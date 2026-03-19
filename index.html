@@ -1644,6 +1644,15 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       </div>
     </button>
 
+    <!-- Export Seed Data -->
+    <button onclick="closeMenu();exportSeedData()" style="width:100%;padding:13px;border-radius:10px;border:1px solid rgba(184,144,77,0.25);background:rgba(184,144,77,0.06);color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;margin-bottom:10px;text-align:left">
+      <span style="font-size:20px">&#128229;</span>
+      <div>
+        <div>Export Data for GitHub</div>
+        <div style="font-size:10px;color:var(--text-2);margin-top:2px">Download seed snippet to embed in HTML</div>
+      </div>
+    </button>
+
     <!-- Logout -->
     <button onclick="closeMenu();doLogout()" style="width:100%;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.25);background:rgba(188,151,84,0.06);color:#d4aa60;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;text-align:left">
       <span style="font-size:20px">&#128682;</span>
@@ -3727,8 +3736,20 @@ var calM=new Date().getMonth();
 // ===========================================
 function save(){try{localStorage.setItem(SK,JSON.stringify(EMP));}catch(e){}}
 function load(){
+  // First try localStorage
   try{var d=localStorage.getItem(SK);if(d){var p=JSON.parse(d);if(p&&p.length>0){EMP=p;return;}}}catch(e){}
+  // Fallback: load from embedded seed-data tag
+  try{var sd=document.getElementById('seed-data');if(sd){var s=JSON.parse(sd.textContent||sd.innerText);if(s&&s.length>0){EMP=JSON.parse(JSON.stringify(s));save();return;}}}catch(e){}
+  // Last resort: use SEED variable
   EMP=JSON.parse(JSON.stringify(SEED));save();
+}
+
+// Export current data as seed for GitHub deployment
+function exportSeedData(){
+  var data=JSON.stringify(EMP,null,2);
+  var blob=new Blob(['<script id="seed-data" type="application/json">\n'+data+'\n<\/script>'],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seed-data-snippet.txt';a.click();
+  alert('Paste the downloaded snippet just before </body> in your index.html, then re-upload to GitHub.');
 }
 
 // ===========================================
@@ -5347,6 +5368,10 @@ function printLvSettle(){
 
 
 
+
+
+<!-- ═══ SEED DATA — paste your exported data between the script tags below ═══ -->
+<script id="seed-data" type="application/json">[]</script>
 
 </body>
 </html>
