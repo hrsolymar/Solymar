@@ -603,9 +603,9 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span class="ni-label">Calendar</span>
     </div>
-    <div class="nav-item" onclick="showPg('law');closeSidebar()" data-pg="law">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      <span class="ni-label">Labour Law</span>
+    <div class="nav-item" onclick="showPg('leave');closeSidebar()" data-pg="leave">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+      <span class="ni-label">Leave Tracker</span>
     </div>
     <div class="nav-item" onclick="showPg('rep');closeSidebar()" data-pg="rep">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -715,31 +715,117 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 
   <!-- CALENDAR -->
 
-  <div id="pg-law" class="pg">
-    <div style="background:linear-gradient(135deg,var(--bg4),var(--bg5));border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="width:40px;height:40px;background:linear-gradient(135deg,#bc9754,#8a6830);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <div>
-          <div style="font-size:15px;color:var(--gold-l);font-weight:700">Bahrain Labour Law</div>
-          <div style="font-size:10px;color:var(--text-2)">Law No. 36 of 2012 — Private Sector</div>
+  <div id="pg-leave" class="pg">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,var(--bg4),var(--bg5));border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;background:linear-gradient(135deg,#0a1f44,#1c3a6e);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#bc9754" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
         </div>
-        <div style="margin-left:auto"><span id="law-total-badge" style="background:rgba(188,151,84,0.12);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--gold-l);font-weight:700"></span></div>
+        <div style="flex:1">
+          <div style="font-size:15px;color:var(--gold-l);font-weight:700">Leave Tracker</div>
+          <div style="font-size:10px;color:var(--text-2)">Active leaves &amp; return dates</div>
+        </div>
+        <button onclick="openAddLeave()" style="background:linear-gradient(135deg,#bc9754,#8a6830);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Leave
+        </button>
       </div>
-      <input class="sbar" id="law-search" placeholder="Search / &#1575;&#1576;&#1581;&#1579;..." oninput="searchLaw()" style="margin-bottom:0"/>
     </div>
-    <div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap" id="law-filters">
-      <button class="tb-btn on" data-ch="" onclick="filterLaw(this,'')">All</button>
-      <button class="tb-btn" data-ch="&#1578;&#1593;&#1575;&#1585;&#1610;" onclick="filterLaw(this,'&#1578;&#1593;&#1575;&#1585;&#1610;')">&#1578;&#1593;&#1575;&#1585;&#1610;&#1601;</button>
-      <button class="tb-btn" data-ch="&#1593;&#1602;&#1583;" onclick="filterLaw(this,'&#1593;&#1602;&#1583;')">&#1575;&#1604;&#1593;&#1602;&#1583;</button>
-      <button class="tb-btn" data-ch="&#1575;&#1604;&#1571;&#1580;&#1608;&#1585;" onclick="filterLaw(this,'&#1575;&#1604;&#1571;&#1580;&#1608;&#1585;')">&#1575;&#1604;&#1571;&#1580;&#1608;&#1585;</button>
-      <button class="tb-btn" data-ch="&#1587;&#1575;&#1593;&#1575;&#1578;" onclick="filterLaw(this,'&#1587;&#1575;&#1593;&#1575;&#1578;')">&#1587;&#1575;&#1593;&#1575;&#1578;</button>
-      <button class="tb-btn" data-ch="&#1575;&#1604;&#1573;&#1580;&#1575;&#1586;&#1575;&#1578;" onclick="filterLaw(this,'&#1575;&#1604;&#1573;&#1580;&#1575;&#1586;&#1575;&#1578;')">&#1575;&#1604;&#1573;&#1580;&#1575;&#1586;&#1575;&#1578;</button>
-      <button class="tb-btn" data-ch="&#1575;&#1604;&#1605;&#1585;&#1571;&#1577;" onclick="filterLaw(this,'&#1575;&#1604;&#1605;&#1585;&#1571;&#1577;')">&#1575;&#1604;&#1605;&#1585;&#1571;&#1577;</button>
-      <button class="tb-btn" data-ch="&#1575;&#1606;&#1602;&#1590;&#1575;&#1569;" onclick="filterLaw(this,'&#1575;&#1606;&#1602;&#1590;&#1575;&#1569;')">&#1573;&#1606;&#1607;&#1575;&#1569;</button>
-      <button class="tb-btn" data-ch="&#1605;&#1606;&#1575;&#1586;&#1593;" onclick="filterLaw(this,'&#1605;&#1606;&#1575;&#1586;&#1593;')">Disputes&#1575;&#1578;</button>
+
+    <!-- Stats row -->
+    <div id="lv-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"></div>
+
+    <!-- Filters -->
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+      <input class="sbar" id="lv-search" placeholder="Search employee..." oninput="renderLeaves()" style="flex:1;min-width:160px;margin-bottom:0"/>
+      <select id="lv-filter-type" onchange="renderLeaves()" style="height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;padding:0 10px;cursor:pointer">
+        <option value="">All Types</option>
+        <option value="Annual">Annual</option>
+        <option value="Sick">Sick</option>
+        <option value="Emergency">Emergency</option>
+        <option value="Maternity">Maternity</option>
+        <option value="Hajj">Hajj</option>
+        <option value="Unpaid">Unpaid</option>
+        <option value="Other">Other</option>
+      </select>
+      <select id="lv-filter-status" onchange="renderLeaves()" style="height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;padding:0 10px;cursor:pointer">
+        <option value="active">On Leave Now</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="all">All Records</option>
+      </select>
     </div>
-    <div id="law-count" style="font-size:11px;color:var(--text-2);margin-bottom:9px"></div>
-    <div id="law-cards"></div>
+
+    <div id="lv-count" style="font-size:11px;color:var(--text-2);margin-bottom:8px"></div>
+    <div id="lv-cards"></div>
+  </div>
+
+  <!-- LEAVE SETTLEMENT DETAIL MODAL -->
+  <div id="lv-settle-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:520px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <div style="background:linear-gradient(135deg,#0a1f44,#1c3a6e);border-radius:16px 16px 0 0;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#fff">Leave Settlement</div>
+          <div id="lv-settle-subtitle" style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px"></div>
+        </div>
+        <button onclick="closeLvSettle()" style="background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+      <div id="lv-settle-body" style="padding:0"></div>
+      <div style="padding:14px 20px;border-top:1px solid #eee;display:flex;gap:8px">
+        <button onclick="closeLvSettle()" style="flex:1;height:40px;background:#f5f5f5;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer;color:#666">Close</button>
+        <button onclick="printLvSettle()" style="flex:2;height:40px;background:linear-gradient(135deg,#0a1f44,#1c3a6e);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD LEAVE MODAL -->
+  <div id="lv-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:8000;align-items:center;justify-content:center;padding:16px">
+    <div style="background:var(--bg-white);border-radius:16px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px;font-weight:700;color:var(--text)" id="lv-modal-title">Add Leave Record</div>
+        <button onclick="closeAddLeave()" style="background:none;border:none;cursor:pointer;color:var(--text-2);font-size:18px">&#10005;</button>
+      </div>
+      <div style="padding:16px 20px">
+        <input type="hidden" id="lv-edit-id" value=""/>
+
+        <div class="fl"><label>Employee</label>
+          <select id="lv-emp-sel" style="width:100%;height:38px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;padding:0 10px">
+            <option value="">— Select Employee —</option>
+          </select>
+        </div>
+
+        <div class="fl"><label>Leave Type</label>
+          <select id="lv-type-sel" style="width:100%;height:38px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:12px;padding:0 10px">
+            <option value="Annual">Annual Leave</option>
+            <option value="Sick">Sick Leave</option>
+            <option value="Emergency">Emergency Leave</option>
+            <option value="Maternity">Maternity Leave</option>
+            <option value="Hajj">Hajj Leave</option>
+            <option value="Unpaid">Unpaid Leave</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="fl"><label>Start Date</label><input type="date" id="lv-start-date" oninput="lvCalcDays()"/></div>
+          <div class="fl"><label>Return Date</label><input type="date" id="lv-return-date" oninput="lvCalcDays()"/></div>
+        </div>
+        <div id="lv-days-calc" style="font-size:11px;color:var(--gold);margin:-4px 0 8px;font-weight:600"></div>
+
+        <div class="fl"><label>Destination / Notes</label>
+          <input type="text" id="lv-dest" placeholder="e.g. India, Home Country, Hospital..."/>
+        </div>
+
+        <div class="fl"><label>Contact Number (abroad)</label>
+          <input type="text" id="lv-contact" placeholder="e.g. +91 9876543210"/>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button onclick="closeAddLeave()" style="flex:1;height:40px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;color:var(--text-2)">Cancel</button>
+          <button onclick="saveLeave()" style="flex:2;height:40px;background:linear-gradient(135deg,#bc9754,#8a6830);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Save Record</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="pg-rep" class="pg">
@@ -1080,9 +1166,13 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
         <div id="lv-grand-total" style="font-size:30px;font-weight:900;color:var(--gold-l);line-height:1;margin-bottom:6px">BD 0.000</div>
         <div id="lv-grand-formula" style="font-size:10px;color:var(--text-2)">Entitlement + Salary</div>
       </div>
-      <div style="display:flex;gap:10px">
-        <button class="btn bgh" style="flex:1;padding:12px" onclick="lvReset()">Reset</button>
-        <button class="btn bg" style="flex:1;padding:12px" onclick="lvPrint()">Print</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn bgh" style="flex:1;padding:12px;min-width:100px" onclick="lvReset()">Reset</button>
+        <button class="btn bg" style="flex:1;padding:12px;min-width:100px" onclick="lvPrint()">Print</button>
+        <button style="flex:2;padding:12px;min-width:160px;background:linear-gradient(135deg,#0a7c4e,#0a5c3a);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" onclick="lvSendToTracker()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+          ✅ Approve &amp; Send to Leave Tracker
+        </button>
       </div>
     </div>
   </div>
@@ -3183,24 +3273,7 @@ function bdg(txt,c){return '<span class="badge" style="background:'+c+'20;color:
 // ===========================================
 // NAV
 // ===========================================
-function showPg(id){
-  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on');});
-  var el=document.getElementById('pg-'+id);
-  if(el)el.classList.add('on');
-  curPg=id;
-  document.querySelectorAll('.nav-item[data-pg]').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-pg')===id);});
-  var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',law:'Bahrain Labour Law',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance'};
-  var tb=document.getElementById('topbar-title');
-  if(tb)tb.textContent=titles[id]||'Solymar HR';
-  var ab=document.getElementById('btn-add');
-  if(ab)ab.style.display=(id==='dir'&&canEdit())?'flex':'none';
-  if(id==='dash')renderDash();
-  if(id==='dir')renderDir();
-  if(id==='alerts')renderAlerts();
-  if(id==='cal')renderCal();
-  if(id==='rep')renderRep();
-  if(id==='ta')renderTA();
-}
+
 
 
 // ===========================================
@@ -3451,88 +3524,6 @@ function saveChangePwd(){
 }
 
 
-var _lawDB=[];var _lawCh='';
-function _initLaw(){
-  if(_lawDB.length>0)return;
-  try{var d=document.getElementById('law-data');if(d)_lawDB=JSON.parse(d.textContent||d.innerText);}catch(ex){}
-  var tb=document.getElementById('law-total-badge');
-  if(tb)tb.textContent=_lawDB.length+' Articles';
-}
-function searchLaw(){renderLaw();}
-function filterLaw(btn,ch){
-  _lawCh=ch;
-  document.querySelectorAll('#law-filters .tb-btn').forEach(function(b){b.classList.toggle('on',b===btn);});
-  renderLaw();
-}
-function renderLaw(){
-  _initLaw();
-  var q=(document.getElementById('law-search').value||'').toLowerCase().trim();
-  var list=_lawDB.filter(function(a){
-    var mq=!q||a.title.toLowerCase().indexOf(q)>=0||a.text.toLowerCase().indexOf(q)>=0
-      ||a.explain.toLowerCase().indexOf(q)>=0
-      ||(a.title_en&&a.title_en.toLowerCase().indexOf(q)>=0)
-      ||(a.text_en&&a.text_en.toLowerCase().indexOf(q)>=0)
-      ||(a.explain_en&&a.explain_en.toLowerCase().indexOf(q)>=0)
-      ||a.id===q||('\u0627\u0644\u0645\u0627\u062f\u0629 '+a.id).indexOf(q)>=0
-      ||('article '+a.id).toLowerCase().indexOf(q)>=0;
-    var mc=!_lawCh||a.chapter.indexOf(_lawCh)>=0;
-    return mq&&mc;
-  });
-  var cnt=document.getElementById('law-count');
-  if(cnt)cnt.innerHTML='<strong>'+list.length+'</strong> articles';
-  var cards=document.getElementById('law-cards');
-  if(!cards)return;
-  if(list.length===0){cards.innerHTML='<div class="card" style="text-align:center;padding:28px"><div style="font-size:28px;margin-bottom:8px;opacity:0.4">&#128270;</div><div style="color:var(--text-2)">No results found</div></div>';return;}
-  var out='';var curCh='';
-  list.forEach(function(a){
-    if(a.chapter!==curCh){
-      curCh=a.chapter;
-      var chEn=a.chapter_en||'';
-      out+='<div style="margin:16px 0 8px;padding:10px 14px;background:linear-gradient(135deg,rgba(28,49,81,0.06),rgba(188,151,84,0.04));border-left:3px solid #bc9754;border-radius:0 8px 8px 0">'
-        +'<div style="font-size:11px;font-weight:700;color:var(--gold-l);letter-spacing:0.5px">'+chEn+'</div>'
-        +'<div style="font-size:10px;color:#8a6830;margin-top:2px;direction:rtl">'+a.chapter+'</div>'
-        +'</div>';
-    }
-    out+='<div style="background:var(--bg2);border:1px solid rgba(188,151,84,0.2);border-radius:12px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(28,49,81,0.05)">'
-      +'<div onclick="toggleLawDet(this.parentElement)" style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer">'
-      +'<div style="width:36px;height:36px;background:linear-gradient(135deg,#1C3151,#263e63);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0">'+a.id+'</div>'
-      +'<div style="flex:1;min-width:0">'
-      +'<div style="font-weight:700;font-size:12px;color:var(--gold-l)">Art. '+a.id+' — '+(a.title_en||a.title)+'</div>'
-      +'<div style="font-size:10px;color:#8a6830;direction:rtl;text-align:right;margin-top:2px">\u0645\u0627\u062f\u0629 ('+a.id+') \u2014 '+a.title+'</div>'
-      +'</div>'
-      +'<span class="law-arr" style="color:#bc9754;font-size:12px;flex-shrink:0">&#9660;</span>'
-      +'</div>'
-      +'<div class="law-det" style="display:none">'
-      // English section
-      +'<div style="padding:12px 14px;background:rgba(28,49,81,0.03);border-top:1px solid rgba(188,151,84,0.15)">'
-      +'<div style="font-size:9px;font-weight:700;color:var(--gold-l);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px">EN — Article Text</div>'
-      +'<div style="font-size:12px;line-height:1.85;color:var(--text)">'+(a.text_en||a.text)+'</div>'
-      +'</div>'
-      // Arabic section
-      +'<div style="padding:12px 14px;background:rgba(188,151,84,0.03);border-top:1px solid rgba(188,151,84,0.12)">'
-      +'<div style="font-size:9px;font-weight:700;color:#8a6830;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:7px">\u0627\u0644\u0646\u0635 \u0627\u0644\u0639\u0631\u0628\u064a</div>'
-      +'<div style="font-size:12px;line-height:1.85;color:var(--text);direction:rtl;text-align:right">'+a.text+'</div>'
-      +'</div>'
-      // What it means (bilingual)
-      +'<div style="padding:12px 14px;background:linear-gradient(135deg,rgba(188,151,84,0.06),rgba(188,151,84,0.02));border-top:1px solid rgba(188,151,84,0.15)">'
-      +'<div style="font-size:9px;font-weight:700;color:#8a6830;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">What This Means For You</div>'
-      +'<div style="font-size:12px;line-height:1.7;color:var(--text);margin-bottom:8px">'+(a.explain_en||'')+'</div>'
-      +'<div style="font-size:11px;line-height:1.7;color:#5a5040;direction:rtl;text-align:right;border-top:1px solid rgba(188,151,84,0.12);padding-top:7px">'+a.explain+'</div>'
-      +'</div>'
-      +'</div>'
-      +'</div>';
-  });
-  cards.innerHTML=out;
-}
-function toggleLawDet(card){
-  var det=card.querySelector('.law-det');
-  var arr=card.querySelector('.law-arr');
-  if(!det)return;
-  var open=det.style.display!=='none';
-  det.style.display=open?'none':'block';
-  if(arr)arr.innerHTML=open?'&#9660;':'&#9650;';
-}
-
 
 var _otActive = {1:false,2:false,3:false,4:false};
 var _otRates  = {1:1.5, 2:1.5, 3:1.25, 4:1.5};
@@ -3706,7 +3697,7 @@ function showPg(id){
   if(el)el.classList.add('on');
   curPg=id;
   document.querySelectorAll('.nav-item[data-pg]').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-pg')===id);});
-  var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',law:'Bahrain Labour Law',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance'};
+  var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',leave:'Leave Tracker',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance'};
   var tb=document.getElementById('topbar-title');
   if(tb)tb.textContent=titles[id]||'Solymar HR';
   var ab=document.getElementById('btn-add');
@@ -4721,24 +4712,565 @@ window.onload=function(){
 
 function toggleSidebar(){document.body.classList.toggle("sidebar-open");}
 function closeSidebar(){document.body.classList.remove("sidebar-open");}
+
+// ═══ LEAVE TRACKER ═══
+var _leaveRecs = [];
+
+function _lvKey(){ return 'solymar_leaves_v1'; }
+
+function _lvLoad(){
+  try{ var r=localStorage.getItem(_lvKey()); if(r)_leaveRecs=JSON.parse(r); }catch(e){ _leaveRecs=[]; }
+}
+
+function _lvSave(){
+  try{ localStorage.setItem(_lvKey(), JSON.stringify(_leaveRecs)); }catch(e){}
+}
+
+function openAddLeave(){
+  _lvLoad();
+  document.getElementById('lv-edit-id').value='';
+  document.getElementById('lv-modal-title').textContent='Add Leave Record';
+  document.getElementById('lv-emp-sel').value='';
+  document.getElementById('lv-type-sel').value='Annual';
+  document.getElementById('lv-start-date').value='';
+  document.getElementById('lv-return-date').value='';
+  document.getElementById('lv-dest').value='';
+  document.getElementById('lv-contact').value='';
+  document.getElementById('lv-days-calc').textContent='';
+  // Populate employee dropdown
+  var sel=document.getElementById('lv-emp-sel');
+  sel.innerHTML='<option value="">— Select Employee —</option>';
+  var emps=EMP.sort(function(a,b){return a.name.localeCompare(b.name);});
+  emps.forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' ('+e.dept+')';
+    sel.appendChild(o);
+  });
+  document.getElementById('lv-modal').style.display='flex';
+}
+
+function closeAddLeave(){
+  document.getElementById('lv-modal').style.display='none';
+}
+
+function lvCalcDays(){
+  var s=document.getElementById('lv-start-date').value;
+  var r=document.getElementById('lv-return-date').value;
+  var el=document.getElementById('lv-days-calc');
+  if(!s||!r){el.textContent='';return;}
+  var ds=new Date(s), dr=new Date(r);
+  if(dr<=ds){el.textContent='⚠️ Return date must be after start date';el.style.color='var(--red)';return;}
+  var days=Math.round((dr-ds)/(1000*60*60*24));
+  el.textContent='📅 '+days+' day'+(days!==1?'s':'')+' of leave';
+  el.style.color='var(--gold)';
+}
+
+function saveLeave(){
+  _lvLoad();
+  var empId=document.getElementById('lv-emp-sel').value;
+  var type=document.getElementById('lv-type-sel').value;
+  var start=document.getElementById('lv-start-date').value;
+  var ret=document.getElementById('lv-return-date').value;
+  var dest=document.getElementById('lv-dest').value.trim();
+  var contact=document.getElementById('lv-contact').value.trim();
+  var editId=document.getElementById('lv-edit-id').value;
+
+  if(!empId||!type||!start||!ret){
+    alert('Please fill in all required fields');return;
+  }
+  if(new Date(ret)<=new Date(start)){
+    alert('Return date must be after start date');return;
+  }
+
+  var emp=EMP.find(function(e){return e.id===empId;});
+  if(!emp)return;
+
+  if(editId){
+    var idx=_leaveRecs.findIndex(function(r){return r.id===editId;});
+    if(idx>=0){
+      _leaveRecs[idx]={id:editId,empId:empId,empName:emp.name,empCode:emp.emp_code,dept:emp.dept,title:emp.title,nationality:emp.nationality,type:type,start:start,returnDate:ret,dest:dest,contact:contact};
+    }
+  } else {
+    _leaveRecs.push({id:'lv'+Date.now(),empId:empId,empName:emp.name,empCode:emp.emp_code,dept:emp.dept,title:emp.title,nationality:emp.nationality,type:type,start:start,returnDate:ret,dest:dest,contact:contact});
+  }
+  _lvSave();
+  closeAddLeave();
+  renderLeaves();
+}
+
+function editLeave(id){
+  _lvLoad();
+  var rec=_lvData.find(function(r){return r.id===id;});
+  if(!rec)return;
+  // Populate employee dropdown first
+  var sel=document.getElementById('lv-emp-sel');
+  sel.innerHTML='<option value="">— Select Employee —</option>';
+  var emps=EMP.sort(function(a,b){return a.name.localeCompare(b.name);});
+  emps.forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' ('+e.dept+')';
+    sel.appendChild(o);
+  });
+  document.getElementById('lv-edit-id').value=rec.id;
+  document.getElementById('lv-modal-title').textContent='Edit Leave Record';
+  document.getElementById('lv-emp-sel').value=rec.empId;
+  document.getElementById('lv-type-sel').value=rec.type;
+  document.getElementById('lv-start-date').value=rec.start;
+  document.getElementById('lv-return-date').value=rec.returnDate;
+  document.getElementById('lv-dest').value=rec.dest||'';
+  document.getElementById('lv-contact').value=rec.contact||'';
+  lvCalcDays();
+  document.getElementById('lv-modal').style.display='flex';
+}
+
+function deleteLeave(id){
+  if(!confirm('Delete this leave record?'))return;
+  _lvLoad();
+  _lvData=_leaveRecs.filter(function(r){return r.id!==id;});
+  _lvSave();
+  renderLeaves();
+}
+
+function _lvStatus(rec){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var s=new Date(rec.start); s.setHours(0,0,0,0);
+  var r=new Date(rec.returnDate); r.setHours(0,0,0,0);
+  if(today>=s && today<r) return 'active';
+  if(s>today) return 'upcoming';
+  return 'past';
+}
+
+function _lvDaysLeft(rec){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var r=new Date(rec.returnDate); r.setHours(0,0,0,0);
+  return Math.round((r-today)/(1000*60*60*24));
+}
+
+function _lvDaysUntil(rec){
+  var today=new Date(); today.setHours(0,0,0,0);
+  var s=new Date(rec.start); s.setHours(0,0,0,0);
+  return Math.round((s-today)/(1000*60*60*24));
+}
+
+function _fmtDate(d){
+  if(!d)return '—';
+  var parts=d.split('-');
+  if(parts.length!==3)return d;
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return parseInt(parts[2])+' '+months[parseInt(parts[1])-1]+' '+parts[0];
+}
+
+var _lvTypeColors={
+  'Annual':'#0a7c4e','Sick':'#c0392b','Emergency':'#e67e22',
+  'Maternity':'#8e44ad','Hajj':'#16a085','Unpaid':'#7f8c8d','Other':'#2980b9'
+};
+
+function renderLeaves(){
+  // Always read fresh from localStorage
+  try{
+    var raw = localStorage.getItem('solymar_leaves_v1');
+    _leaveRecs = (raw ? JSON.parse(raw) : []);
+    if(!Array.isArray(_leaveRecs)) _leaveRecs = [];
+  }catch(e){ _leaveRecs=[]; }
+  var q=(document.getElementById('lv-search').value||'').toLowerCase();
+  var filterType=document.getElementById('lv-filter-type').value;
+  var filterStatus=document.getElementById('lv-filter-status').value;
+
+  var list=_leaveRecs.filter(function(r){
+    var st=_lvStatus(r);
+    var matchStatus = filterStatus==='all' || filterStatus===st || (filterStatus==='active' && st==='active');
+    if(filterStatus==='upcoming') matchStatus = st==='upcoming';
+    var matchType=!filterType||r.type===filterType;
+    var matchQ=!q||r.empName.toLowerCase().indexOf(q)>=0||r.dept.toLowerCase().indexOf(q)>=0||(r.dest||'').toLowerCase().indexOf(q)>=0;
+    return matchStatus&&matchType&&matchQ;
+  });
+
+  // Sort: active first, then upcoming by start, then past
+  list.sort(function(a,b){
+    var order={active:0,upcoming:1,past:2};
+    var sa=order[_lvStatus(a)]||2, sb=order[_lvStatus(b)]||2;
+    if(sa!==sb)return sa-sb;
+    return new Date(a.returnDate)-new Date(b.returnDate);
+  });
+
+  // Stats
+  var all=_leaveRecs, active=all.filter(function(r){return _lvStatus(r)==='active';});
+  var upcoming=all.filter(function(r){return _lvStatus(r)==='upcoming';});
+  var statsEl=document.getElementById('lv-stats-row');
+  if(statsEl){
+    statsEl.innerHTML=
+      '<div style="background:rgba(10,31,68,0.07);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:#0a1f44">'+active.length+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">On Leave</div></div>'
+      +'<div style="background:rgba(188,151,84,0.08);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:var(--gold)">'+upcoming.length+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Upcoming</div></div>'
+      +'<div style="background:rgba(22,160,133,0.07);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:#16a085">'+all.length+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Total Records</div></div>';
+  }
+
+  var cnt=document.getElementById('lv-count');
+  if(cnt)cnt.innerHTML='<strong>'+list.length+'</strong> record'+(list.length!==1?'s':'');
+
+  var cards=document.getElementById('lv-cards');
+  if(!cards)return;
+  if(list.length===0){
+    cards.innerHTML='<div class="card" style="text-align:center;padding:32px">'
+      +'<div style="font-size:36px;margin-bottom:10px">🏖️</div>'
+      +'<div style="font-weight:600;color:var(--text-2);font-size:13px">No leave records found</div>'
+      +'<div style="font-size:11px;color:var(--text-3);margin-top:4px">Click "Add Leave" to record a new leave</div>'
+      +'</div>';
+    return;
+  }
+  var out='';
+  list.forEach(function(r){
+    var st=_lvStatus(r);
+    var col=_lvTypeColors[r.type]||'#2980b9';
+    var daysLeft=_lvDaysLeft(r);
+    var daysUntil=_lvDaysUntil(r);
+    var totalDays=Math.round((new Date(r.returnDate)-new Date(r.start))/(1000*60*60*24));
+
+    var badge='', urgencyBar='';
+    var approvedBadge = r.approved
+      ? '<span style="background:rgba(10,124,78,0.12);color:#0a7c4e;border:1px solid rgba(10,124,78,0.25);border-radius:20px;padding:2px 7px;font-size:9px;font-weight:700;margin-left:5px">\u2713 APPROVED</span>'
+      : '';
+
+    if(st==='active'){
+      badge='<span style="background:rgba(10,124,78,0.1);color:#0a7c4e;border:1px solid rgba(10,124,78,0.3);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700">\u25cf ON LEAVE</span>';
+      var pct=totalDays>0?Math.max(0,Math.min(100,Math.round((1-(daysLeft/totalDays))*100))):0;
+      urgencyBar='<div style="margin:8px 14px 4px">'
+        +'<div style="display:flex;justify-content:space-between;margin-bottom:4px">'
+        +'<span style="font-size:11px;font-weight:700;color:#0a7c4e">\u23f3 '+daysLeft+' day'+(daysLeft!==1?'s':'')+' remaining until return</span>'
+        +'<span style="font-size:10px;color:var(--text-3)">'+pct+'% elapsed</span>'
+        +'</div>'
+        +'<div style="height:7px;background:rgba(10,124,78,0.12);border-radius:10px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#0a7c4e,#16a34a);border-radius:10px"></div>'
+        +'</div></div>';
+    } else if(st==='upcoming'){
+      badge='<span style="background:rgba(188,151,84,0.1);color:var(--gold);border:1px solid rgba(188,151,84,0.3);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700">\u25f7 UPCOMING</span>';
+      urgencyBar='<div style="margin:6px 14px 4px;background:rgba(188,151,84,0.08);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--gold);font-weight:600">'
+        +'Starts in <strong>'+daysUntil+' day'+(daysUntil!==1?'s':'')+'</strong> \u2014 '+_fmtDate(r.start)
+        +'</div>';
+    } else {
+      badge='<span style="background:var(--bg);color:var(--text-3);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600">\u2713 RETURNED</span>';
+      urgencyBar='<div style="margin:4px 14px 2px;font-size:10px;color:var(--text-3)">Returned on '+_fmtDate(r.returnDate)+'</div>';
+    }
+
+    var payBadge = r.grandTotal
+      ? '<span style="background:rgba(188,151,84,0.12);color:#8a6830;border:1px solid rgba(188,151,84,0.3);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700">BD '+parseFloat(r.grandTotal).toFixed(3)+'</span>'
+      : '';
+
+    var settleBtnStyle = (r.approved||r.grandTotal)
+      ? 'flex:2;background:linear-gradient(135deg,#0a1f44,#1c3a6e);color:#fff;border:none;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700;cursor:pointer'
+      : 'flex:2;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-2)';
+
+    out+='<div style="background:var(--bg-white);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06)">'
+      +'<div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--border-l)">'
+      +'<div style="width:44px;height:44px;background:linear-gradient(135deg,#0a1f44,#1c3a6e);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">&#128100;</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-weight:700;font-size:13px;color:var(--text)">'+r.empName+approvedBadge+'</div>'
+      +'<div style="font-size:11px;color:var(--text-2);margin-top:1px">'+(r.title||'')+(r.dept?' &middot; '+r.dept:'')+(r.empCode?' &middot; #'+r.empCode:'')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">'
+      +badge
+      +'<span style="background:'+col+'1a;color:'+col+';border:1px solid '+col+'44;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">'+r.type+'</span>'
+      +'</div>'
+      +'</div>'
+      +urgencyBar
+      +'<div style="padding:10px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+      +'<div><div style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px">Departure</div><div style="font-size:12px;font-weight:600;color:var(--text)">'+_fmtDate(r.start)+'</div></div>'
+      +'<div><div style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px">Return</div><div style="font-size:12px;font-weight:700;color:#0a7c4e">'+_fmtDate(r.returnDate)+'</div></div>'
+      +'<div><div style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px">Duration</div><div style="font-size:12px;font-weight:600;color:var(--text)">'+totalDays+' days</div></div>'
+      +(r.dest?'<div><div style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px">Destination</div><div style="font-size:12px;font-weight:600;color:var(--text)">'+r.dest+'</div></div>':'')
+      +(r.contact?'<div style="grid-column:1/-1"><div style="font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px">Contact Abroad</div><div style="font-size:12px;font-weight:600;color:var(--primary)">'+r.contact+'</div></div>':'')
+      +(payBadge?'<div style="grid-column:1/-1;display:flex;align-items:center;gap:5px"><span style="font-size:10px;color:var(--text-3)">Leave Pay:</span> '+payBadge+'</div>':'')
+      +'</div>'
+      +'<div style="padding:8px 14px;border-top:1px solid var(--border-l);display:flex;gap:6px">'
+      +'<button onclick="openLvSettle(\''+r.id+'\')" style="'+settleBtnStyle+'">&#128196; Settlement</button>'
+      +'<button onclick="editLeave(\''+r.id+'\')" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text-2)">&#9999; Edit</button>'
+      +'<button onclick="deleteLeave(\''+r.id+'\')" style="background:var(--red-light);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;cursor:pointer;color:var(--red)">&#128465;</button>'
+      +'</div>'
+      +'</div>';
+  });
+  cards.innerHTML=out;
+}
+function initLeave(){
+  try{
+    var raw = localStorage.getItem('solymar_leaves_v1');
+    _leaveRecs = (raw ? JSON.parse(raw) : []);
+    if(!Array.isArray(_leaveRecs)) _leaveRecs = [];
+  }catch(e){ _leaveRecs=[]; }
+  renderLeaves();
+}
+
+function lvSendToTracker(){
+  var empName = (document.getElementById('lv-name')||{value:''}).value.trim();
+  var empCode = (document.getElementById('lv-code')||{value:''}).value.trim();
+  var fromVal = (document.getElementById('lv-from')||{value:''}).value;
+  var toVal   = (document.getElementById('lv-to')||{value:''}).value;
+
+  if(!empName && !empCode){ alert('Please fill in the Staff Name / Staff Code first.'); return; }
+  if(!fromVal || !toVal){ alert('Please enter Leave From and Leave To dates first.'); return; }
+  if(new Date(toVal) <= new Date(fromVal)){ alert('Return date must be after the start date.'); return; }
+
+  var emp = null;
+  for(var i=0;i<EMP.length;i++){
+    if((empCode && EMP[i].emp_code===empCode)||(empName && EMP[i].name===empName)){ emp=EMP[i]; break; }
+  }
+
+  var existing = [];
+  try{ var raw=localStorage.getItem('solymar_leaves_v1'); if(raw) existing=JSON.parse(raw); if(!Array.isArray(existing)) existing=[]; }catch(e){ existing=[]; }
+
+  existing = existing.filter(function(r){ return !(r.empCode===empCode && r.start===fromVal); });
+
+  var grandTotal = 0, calcSnapshot = null;
+  try{
+    if(window._lvData){
+      grandTotal = window._lvData.grandTotal || 0;
+      calcSnapshot = window._lvData; // save full breakdown
+    }
+  }catch(e){}
+
+  var rec = {
+    id:'lv_auto_'+Date.now(),
+    empId: emp?emp.id:('emp_'+empCode),
+    empName: empName||(emp?emp.name:empCode),
+    empCode: empCode,
+    dept: emp?emp.dept:'',
+    title: emp?emp.title:'',
+    nationality: emp?emp.nationality:'',
+    type:'Annual', start:fromVal, returnDate:toVal,
+    dest:'', contact:'', grandTotal:grandTotal,
+    approved:true, approvedDate:new Date().toISOString().split('T')[0],
+    calcData: calcSnapshot   // full Leave Salary breakdown stored here
+  };
+
+  existing.push(rec);
+  try{
+    localStorage.setItem('solymar_leaves_v1', JSON.stringify(existing));
+    _leaveRecs = existing;
+    alert('\u2705 Done!\n\n'+rec.empName+' added to Leave Tracker.\nReturn date: '+toVal+'\nTotal records saved: '+existing.length);
+  }catch(e){ alert('\u274c Save failed: '+e.message); }
+}
+
+function openLvSettle(id){
+  var rec = null;
+  try{
+    var raw = localStorage.getItem('solymar_leaves_v1');
+    var arr = raw ? JSON.parse(raw) : [];
+    for(var i=0;i<arr.length;i++){ if(arr[i].id===id){ rec=arr[i]; break; } }
+  }catch(e){}
+  if(!rec){ alert('Record not found'); return; }
+
+  var totalDays = Math.round((new Date(rec.returnDate)-new Date(rec.start))/(1000*60*60*24));
+  var st = _lvStatus(rec);
+  var daysLeft = _lvDaysLeft(rec);
+  var pct = totalDays>0 ? Math.max(0,Math.min(100,Math.round((1-(daysLeft/totalDays))*100))) : 100;
+
+  var subtitle = rec.empCode ? '#'+rec.empCode+' \u2014 '+rec.type+' Leave' : rec.type+' Leave';
+  var el = document.getElementById('lv-settle-subtitle');
+  if(el) el.textContent = subtitle;
+
+  var statusColor = st==='active' ? '#0a7c4e' : st==='upcoming' ? '#bc9754' : '#666';
+  var statusLabel = st==='active' ? '\u25cf ON LEAVE \u2014 Returns in '+daysLeft+' day'+(daysLeft!==1?'s':'')+' ('+pct+'% elapsed)'
+                  : st==='upcoming' ? '\u25f7 UPCOMING \u2014 Starts in '+_lvDaysUntil(rec)+' days'
+                  : '\u2713 RETURNED \u2014 '+_fmtDate(rec.returnDate);
+
+  var html = '<div style="padding:16px 20px">'
+    // Employee info
+    +'<div style="background:#f8f9fc;border-radius:10px;padding:12px 14px;margin-bottom:12px">'
+    +'<div style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Employee</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+    +_settleRow('Name', rec.empName||'—')
+    +_settleRow('Code', rec.empCode||'—')
+    +_settleRow('Department', rec.dept||'—')
+    +_settleRow('Title', rec.title||'—')
+    +_settleRow('Nationality', rec.nationality||'—')
+    +'</div></div>'
+    // Leave details
+    +'<div style="background:#f8f9fc;border-radius:10px;padding:12px 14px;margin-bottom:12px">'
+    +'<div style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Leave Details</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'
+    +_settleRow('Type', rec.type)
+    +_settleRow('Duration', totalDays+' days')
+    +_settleRow('Departure', _fmtDate(rec.start))
+    +_settleRow('Return Date', _fmtDate(rec.returnDate))
+    +(rec.dest?_settleRow('Destination', rec.dest):'')
+    +(rec.contact?_settleRow('Contact Abroad', rec.contact):'')
+    +_settleRow('Approved Date', rec.approvedDate||'Manual')
+    +'</div></div>'
+    // Status bar
+    +(st==='active'
+      ? '<div style="background:rgba(10,124,78,0.06);border:1px solid rgba(10,124,78,0.2);border-radius:10px;padding:10px 14px;margin-bottom:12px">'
+        +'<div style="display:flex;justify-content:space-between;margin-bottom:6px">'
+        +'<span style="font-size:11px;font-weight:700;color:#0a7c4e">\u23f3 '+daysLeft+' days remaining</span>'
+        +'<span style="font-size:10px;color:#888">'+pct+'% elapsed</span>'
+        +'</div>'
+        +'<div style="height:8px;background:rgba(10,124,78,0.12);border-radius:10px;overflow:hidden">'
+        +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#0a7c4e,#16a34a);border-radius:10px"></div>'
+        +'</div></div>'
+      : '')
+    // Financial summary
+    +(rec.grandTotal
+      ? '<div style="background:linear-gradient(135deg,rgba(188,151,84,0.1),rgba(188,151,84,0.05));border:1px solid rgba(188,151,84,0.3);border-radius:10px;padding:12px 14px;margin-bottom:4px">'
+        +'<div style="font-size:9px;font-weight:700;color:#8a6830;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Financial Summary</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:13px;color:#333">Total Leave Pay</span>'
+        +'<span style="font-size:20px;font-weight:900;color:#bc9754">BD '+parseFloat(rec.grandTotal).toFixed(3)+'</span>'
+        +'</div>'
+        +(rec.approved?'<div style="font-size:10px;color:#0a7c4e;margin-top:4px">\u2713 Approved &amp; processed on '+(rec.approvedDate||'—')+'</div>':'')
+        +'</div>'
+      : '<div style="text-align:center;padding:10px;color:#888;font-size:12px">No financial data \u2014 use Leave Salary to calculate</div>')
+    +'</div>';
+
+  var body = document.getElementById('lv-settle-body');
+  if(body) body.innerHTML = html;
+
+  // Store current record id for print
+  window._lvSettleId = id;
+  var modal = document.getElementById('lv-settle-modal');
+  if(modal) modal.style.display = 'flex';
+}
+
+function _settleRow(label, value){
+  return '<div><div style="font-size:9px;color:#999;margin-bottom:2px">'+label+'</div>'
+    +'<div style="font-size:12px;font-weight:600;color:#222">'+value+'</div></div>';
+}
+
+function closeLvSettle(){
+  var m = document.getElementById('lv-settle-modal');
+  if(m) m.style.display='none';
+}
+
+function printLvSettle(){
+  var id = window._lvSettleId;
+  var rec = null;
+  try{
+    var raw = localStorage.getItem('solymar_leaves_v1');
+    var arr = raw ? JSON.parse(raw) : [];
+    for(var i=0;i<arr.length;i++){ if(arr[i].id===id){ rec=arr[i]; break; } }
+  }catch(e){}
+  if(!rec){ alert('Record not found'); return; }
+
+  var d = rec.calcData;  // full Leave Salary snapshot
+  var now = new Date().toLocaleDateString('en-GB');
+  var totalDays = Math.round((new Date(rec.returnDate)-new Date(rec.start))/(1000*60*60*24));
+  var sd = rec.start  ? new Date(rec.start).toLocaleDateString('en-GB') : '-';
+  var ed = rec.returnDate ? new Date(rec.returnDate).toLocaleDateString('en-GB') : '-';
+  function fv(v){return(parseFloat(v)||0).toFixed(3);}
+  var MN=['','January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // Build entitlement rows (if full calcData exists)
+  var eRows='', sRows='';
+  var tdL='padding:3px 10px;font-size:10px;color:#333;border-bottom:1px solid #e8e8e8;';
+  var tdR='padding:3px 10px;font-size:10px;font-weight:700;text-align:right;border-bottom:1px solid #e8e8e8;';
+
+  if(d && d.annAmt>0) eRows+='<tr><td style="'+tdL+'">Annual Leave ('+d.ann+' days) <span style="font-size:10px;color:#888">basic only</span></td><td style="'+tdR+'color:#006600;">BD '+fv(d.annAmt)+'</td></tr>';
+  if(d && d.phAmt>0)  eRows+='<tr><td style="'+tdL+'">Public Holidays ('+d.ph+' days) <span style="font-size:10px;color:#888">basic only</span></td><td style="'+tdR+'color:#006600;">BD '+fv(d.phAmt)+'</td></tr>';
+  if(d && d.woAmt>0)  eRows+='<tr><td style="'+tdL+'">Weekly Off ('+d.wo+' days) <span style="font-size:10px;color:#888">'+(d.trans>0?'basic+transport':'basic only')+'</span></td><td style="'+tdR+'color:#006600;">BD '+fv(d.woAmt)+'</td></tr>';
+  if(d && d.ext>0)    eRows+='<tr><td style="'+tdL+'">Extra Hours Amount</td><td style="'+tdR+'color:#006600;">BD '+fv(d.ext)+'</td></tr>';
+  var totEnt = (d&&d.totEnt)||rec.grandTotal||0;
+  var totSal = (d&&d.totSal)||0;
+  if(eRows) eRows+='<tr style="background:rgba(188,151,84,0.07);"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#006600;border-top:2px solid #a8d5a8;">Total Entitlement</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#006600;border-top:2px solid #a8d5a8;">BD '+fv(totEnt)+'</td></tr>';
+
+  if(d && d.periods && d.periods.length){
+    d.periods.forEach(function(p,i){
+      var v=lvGetVals(p,d.basic,d.hous,d.trans,d.tel||0);
+      if(v.b===0&&v.h===0&&v.t===0&&v.g===0&&v.d===0)return;
+      var mname=p.month?MN[p.month]:('Period '+(i+1));
+      var ptype=v.isFull?'Full month':'Partial ('+v.days+'/'+v.mdays+' days)';
+      if(p.note) ptype+=' — '+p.note;
+      sRows+='<tr style="background:#f7f7f7;"><td style="padding:7px 14px;font-size:12px;font-weight:700;color:#2d1f0a;border-top:2px solid #c9a96e;">'+mname+'</td><td style="padding:7px 14px;font-size:10px;color:#888;text-align:right;border-top:2px solid #c9a96e;">'+ptype+'</td></tr>';
+      if(v.b>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">Basic Salary'+(v.isFull?'':' ('+v.days+'/'+v.mdays+' days)')+'</td><td style="'+tdR+'color:#006600;">+ BD '+v.b.toFixed(3)+'</td></tr>';
+      if(v.h>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">HRA Housing'+(v.isFull?'':' (full month)')+'</td><td style="'+tdR+'color:#006600;">+ BD '+v.h.toFixed(3)+'</td></tr>';
+      if(v.t>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">Transport'+(v.isFull?'':' ('+v.days+'/'+v.mdays+' days)')+'</td><td style="'+tdR+'color:#006600;">+ BD '+v.t.toFixed(3)+'</td></tr>';
+      if(v.g>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">GOSI Deduction</td><td style="'+tdR+'color:#cc0000;">- BD '+v.g.toFixed(3)+'</td></tr>';
+      if(v.d>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">Other Deductions</td><td style="'+tdR+'color:#cc0000;">- BD '+v.d.toFixed(3)+'</td></tr>';
+      sRows+='<tr style="background:#fafafa;"><td style="padding:6px 14px;font-size:11px;font-weight:700;color:#333;">Net</td><td style="padding:6px 14px;font-size:12px;font-weight:800;text-align:right;color:'+(v.net>=0?'#333':'#cc0000')+';">BD '+v.net.toFixed(3)+'</td></tr>';
+    });
+    if(sRows) sRows+='<tr style="background:#f0f0f0;"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#333;border-top:2px solid #bbb;">Total Salary Payment</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#333;border-top:2px solid #bbb;">BD '+fv(totSal)+'</td></tr>';
+  }
+
+  var grandTotalAmt = rec.grandTotal || (totEnt+totSal);
+
+  // Build printable HTML
+  var body = '<div style="max-width:680px;margin:0 auto;padding:10px;font-family:Arial,sans-serif;background:#fff;color:#000;">'
+    // Header
+    +'<div style="background:#2d1f0a;color:#fff;padding:10px 14px;margin-bottom:8px;">'
+    +'<div style="font-size:16px;font-weight:bold;color:#e8c97e;letter-spacing:1px;">THE SOLYMAR HOTEL</div>'
+    +'<div style="font-size:9px;color:#c9a96e;letter-spacing:2px;">AMWAJ ISLAND, BAHRAIN</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'
+    +'<span style="font-size:14px;font-weight:bold;color:#fff;letter-spacing:1px;">LEAVE SALARY CALCULATION</span>'
+    +'<span style="font-size:10px;color:#c9a96e;">'+now+'</span>'
+    +'</div></div>'
+    // Employee info
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:7px;border:1px solid #c9a96e;font-size:10px;"><tbody>'
+    +'<tr><td style="padding:5px 12px;width:50%;border-right:1px solid #e8d5b0;"><b style="color:#7a4f00;">Name:</b> '+rec.empName+'</td>'
+    +'<td style="padding:5px 12px;"><b style="color:#7a4f00;">Staff Code:</b> '+(rec.empCode||'-')+'</td></tr>'
+    +'<tr style="background:#fdf8f0;"><td style="padding:5px 12px;border-right:1px solid #e8d5b0;"><b style="color:#7a4f00;">Department:</b> '+(rec.dept||'-')+'</td>'
+    +'<td style="padding:5px 12px;"><b style="color:#7a4f00;">Title:</b> '+(rec.title||'-')+'</td></tr>'
+    +'<tr><td style="padding:5px 12px;border-right:1px solid #e8d5b0;"><b style="color:#7a4f00;">Leave From:</b> '+sd+'</td>'
+    +'<td style="padding:5px 12px;"><b style="color:#7a4f00;">Leave To:</b> '+ed+' ('+totalDays+' days)</td></tr>'
+    +(d?'<tr style="background:#fdf8f0;"><td colspan="2" style="padding:5px 12px;"><b style="color:#7a4f00;">Basic:</b> BD '+fv(d.basic)+(d.hous>0?' &nbsp;|&nbsp; <b style="color:#7a4f00;">HRA:</b> BD '+fv(d.hous):'')+(d.trans>0?' &nbsp;|&nbsp; <b style="color:#7a4f00;">TRA:</b> BD '+fv(d.trans):'')+' &nbsp;|&nbsp; <b style="color:#7a4f00;">Total Salary:</b> BD '+fv(d.sal)+'</td></tr>':'')
+    +'</tbody></table>'
+    // Entitlement
+    +(eRows?'<table style="width:100%;border-collapse:collapse;margin-bottom:7px;border:1px solid #c8e6c8;"><tbody>'
+    +'<tr style="background:#1b5e20;"><td colspan="2" style="padding:7px 14px;font-size:11px;font-weight:bold;text-transform:uppercase;color:#fff;letter-spacing:1.5px;">Leave Entitlement</td></tr>'
+    +eRows+'</tbody></table>':'')
+    // Salary payment
+    +(sRows?'<table style="width:100%;border-collapse:collapse;margin-bottom:7px;border:1px solid #c9a96e;"><tbody>'
+    +'<tr style="background:#2d1f0a;"><td colspan="2" style="padding:7px 14px;font-size:11px;font-weight:bold;text-transform:uppercase;color:#e8c97e;letter-spacing:1.5px;">Salary Payment</td></tr>'
+    +sRows+'</tbody></table>':'')
+    // Summary boxes
+    +'<div style="display:flex;gap:10px;margin-bottom:10px;">'
+    +(totEnt?'<div style="flex:1;background:rgba(188,151,84,0.07);border:2px solid #a8d5a8;padding:14px;text-align:center;border-radius:4px;"><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">Leave Entitlement</div><div style="font-size:22px;font-weight:800;color:#006600;">BD '+fv(totEnt)+'</div></div>':'')
+    +(totSal?'<div style="flex:1;background:rgba(188,151,84,0.06);border:2px solid #e8d5b0;padding:14px;text-align:center;border-radius:4px;"><div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">Salary Payment</div><div style="font-size:22px;font-weight:800;color:#7a4f00;">BD '+fv(totSal)+'</div></div>':'')
+    +'</div>'
+    // Grand total
+    +'<div style="background:#2d1f0a;padding:10px 14px;text-align:center;margin-bottom:8px;border:1px solid #c9a96e;">'
+    +'<div style="font-size:9px;color:#c9a96e;text-transform:uppercase;letter-spacing:2px;margin-bottom:5px;">Grand Total</div>'
+    +'<div style="font-size:22px;font-weight:800;color:#e8c97e;">BD '+fv(grandTotalAmt)+'</div>'
+    +(totEnt&&totSal?'<div style="font-size:10px;color:#9c7a3c;margin-top:4px;">Entitlement BD '+fv(totEnt)+' + Salary BD '+fv(totSal)+'</div>':'')
+    +'</div>'
+    // Acknowledgement
+    +'<p style="font-size:9px;padding:6px 10px;border:1px solid #c9a96e;color:#000;line-height:1.5;margin-bottom:10px;">I acknowledge receipt of the above Leave Salary amount at Solymar Hotel.</p>'
+    // Signatures
+    +'<div style="display:flex;justify-content:space-around;margin-top:14px;font-size:10px;text-align:center;">'
+    +'<div><div style="border-top:1px solid #000;margin-top:30px;padding-top:4px;width:120px;">Prepared By</div></div>'
+    +'<div><div style="border-top:1px solid #000;margin-top:30px;padding-top:4px;width:120px;">H.R</div></div>'
+    +'<div><div style="border-top:1px solid #000;margin-top:30px;padding-top:4px;width:120px;">Finance</div></div>'
+    +'</div>'
+    +'<div style="margin-top:10px;font-size:10px;">'
+    +'<span style="border-top:1px solid #000;display:inline-block;width:160px;padding-top:4px;">Receiver Signature</span>'
+    +'&nbsp;&nbsp;&nbsp; Date: ...................'
+    +'</div>'
+    +'</div>';
+
+  // ── Print: inject into a hidden iframe (works on mobile) ──
+  var iframe = document.getElementById('lv-print-frame');
+  if(!iframe){
+    iframe = document.createElement('iframe');
+    iframe.id = 'lv-print-frame';
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;';
+    document.body.appendChild(iframe);
+  }
+  var doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#fff;font-family:Arial,sans-serif;font-size:10px}'
+    +'@media print{@page{margin:8mm;size:A4}}</style>'
+    +'</head><body>'+body+'</body></html>');
+  doc.close();
+  setTimeout(function(){
+    try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }
+    catch(e){ alert('Print failed: '+e.message+'. Try long-pressing the page to save as PDF.'); }
+  }, 500);
+}
 </script>
 
 
 
-
-
-<div id="law-data" style="display:none">[{"id": "1", "title": "التعريفات", "title_en": "Definitions", "chapter": "الباب الأول - تعاريف وأحكام عامة", "chapter_en": "Part One – Definitions & General Provisions", "text": "في تطبيق أحكام هذا القانون: العامل: كل شخص طبيعي يعمل لقاء أجر لدى صاحب عمل وتحت إدارته أو إشرافه. صاحب العمل: كل شخص طبيعي أو اعتباري يستخدم عاملاً أو أكثر لقاء أجر. الأجر: كل ما يحصل عليه العامل لقاء عمله أياً كان نوعه ثابتاً أو متغيراً نقداً أو عيناً، ويشمل الأجر الأساسي وملحقاته من العلاوات والبدلات والمنح والمكافآت والعمولات. الأجر الأساسي: المقابل المحدد في عقد العمل الذي يُدفع للعامل بصفة دورية. عقد العمل: اتفاق بين صاحب عمل وعامل يتعهد العامل بموجبه بأداء عمل معين تحت إدارة صاحب العمل لقاء أجر. الليل: الفترة بين الساعة السابعة مساءً والساعة السابعة صباحاً.", "text_en": "For purposes of this Law: Employee: any natural person working for remuneration under the management or supervision of an employer. Employer: any natural or legal person employing one or more employees for remuneration. Wage: everything an employee receives in return for work, whether fixed or variable, in cash or in kind, including basic salary, allowances, grants, bonuses, and commissions. Basic Wage: the periodic payment specified in the employment contract. Employment Contract: an agreement between an employer and employee whereby the employee undertakes to perform specific work under the employer's management for remuneration. Night: the period between 7:00 PM and 7:00 AM.", "explain": "هذه المادة تحدد المصطلحات الأساسية المستخدمة في القانون. الأجر يشمل كل ما تحصل عليه كمقابل للعمل، ليس فقط الراتب الأساسي.", "explain_en": "This article defines key terms used throughout the law. Your 'wage' includes everything you receive for work — not just basic salary but all allowances and bonuses too."}, {"id": "2", "title": "نطاق التطبيق", "title_en": "Scope of Application", "chapter": "الباب الأول - تعاريف وأحكام عامة", "chapter_en": "Part One – Definitions & General Provisions", "text": "لا تسري أحكام هذا القانون على موظفي الحكومة والأشخاص الاعتبارية العامة الخاضعين لأنظمة الخدمة المدنية أو العسكرية. كما لا تسري على خدم المنازل وأفراد أسرة صاحب العمل الذين يعولهم فعلاً.", "text_en": "This Law does not apply to government employees and public legal persons subject to civil or military service regulations. It also does not apply to domestic workers and family members of the employer who are actually dependent on him.", "explain": "القانون مُطبَّق على القطاع الخاص فقط. الموظفون الحكوميون لديهم قوانين خاصة بهم.", "explain_en": "This law covers private sector workers only. Government employees are governed by separate civil service regulations."}, {"id": "2m", "title": "حظر التمييز", "title_en": "Prohibition of Discrimination", "chapter": "الباب الأول - تعاريف وأحكام عامة", "chapter_en": "Part One – Definitions & General Provisions", "text": "يُحظر التمييز بين العمال الخاضعين لأحكام هذا القانون بسبب الجنس أو الأصل أو اللغة أو الدين أو العقيدة.", "text_en": "Discrimination between workers subject to this Law based on sex, origin, language, religion, or creed is prohibited.", "explain": "لا يجوز التمييز بينك وبين زملائك في العمل على أساس جنسك أو جنسيتك أو دينك أو لغتك.", "explain_en": "You cannot be treated differently from colleagues based on your gender, nationality, religion, or language."}, {"id": "12", "title": "استخدام العمالة الوطنية", "title_en": "Employment of National Workforce", "chapter": "الباب الثاني - تنظيم العمالة", "chapter_en": "Part Two – Workforce Regulation", "text": "يجب على صاحب العمل أن يمنح الأولوية في الاستخدام للعامل البحريني ثم العربي ثم الأجنبي. وتحدد وزارة العمل النسب المئوية للعمالة الوطنية المطلوبة في كل قطاع.", "text_en": "Employers must give priority in employment to Bahraini workers, then Arab workers, then foreign workers. The Ministry of Labour determines the required percentage of national workforce in each sector.", "explain": "البحرينيون لهم الأولوية في التوظيف، وهناك نسب محددة للبحرنة (توطين) في كل قطاع.", "explain_en": "Bahrainis have hiring priority. Each industry has a Bahrainization quota that employers must meet."}, {"id": "19", "title": "شكل عقد العمل", "title_en": "Form of Employment Contract", "chapter": "الباب الثالث - عقد العمل الفردي", "chapter_en": "Part Three – Individual Employment Contract", "text": "يجب أن يكون عقد العمل ثابتاً بالكتابة ومحرراً باللغة العربية من نسختين لكل طرف نسخة. وإذا كان العقد محرراً بغير اللغة العربية ترفق به نسخة محررة باللغة العربية يُعتد بها في الإثبات.", "text_en": "The employment contract must be in writing in Arabic, in two copies — one for each party. If the contract is in a language other than Arabic, an Arabic copy must be attached and shall prevail for evidentiary purposes.", "explain": "عقد عملك يجب أن يكون مكتوباً بالعربي، ولك نسخة منه. إذا لم يكن هناك عقد مكتوب، يجوز لك وحدك إثبات حقوقك بكل الطرق.", "explain_en": "Your contract must be written in Arabic and you must receive a copy. If there's no written contract, you alone (not the employer) can prove your rights by any means."}, {"id": "20", "title": "بيانات العقد الأساسية", "title_en": "Mandatory Contract Details", "chapter": "الباب الثالث - عقد العمل الفردي", "chapter_en": "Part Three – Individual Employment Contract", "text": "يجب أن يتضمن عقد العمل: اسم صاحب العمل وعنوانه ورقم السجل التجاري، واسم العامل وتاريخ ميلاده ومؤهله ووظيفته وجنسيته، وطبيعة ونوع العمل ومدة العقد إذا كان محدد المدة، والأجر المتفق عليه وطريقة وموعد أدائه وسائر المزايا المتفق عليها.", "text_en": "The employment contract must include: employer's name, address and commercial registration number; employee's name, date of birth, qualifications, job title, and nationality; nature and type of work and contract duration if fixed-term; agreed wage, payment method and schedule, and all other agreed benefits.", "explain": "تأكد أن عقدك يذكر راتبك الكامل، بدلاتك، مسماك الوظيفي، ومدة العقد بشكل صريح.", "explain_en": "Make sure your contract explicitly states your full salary, allowances, job title, and contract duration."}, {"id": "21", "title": "فترة التجربة", "title_en": "Probation Period", "chapter": "الباب الثالث - عقد العمل الفردي", "chapter_en": "Part Three – Individual Employment Contract", "text": "يجوز تعيين العامل تحت شرط التجربة لمدة لا تزيد على ثلاثة أشهر، وتمتد إلى ستة أشهر في بعض المهن. يجوز لأي من الطرفين إنهاء العقد خلال التجربة بإخطار يوم واحد على الأقل. لا يجوز تعيين العامل تحت شرط التجربة أكثر من مرة واحدة لدى صاحب عمل واحد.", "text_en": "An employee may be appointed on probation for up to 3 months, extendable to 6 months for certain professions. Either party may terminate during probation with at least 1 day's notice. An employee cannot be placed on probation more than once with the same employer.", "explain": "فترة التجربة لا تتجاوز 3 أشهر (6 أشهر لبعض المهن). يمكن للطرفين الإنهاء بإشعار يوم واحد فقط.", "explain_en": "Probation is max 3 months (6 for some roles). Either side can end the contract with just 1 day's notice during probation."}, {"id": "32", "title": "إجازة الوضع", "title_en": "Maternity Leave", "chapter": "الباب الثالث - عقد العمل الفردي", "chapter_en": "Part Three – Individual Employment Contract", "text": "تحصل العاملة على إجازة وضع مدفوعة الأجر مدتها ستون يوماً تشمل المدة التي تسبق الوضع والتي تليه. ويُحظر تشغيل العاملة خلال الأيام الأربعين التالية للوضع. يُحظر على صاحب العمل فصل العاملة أو إنهاء عقد عملها بسبب الزواج أو أثناء إجازة الوضع.", "text_en": "A female employee is entitled to 60 days' paid maternity leave covering the period before and after childbirth. It is prohibited to employ a female worker during the 40 days following childbirth. An employer may not dismiss a female employee due to marriage or during maternity leave.", "explain": "للمرأة العاملة 60 يوماً إجازة أمومة مدفوعة. لا يجوز فصلها بسبب الزواج أو الحمل أو خلال الإجازة.", "explain_en": "Female employees get 60 days paid maternity leave. They cannot be dismissed due to marriage, pregnancy, or during maternity leave."}, {"id": "37", "title": "تحديد الأجر", "title_en": "Wage Determination", "chapter": "الباب السادس - الأجور", "chapter_en": "Part Six – Wages", "text": "يُحدد أجر العامل وفقاً لعقد العمل الفردي أو عقد العمل الجماعي أو أنظمة العمل بالمنشأة. فإذا لم يُحدد الأجر بأي من هذه الطرق استحق العامل أجر المثل.", "text_en": "An employee's wage is determined by the individual employment contract, collective agreement, or establishment work regulations. If the wage is not determined by any of these methods, the employee is entitled to the customary wage for similar work.", "explain": "إذا لم يُذكر الراتب في العقد، يحق لك الحصول على الأجر المعتاد في السوق لنفس نوع العمل.", "explain_en": "If your salary isn't specified in the contract, you're entitled to the market rate for comparable work."}, {"id": "39", "title": "حظر التمييز في الأجور", "title_en": "Equal Pay", "chapter": "الباب السادس - الأجور", "chapter_en": "Part Six – Wages", "text": "يُحظر التمييز في الأجور لمجرد اختلاف الجنس أو الأصل أو اللغة أو الدين أو العقيدة. ويُحظر التمييز في الأجور بين العمال والعاملات في العمل ذي القيمة المتساوية.", "text_en": "Wage discrimination based solely on sex, origin, language, religion, or creed is prohibited. Pay discrimination between men and women for work of equal value is prohibited.", "explain": "الرجل والمرأة يجب أن يتقاضوا نفس الأجر عن نفس العمل أو العمل ذي القيمة المتساوية.", "explain_en": "Men and women must receive equal pay for equal work or work of equal value. Pay gaps based on gender are illegal."}, {"id": "40", "title": "مواعيد صرف الأجر", "title_en": "Wage Payment Schedule", "chapter": "الباب السادس - الأجور", "chapter_en": "Part Six – Wages", "text": "تُؤدى أجور العمال المعينين بأجر شهري مرة على الأقل في الشهر. إذا انتهت علاقة العمل يُؤدى للعامل أجره وكافة المبالغ المستحقة فوراً، إلا إذا ترك العامل العمل من تلقاء نفسه فيجب على صاحب العمل الأداء خلال سبعة أيام. إذا تأخر صاحب العمل في صرف الأجر وجب عليه تعويض العامل بنسبة 6% سنوياً عن كل شهر تأخير.", "text_en": "Wages for monthly-paid employees must be paid at least once per month. Upon termination, all dues must be paid immediately; if the employee resigned voluntarily, payment must be made within 7 days. Late payment incurs a 6% annual penalty, increasing by 1% for each additional month of delay.", "explain": "راتبك يجب أن يُصرف مرة في الشهر على الأقل. التأخر في الصرف يستوجب تعويضاً بنسبة 6% سنوياً.", "explain_en": "Your salary must be paid at least monthly. Late payment triggers a 6% annual penalty for the employer, increasing each month of delay."}, {"id": "47", "title": "أساس احتساب المكافآت", "title_en": "Basis for Calculating End-of-Service Benefits", "chapter": "الباب السادس - الأجور", "chapter_en": "Part Six – Wages", "text": "تُحسب مكافأة نهاية الخدمة ومقابل رصيد الإجازات والتعويضات على أساس الأجر الأساسي الأخير للعامل مضافاً إليه العلاوة الاجتماعية إن وجدت.", "text_en": "End-of-service gratuity, accrued leave compensation, and other entitlements are calculated based on the employee's last basic wage plus social allowance (if applicable).", "explain": "مكافأة نهاية الخدمة تُحسب على أساس الراتب الأساسي + العلاوة الاجتماعية فقط، وليس إجمالي الراتب.", "explain_en": "Your end-of-service gratuity is calculated on basic salary + social allowance only — not your total package including housing or transport allowances."}, {"id": "50", "title": "بدل نوبات الليل", "title_en": "Night Shift Allowance", "chapter": "الباب السابع - ساعات العمل وفترات الراحة", "chapter_en": "Part Seven – Working Hours & Rest Periods", "text": "يُمنح العاملون بنظام النوبات الليلية ونظام الحجز الوظيفي بدل طبيعة عمل.", "text_en": "Employees working night shifts or on-call duty are entitled to a nature-of-work allowance.", "explain": "العمل في النوبات الليلية يستحق بدلاً إضافياً.", "explain_en": "Night shift and on-call workers are legally entitled to an additional nature-of-work allowance."}, {"id": "51", "title": "الحد الأقصى لساعات العمل", "title_en": "Maximum Working Hours", "chapter": "الباب السابع - ساعات العمل وفترات الراحة", "chapter_en": "Part Seven – Working Hours & Rest Periods", "text": "لا يجوز تشغيل العامل أكثر من ثماني ساعات فعلياً في اليوم أو ثمانٍ وأربعين ساعة في الأسبوع. وفي شهر رمضان، لا يُشغَّل العامل المسلم أكثر من ست ساعات في اليوم أو ست وثلاثين ساعة في الأسبوع.", "text_en": "Employees may not work more than 8 hours per day or 48 hours per week. During Ramadan, Muslim employees may not work more than 6 hours per day or 36 hours per week.", "explain": "الحد الأقصى للعمل 8 ساعات يومياً أو 48 ساعة أسبوعياً. في رمضان، 6 ساعات يومياً للمسلمين.", "explain_en": "Max working hours are 8/day or 48/week. During Ramadan, Muslim employees work max 6 hours/day or 36 hours/week."}, {"id": "54", "title": "العمل الإضافي", "title_en": "Overtime", "chapter": "الباب السابع - ساعات العمل وفترات الراحة", "chapter_en": "Part Seven – Working Hours & Rest Periods", "text": "يجوز تشغيل العامل ساعات عمل إضافية إذا اقتضت ظروف العمل ذلك. يُمنح العامل أجراً عن كل ساعة إضافية يوازي الأجر الذي يستحقه مضافاً إليه 25% على الأقل عن ساعات العمل النهارية، و50% عن ساعات العمل الليلية.", "text_en": "Employees may be required to work overtime when work circumstances demand it. Overtime pay must be the regular hourly rate plus at least 25% for daytime hours and 50% for nighttime hours.", "explain": "العمل الإضافي النهاري = الأجر العادي + 25% على الأقل. الليلي = الأجر العادي + 50% على الأقل.", "explain_en": "Daytime overtime = regular rate + 25% minimum. Nighttime overtime = regular rate + 50% minimum."}, {"id": "57", "title": "الراحة الأسبوعية", "title_en": "Weekly Rest", "chapter": "الباب السابع - ساعات العمل وفترات الراحة", "chapter_en": "Part Seven – Working Hours & Rest Periods", "text": "يجب أن يحصل كل عامل على راحة أسبوعية لا تقل عن أربع وعشرين ساعة كاملة. يُعتبر يوم الجمعة راحة أسبوعية. إذا عمل العامل في يوم راحته الأسبوعية يستحق أجره عن هذا اليوم وأجراً إضافياً بواقع 150% منه، أو يوماً بديلاً.", "text_en": "Every employee must have at least 24 consecutive hours of weekly rest. Friday is the designated weekly rest day. If an employee works on their weekly rest day, they are entitled to their regular pay plus 150% overtime, or an alternative rest day.", "explain": "يوم الجمعة هو يوم الراحة الأسبوعية. العمل فيه يستحق مرتباً ونصف (150%) أو يوم إجازة بديل.", "explain_en": "Friday is the weekly rest day. Working on it earns regular pay + 150% bonus, or a substitute day off — your choice."}, {"id": "58", "title": "الإجازة السنوية", "title_en": "Annual Leave", "chapter": "الباب الثامن - الإجازات", "chapter_en": "Part Eight – Leave", "text": "يستحق العامل الذي أمضى سنة في الخدمة إجازة سنوية مدفوعة الأجر لا تقل عن ثلاثين يوماً بمعدل يومين ونصف عن كل شهر. وإذا قلت مدة الخدمة عن سنة استحق إجازة بنسبة المدة التي قضاها في العمل.", "text_en": "An employee who has completed one year of service is entitled to a paid annual leave of at least 30 days, accruing at 2.5 days per month. If service is less than one year, leave is proportional to time served.", "explain": "تستحق 30 يوم إجازة سنوية مدفوعة بعد سنة خدمة. قبل ذلك تستحق بالنسبة (2.5 يوم لكل شهر عمل).", "explain_en": "After 1 year, you're entitled to 30 days paid annual leave. Before that, you earn 2.5 days per month worked."}, {"id": "63", "title": "الإجازات الخاصة", "title_en": "Special Leave", "chapter": "الباب الثامن - الإجازات", "chapter_en": "Part Eight – Leave", "text": "للعامل الحق في إجازة ثلاثة أيام مدفوعة الأجر في حالة: زواجه لمرة واحدة، أو وفاة زوجه أو أحد أقاربه حتى الدرجة الرابعة، أو وفاة أحد أقارب زوجه حتى الدرجة الثانية. وله الحق في يوم واحد مدفوع عند ولادة مولود. وللعاملة المسلمة شهر إجازة حداد مدفوعة عند وفاة زوجها.", "text_en": "Employees are entitled to 3 days' paid leave for: marriage (once), death of spouse or relative up to 4th degree, or death of spouse's relative up to 2nd degree. One paid day for birth of a child. Muslim female employees get 1 month paid bereavement leave upon death of husband.", "explain": "إجازة الزواج: 3 أيام مدفوعة (مرة واحدة). إجازة الوفاة: 3 أيام. إجازة الميلاد للأب: يوم واحد. إجازة الحداد للمرأة المسلمة: شهر كامل.", "explain_en": "Marriage leave: 3 paid days (once). Bereavement: 3 days. Birth of child (father): 1 day. Widowhood (Muslim women): 1 full paid month."}, {"id": "65", "title": "الإجازة المرضية", "title_en": "Sick Leave", "chapter": "الباب الثامن - الإجازات", "chapter_en": "Part Eight – Leave", "text": "للعامل الذي أمضى ثلاثة أشهر متصلة الحق في الإجازات المرضية التالية خلال السنة الواحدة: 15 يوماً بأجر كامل، 20 يوماً بنصف أجر، 20 يوماً بدون أجر.", "text_en": "An employee who has completed 3 consecutive months is entitled per year to: 15 days on full pay, 20 days on half pay, 20 days unpaid.", "explain": "حصتك السنوية من الإجازة المرضية: 15 يوم بأجر كامل + 20 يوم بنصف أجر + 20 يوم بدون أجر.", "explain_en": "Annual sick leave entitlement: 15 days full pay + 20 days half pay + 20 days unpaid. Requires 3 months of service first."}, {"id": "67", "title": "إجازة الحج", "title_en": "Hajj Leave", "chapter": "الباب الثامن - الإجازات", "chapter_en": "Part Eight – Leave", "text": "للعامل المسلم الذي أمضى في خدمة صاحب العمل مدة خمس سنوات متصلة الحق في إجازة مدة أربعة عشر يوم عمل مدفوعة الأجر لأداء فريضة الحج. تُمنح هذه الإجازة مرة واحدة فقط خلال مدة الخدمة.", "text_en": "A Muslim employee who has completed 5 consecutive years of service is entitled to 14 working days' paid leave to perform the Hajj pilgrimage. This leave is granted only once during the entire period of service.", "explain": "بعد 5 سنوات خدمة، يحق للمسلم إجازة حج 14 يوم عمل مدفوعة الأجر، مرة واحدة في حياته الوظيفية.", "explain_en": "After 5 years of service, Muslim employees get 14 paid working days for Hajj. This is a once-in-a-career entitlement."}, {"id": "91", "title": "أجر فترة العلاج", "title_en": "Pay During Medical Treatment", "chapter": "الباب التاسع - السلامة والصحة المهنية", "chapter_en": "Part Nine – Occupational Safety & Health", "text": "يحصل العامل المُصاب على أجره خلال فترة علاجه. إذا زادت فترة العلاج على ستة أشهر يدفع له صاحب العمل نصف الأجر إلى أن يشفى أو تثبت عدم قدرته على العمل.", "text_en": "An injured employee receives full pay during the treatment period. If treatment exceeds 6 months, the employer pays half salary until recovery or permanent inability to work is established.", "explain": "أجرك يستمر كاملاً خلال العلاج من إصابة العمل. بعد 6 أشهر يتحول إلى نصف أجر.", "explain_en": "You receive full pay during treatment for a work injury. After 6 months, this reduces to half pay until you recover or are assessed as permanently unable to work."}, {"id": "99", "title": "مهلة الإخطار", "title_en": "Notice Period", "chapter": "الباب العاشر - واجبات العمال ومساءلتهم", "chapter_en": "Part Ten – Employee Duties & Discipline", "text": "يجوز لكل من طرفي العقد إنهاؤه بعد إخطار الطرف الآخر قبل الإنهاء بثلاثين يوماً على الأقل. إذا تم الإنهاء دون مراعاة مهلة الإخطار، ألزم الطرف الذي أنهى العقد بأداء تعويض يعادل أجر العامل عن كامل المهلة.", "text_en": "Either party may terminate the contract after giving the other party at least 30 days' notice. If termination occurs without notice, the terminating party must pay the other party compensation equal to the employee's wage for the full notice period.", "explain": "مهلة الإخطار 30 يوماً على الأقل. إذا أنهى صاحب العمل دون إشعار، يجب أن يدفع راتب 30 يوم كتعويض.", "explain_en": "Notice period is minimum 30 days. Termination without notice requires payment of 30 days' salary as compensation for the party who didn't receive notice."}, {"id": "107", "title": "الفصل الفوري دون تعويض", "title_en": "Summary Dismissal Without Compensation", "chapter": "الباب الحادي عشر - التنظيم النقابي", "chapter_en": "Part Eleven – Trade Union Organisation", "text": "يجوز لصاحب العمل إنهاء عقد العمل دون إخطار أو تعويض في حالات: انتحال العامل شخصية غير صحيحة، ارتكاب خطأ أوجد خسارة مادية جسيمة، عدم اتباع تعليمات السلامة رغم الإنذار الكتابي، الغياب دون سبب مشروع لأكثر من 20 يوماً متقطعة أو 10 أيام متصلة في السنة، إفشاء أسرار العمل، صدور حكم نهائي في جريمة ماسة بالشرف أو الأمانة، الحضور أثناء العمل في حالة سكر أو تعاطٍ للمخدرات، الاعتداء على صاحب العمل أو المدير أو الزملاء.", "text_en": "An employer may terminate without notice or compensation if the employee: impersonates someone else; causes severe financial loss through negligence; repeatedly violates safety instructions despite written warning; is absent without valid reason for more than 20 scattered or 10 consecutive days annually; discloses trade secrets; is convicted of a crime affecting honour or integrity; attends work intoxicated or under influence of drugs; assaults the employer, manager, or colleagues.", "explain": "هذه الحالات تُجيز لصاحب العمل فصلك فوراً دون إشعار أو تعويض. الغياب المتكرر يُعد من أبرز هذه الحالات.", "explain_en": "These cases allow immediate dismissal without notice or pay. Repeated unexplained absences (20+ scattered days or 10+ consecutive days/year) are among the most common grounds."}, {"id": "111", "title": "التعويض عن إنهاء العقد", "title_en": "Termination Compensation", "chapter": "الباب الثاني عشر - انقضاء عقد العمل", "chapter_en": "Part Twelve – Contract Termination", "text": "إذا أنهى صاحب العمل عقد العمل غير محدد المدة بدون سبب مشروع بعد 3 أشهر من تاريخ بدء العمل، التزم بتعويض العامل بما يعادل أجر يومين عن كل شهر من الخدمة وبما لا يقل عن أجر شهر ولا يزيد على أجر اثني عشر شهراً. وإذا كان الإنهاء بمثابة فصل تعسفي استحق العامل تعويضاً إضافياً يعادل نصف التعويض المذكور.", "text_en": "If an employer terminates an open-ended contract without legitimate reason after 3 months, compensation equals 2 days' wages per month of service, with a minimum of 1 month's pay and maximum of 12 months' pay. In cases of unfair dismissal, an additional compensation of half the above amount is owed.", "explain": "التعويض عن الفصل = يومان عن كل شهر خدمة (حد أدنى شهر، حد أقصى 12 شهراً). الفصل التعسفي يضيف نصف هذا المبلغ.", "explain_en": "Termination compensation = 2 days per month served (min 1 month, max 12 months). Unfair dismissal adds an extra 50% on top of that."}, {"id": "116", "title": "مكافأة نهاية الخدمة", "title_en": "End-of-Service Gratuity", "chapter": "الباب الثاني عشر - انقضاء عقد العمل", "chapter_en": "Part Twelve – Contract Termination", "text": "يستحق العامل غير الخاضع لأحكام قانون التأمين الاجتماعي عند إنهاء عقد عمله مكافأة بواقع: أجر نصف شهر عن كل سنة من سنوات العمل الثلاث الأولى، وأجر شهر عن كل سنة من السنوات اللاحقة عليها. يستحق العامل المكافأة عن كسور السنة بنسبة المدة التي قضاها في الخدمة.", "text_en": "Employees not covered by Social Insurance Law are entitled upon contract termination to: half a month's wage per year for the first 3 years of service, and one month's wage per year for subsequent years. Partial years are calculated proportionally.", "explain": "مكافأة نهاية الخدمة (للقطاع الخاص غير المؤمن): نصف شهر للسنوات 1-3، وشهر كامل للسنوات التالية.", "explain_en": "End-of-service gratuity (non-insured private sector): half month per year for years 1-3, then full month per year after that. Partial years counted proportionally."}, {"id": "104", "title": "الفصل التعسفي", "title_en": "Unfair Dismissal", "chapter": "الباب الثاني عشر - انقضاء عقد العمل", "chapter_en": "Part Twelve – Contract Termination", "text": "يُعتبر إنهاء صاحب العمل لعقد العمل فصلاً تعسفياً إذا كان الإنهاء بسبب: الجنس أو اللون أو الدين أو العقيدة أو الحالة الاجتماعية أو حمل المرأة أو ولادتها أو إرضاعها، أو الانتماء لنقابة عمالية، أو تمثيل العمال، أو تقديم شكوى أو دعوى ضد صاحب العمل، أو استخدام إجازة مستحقة قانوناً، أو توقيع حجز على مستحقات العامل.", "text_en": "Dismissal is considered unfair if based on: sex, colour, religion, creed, social status, pregnancy, childbirth, or breastfeeding; trade union membership or activities; employee representation; filing a complaint or lawsuit against the employer; exercising legally-entitled leave; or having a garnishment placed on employee's wages.", "explain": "إذا فُصلت بسبب أحد هذه الأسباب، يعتبر فصلاً تعسفياً وتستحق تعويضاً إضافياً، وقد تُعاد إلى عملك.", "explain_en": "If dismissed for any of these reasons, it's automatic unfair dismissal. You may be entitled to reinstatement or additional compensation on top of standard termination pay."}, {"id": "105", "title": "استقالة العامل بسبب مشروع", "title_en": "Employee Resignation for Just Cause", "chapter": "الباب الثاني عشر - انقضاء عقد العمل", "chapter_en": "Part Twelve – Contract Termination", "text": "يجوز للعامل إنهاء عقد العمل دون إخطار إذا اعتدى صاحب العمل أو من ينوب عنه على العامل بقول أو فعل معاقب عليه قانوناً، أو ارتكب صاحب العمل أمراً مخلاً بالآداب نحو العامل أو أحد أفراد أسرته. ويُعتبر هذا الإنهاء بمثابة فصل تعسفي من جانب صاحب العمل.", "text_en": "An employee may terminate without notice if the employer or their representative assaults the employee verbally or physically in a punishable manner, or commits an act violating public morals against the employee or a family member. This termination is treated as unfair dismissal by the employer.", "explain": "إذا تعرضت للاعتداء أو التحرش من صاحب العمل، يمكنك الاستقالة فوراً وتُعامَل كفصل تعسفي — أي تستحق تعويضاً كاملاً.", "explain_en": "If your employer physically or verbally assaults you or acts immorally toward you or your family, you can resign immediately and it's treated as unfair dismissal — full compensation applies."}, {"id": "115", "title": "إنهاء العقد عند بلوغ سن التقاعد", "title_en": "Termination at Retirement Age", "chapter": "الباب الثاني عشر - انقضاء عقد العمل", "chapter_en": "Part Twelve – Contract Termination", "text": "يجوز لصاحب العمل إنهاء العقد دون تعويض إذا بلغ العامل سن الستين، ما لم يتفق الطرفان على خلاف ذلك.", "text_en": "An employer may terminate the contract without compensation when the employee reaches the age of 60, unless the parties agree otherwise.", "explain": "سن التقاعد القانوني هو 60 عاماً. بعده يمكن لصاحب العمل إنهاء العقد دون تعويض، ما لم يتفق الطرفان على الاستمرار.", "explain_en": "The legal retirement age is 60. Employers may end the contract at this point without compensation unless both parties agree to continue."}, {"id": "136", "title": "تقادم الدعاوى العمالية", "title_en": "Limitation Period for Labour Claims", "chapter": "الباب الثالث عشر - منازعات العمل", "chapter_en": "Part Thirteen – Labour Disputes", "text": "تسقط بالتقادم الدعاوى العمالية بمضي سنة تبدأ من تاريخ انقضاء عقد العمل.", "text_en": "Labour claims are time-barred after one year from the date the employment contract ends.", "explain": "لديك سنة واحدة فقط من تاريخ انتهاء عقدك لرفع أي دعوى عمالية. بعدها تسقط حقوقك.", "explain_en": "You have exactly 1 year from your contract end date to file any labour claim. After that, the right is forfeited — don't delay."}, {"id": "177", "title": "صلاحيات مفتشي العمل", "title_en": "Labour Inspector Powers", "chapter": "الباب الرابع عشر - التفتيش على العمل", "chapter_en": "Part Fourteen – Labour Inspection", "text": "للموظفين المكلفين بالتفتيش صلاحية دخول أماكن العمل والاطلاع على السجالت المتعلقة بالعمال وطلب البيانات والمعلومات والمستندات اللازمة للقيام بأعمال التفتيش.", "text_en": "Labour inspectors have the authority to enter workplaces, review employee records, and request all data, information, and documents necessary to carry out inspection duties.", "explain": "مفتشو العمل يمكنهم دخول مكان عملك في أي وقت للتحقق من التزام صاحب العمل بالقانون.", "explain_en": "Labour inspectors can enter any workplace to verify legal compliance. Employers must cooperate and provide all requested documents."}]</div>
-
-<div id="seed-data" style="display:none">[{"id":"s281","emp_code":"281","cpr":"871246481","pp":"EM0438926","name":"Ismail Yeasin","dept":"Food &amp; Beverages","title":"Waiter","nationality":"BGD","gender":"M","dob":"1987-12-20","wp_expiry":"26-01-2027","pp_expiry":"26-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":160.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":160.0,"dependents":[]},{"id":"s459","emp_code":"459","cpr":"980846790","pp":"PZ8901051","name":"Ghita Aakif","dept":"Food &amp; Beverages","title":"Hostess","nationality":"MAR","gender":"F","dob":"1998-08-09","wp_expiry":"09-06-2026","pp_expiry":"09-06-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":50.0,"transport":0.0,"phone_allow":0.0,"allowances":50.0,"total":400.0,"dependents":[]},{"id":"s521","emp_code":"521","cpr":"851476635","pp":"AC7502867","name":"Waree Pattawee","dept":"Food &amp; Beverages","title":"Waiter","nationality":"THA","gender":"F","dob":"1985-10-01","wp_expiry":"14-07-2026","pp_expiry":"14-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s538","emp_code":"538","cpr":"971138583","pp":"P5038613B","name":"Maria Cristina Solmia","dept":"Food &amp; Beverages","title":"Waiter","nationality":"PHL","gender":"F","dob":"1997-11-18","wp_expiry":"03-06-2026","pp_expiry":"03-06-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":250.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":250.0,"dependents":[]},{"id":"s548","emp_code":"548","cpr":"20339100","pp":"Z8220197","name":"Laxman Phuke","dept":"Food &amp; Beverages","title":"Waiter","nationality":"IND","gender":"M","dob":"2002-09-03","wp_expiry":"29-10-2026","pp_expiry":"29-10-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":80.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":80.0,"dependents":[]},{"id":"s549","emp_code":"549","cpr":"20636407","pp":"AA018261","name":"Vithal Kuknur","dept":"Food &amp; Beverages","title":"Waiter","nationality":"IND","gender":"M","dob":"2002-10-06","wp_expiry":"29-10-2026","pp_expiry":"29-10-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":80.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":80.0,"dependents":[]},{"id":"s550","emp_code":"550","cpr":"50227564","pp":"C5798232","name":"Tushar Chaudhari","dept":"Food &amp; Beverages","title":"Waiter","nationality":"IND","gender":"M","dob":"2005-02-03","wp_expiry":"29-10-2026","pp_expiry":"29-10-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":80.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":80.0,"dependents":[]},{"id":"s551","emp_code":"551","cpr":"70220565","pp":"AA995404","name":"Raj Kaundal","dept":"Food &amp; Beverages","title":"Waiter","nationality":"IND","gender":"M","dob":"2007-02-11","wp_expiry":"29-10-2026","pp_expiry":"29-10-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":80.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":80.0,"dependents":[]},{"id":"s553","emp_code":"553","cpr":"881470821","pp":"KX2642584","name":"Tarik Ghanmi","dept":"Food &amp; Beverages","title":"F&amp;B Manager","nationality":"MAR","gender":"M","dob":"1988-03-17","wp_expiry":"25-11-2026","pp_expiry":"25-11-2026","status":"MOBILIZED","in_out":"IN","offense":"","offense_desc":"","basic":800.0,"housing":250.0,"transport":50.0,"phone_allow":0.0,"allowances":300.0,"total":1100.0,"dependents":[]},{"id":"s277","emp_code":"277","cpr":"660735997","pp":"X4868379","name":"Bhanudas Suryaji","dept":"Finance","title":"Financial Controller","nationality":"IND","gender":"M","dob":"1966-07-03","wp_expiry":"11-11-2026","pp_expiry":"11-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":1200.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":1200.0,"dependents":[{"id":"d030619297","name":"Yashwant Bhanudas Suryaji","cpr":"030619297","pp":"T4982802","nationality":"IND","gender":"M","relation":"Dependent","wp_expiry":"11-11-2026","status":"RENEWED"},{"id":"d770266410","name":"Dipali Bhanudas Suryaji","cpr":"770266410","pp":"U0212555","nationality":"IND","gender":"F","relation":"Dependent","wp_expiry":"11-11-2026","status":"RENEWED"}]},{"id":"s333","emp_code":"333","cpr":"910635692","pp":"C2370124","name":"Ajit Arjun Gawas","dept":"Finance","title":"Accountant","nationality":"IND","gender":"M","dob":"1991-06-15","wp_expiry":"13-12-2026","pp_expiry":"13-12-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":300.0,"dependents":[]},{"id":"s378","emp_code":"378","cpr":"940533863","pp":"P2086134","name":"Mahendra Dakua","dept":"Finance","title":"Cost Controller","nationality":"IND","gender":"M","dob":"1994-05-08","wp_expiry":"03-01-2027","pp_expiry":"03-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":450.0,"housing":150.0,"transport":20.0,"phone_allow":0.0,"allowances":170.0,"total":620.0,"dependents":[{"id":"d851728","name":"Bandana Tarasia","cpr":"851728","pp":"W5516886","nationality":"IND","gender":"F","relation":"Dependent","wp_expiry":"03-01-2027","status":"RENEWED"}]},{"id":"s432","emp_code":"432","cpr":"821130943","pp":"I0653581","name":"Suresh Shetty","dept":"Finance","title":"Store Keeper","nationality":"IND","gender":"M","dob":"1982-11-21","wp_expiry":"23-10-2026","pp_expiry":"23-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":260.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":260.0,"dependents":[]},{"id":"s437","emp_code":"437","cpr":"800886747","pp":"W1381083","name":"Abdul Atheeq","dept":"Finance","title":"Chief Accountant","nationality":"IND","gender":"M","dob":"1980-08-01","wp_expiry":"15-10-2026","pp_expiry":"15-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":575.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":575.0,"dependents":[]},{"id":"s489","emp_code":"489","cpr":"890730920","pp":"S6631730","name":"Nehal Khale","dept":"Finance","title":"Purchasing Officer","nationality":"IND","gender":"M","dob":"1989-07-15","wp_expiry":"23-11-2026","pp_expiry":"23-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":550.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":550.0,"dependents":[]},{"id":"s531","emp_code":"531","cpr":"851090524","pp":"P4536674","name":"Shaik Musheer","dept":"Finance","title":"Accountant","nationality":"IND","gender":"M","dob":"1985-10-06","wp_expiry":"14-07-2026","pp_expiry":"14-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":290.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":290.0,"dependents":[]},{"id":"s564","emp_code":"564","cpr":"990837300","pp":"S0867557","name":"Ganesh Govindankutty","dept":"Finance","title":"Cost Controller","nationality":"IND","gender":"M","dob":"1999-08-05","wp_expiry":"08-01-2027","pp_expiry":"08-01-2027","status":"MOBILIZED","in_out":"IN","offense":"","offense_desc":"","basic":230.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":230.0,"dependents":[]},{"id":"s016","emp_code":"016","cpr":"730355330","pp":"Y4890278","name":"Syed Ilyas","dept":"Information Technology","title":"IT Manager","nationality":"IND","gender":"M","dob":"1973-03-04","wp_expiry":"09-10-2026","pp_expiry":"09-10-2026","status":"RENEWED","in_out":"OUT","offense":"","offense_desc":"","basic":900.0,"housing":300.0,"transport":50.0,"phone_allow":0.0,"allowances":350.0,"total":1250.0,"dependents":[{"id":"d810654105","name":"Masarrath Begum","cpr":"810654105","pp":"V4239069","nationality":"IND","gender":"F","relation":"Dependent","wp_expiry":"","status":"VISA_PRINTED"}]},{"id":"s360","emp_code":"360","cpr":"840497636","pp":"A31054218","name":"Ibrahim Abouzamel","dept":"Front Office","title":"Asst. FO Manager","nationality":"EGY","gender":"M","dob":"1984-04-11","wp_expiry":"12-10-2026","pp_expiry":"12-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":150.0,"transport":0.0,"phone_allow":0.0,"allowances":150.0,"total":650.0,"dependents":[]},{"id":"s363","emp_code":"363","cpr":"940246945","pp":"YW9730651","name":"Reda Saaidi","dept":"Front Office","title":"Front Office Supervisor","nationality":"MAR","gender":"M","dob":"1994-02-13","wp_expiry":"26-10-2026","pp_expiry":"26-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":300.0,"dependents":[]},{"id":"s421","emp_code":"421","cpr":"901008427","pp":"","name":"Yusuf Ahmed Ramadhan Nasralla","dept":"Front Office","title":"Telephone Operator","nationality":"BHR","gender":"M","dob":"1990-10-15","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":500.0,"dependents":[]},{"id":"s446","emp_code":"446","cpr":"730595900","pp":"X4314777","name":"Velpula Dass","dept":"Front Office","title":"Bellboy","nationality":"IND","gender":"M","dob":"1973-05-12","wp_expiry":"04-06-2026","pp_expiry":"04-06-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":220.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":220.0,"dependents":[]},{"id":"s482","emp_code":"482","cpr":"961203927","pp":"","name":"Husain Mohamed Nasralla","dept":"Front Office","title":"Bellboy","nationality":"BHR","gender":"M","dob":"1996-12-13","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":500.0,"dependents":[]},{"id":"s485","emp_code":"485","cpr":"740760343","pp":"A28787416","name":"Basem Hamdi Elmaghrabi","dept":"Front Office","title":"Director Of Rooms","nationality":"EGY","gender":"M","dob":"1974-07-01","wp_expiry":"04-11-2026","pp_expiry":"04-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":935.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":935.0,"dependents":[]},{"id":"s490","emp_code":"490","cpr":"920226604","pp":"P7869999B","name":"Arianne Lyn Gubaton","dept":"Front Office","title":"Front Office Supervisor","nationality":"PHL","gender":"F","dob":"1992-02-19","wp_expiry":"09-12-2026","pp_expiry":"09-12-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":300.0,"dependents":[]},{"id":"s497","emp_code":"497","cpr":"20527306","pp":"P3683372C","name":"Andrea Mae Timbol","dept":"Front Office","title":"Guest Service Agent","nationality":"PHL","gender":"F","dob":"2002-05-01","wp_expiry":"11-12-2026","pp_expiry":"11-12-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":230.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":230.0,"dependents":[]},{"id":"s515","emp_code":"515","cpr":"10902767","pp":"","name":"Abdulla Alghannami","dept":"Front Office","title":"Telephone Operator","nationality":"BHR","gender":"M","dob":"2001-09-04","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s528","emp_code":"528","cpr":"30630924","pp":"BW3492682","name":"Muhammad Ammar","dept":"Front Office","title":"Bellboy","nationality":"PAK","gender":"M","dob":"2003-06-04","wp_expiry":"31-07-2026","pp_expiry":"31-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s547","emp_code":"547","cpr":"10728589","pp":"KG4154291","name":"Nazar Khalil","dept":"Front Office","title":"Bellboy","nationality":"PAK","gender":"M","dob":"2001-07-26","wp_expiry":"04-11-2026","pp_expiry":"04-11-2026","status":"MOBILIZED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s554","emp_code":"554","cpr":"950360465","pp":"A41941937","name":"Eman Almas","dept":"Front Office","title":"Guest Service Agent","nationality":"EGY","gender":"F","dob":"1995-03-07","wp_expiry":"11-01-2027","pp_expiry":"11-01-2027","status":"VISA_PRINTED","in_out":"OUT","offense":"","offense_desc":"","basic":230.0,"housing":75.0,"transport":25.0,"phone_allow":0.0,"allowances":100.0,"total":330.0,"dependents":[]},{"id":"s556","emp_code":"556","cpr":"60210508","pp":"","name":"Essa Ali","dept":"Front Office","title":"Bellboy","nationality":"BHR","gender":"M","dob":"2006-02-26","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s557","emp_code":"557","cpr":"40705986","pp":"","name":"Saleem Barkhadar","dept":"Front Office","title":"Bellboy","nationality":"BHR","gender":"M","dob":"2004-07-16","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s559","emp_code":"559","cpr":"61006394","pp":"","name":"Muhammad Latif","dept":"Front Office","title":"Bellboy","nationality":"BHR","gender":"M","dob":"2006-10-17","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s562","emp_code":"562","cpr":"51229056","pp":"","name":"Bolotbek Samalievich","dept":"Front Office","title":"Bellboy","nationality":"KGZ","gender":"M","dob":"2005-12-18","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":50.0,"transport":0.0,"phone_allow":0.0,"allowances":50.0,"total":200.0,"dependents":[]},{"id":"s563","emp_code":"563","cpr":"970900058","pp":"","name":"Saif Dad Mohamed","dept":"Front Office","title":"Bellboy","nationality":"BHR","gender":"M","dob":"1997-09-02","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s571","emp_code":"571","cpr":"","pp":"","name":"Fatima A K Jawabreh","dept":"Front Office","title":"Guest Service Agent","nationality":"JOR","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":200.0,"housing":100.0,"transport":30.0,"phone_allow":0.0,"allowances":130.0,"total":330.0,"dependents":[]},{"id":"s061","emp_code":"061","cpr":"691201072","pp":"N11378945","name":"Dewaka Sisira Kumara","dept":"Housekeeping","title":"Tailor","nationality":"LKA","gender":"M","dob":"1969-12-26","wp_expiry":"10-08-2026","pp_expiry":"10-08-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":200.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":200.0,"dependents":[]},{"id":"s211","emp_code":"211","cpr":"941035344","pp":"C7339876","name":"Sudipta Kundu","dept":"Housekeeping","title":"Housekeeping Supervisor","nationality":"IND","gender":"M","dob":"1994-10-05","wp_expiry":"30-10-2026","pp_expiry":"30-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":220.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":220.0,"dependents":[]},{"id":"s280","emp_code":"280","cpr":"871304295","pp":"A19961074","name":"Sumon Salam","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1987-01-01","wp_expiry":"25-02-2027","pp_expiry":"25-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s283","emp_code":"283","cpr":"820640689","pp":"A21171060","name":"Fukrul Islam","dept":"Housekeeping","title":"Housekeeping Supervisor","nationality":"BGD","gender":"M","dob":"1982-06-20","wp_expiry":"08-03-2026","pp_expiry":"08-03-2026","status":"EXPIRED","in_out":"IN","offense":"Alert","offense_desc":"Expatriate work permit has expired without being terminated or renewed","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s301","emp_code":"301","cpr":"900558474","pp":"EL0578560","name":"Mozammel Rafiqul Islam","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1990-05-08","wp_expiry":"15-11-2026","pp_expiry":"15-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s305","emp_code":"305","cpr":"840389647","pp":"EL0523703","name":"Mohammad Mosaraf","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1984-03-23","wp_expiry":"27-10-2026","pp_expiry":"27-10-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s331","emp_code":"331","cpr":"880581140","pp":"A20667021","name":"Hakim Harun","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1988-05-05","wp_expiry":"05-03-2026","pp_expiry":"05-03-2026","status":"EXPIRED","in_out":"IN","offense":"Alert","offense_desc":"Expatriate work permit has expired without being terminated or renewed","basic":145.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":145.0,"dependents":[]},{"id":"s348","emp_code":"348","cpr":"870344137","pp":"EK0104271","name":"Sayem Kamal","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1987-03-01","wp_expiry":"17-04-2026","pp_expiry":"17-04-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s362","emp_code":"362","cpr":"870561839","pp":"EK0560368","name":"Mohammad Akther","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1987-05-11","wp_expiry":"19-09-2026","pp_expiry":"19-09-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s400","emp_code":"400","cpr":"880599626","pp":"A18143003","name":"Abdur Rashid Miah","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1988-05-03","wp_expiry":"17-03-2026","pp_expiry":"17-03-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s416","emp_code":"416","cpr":"860675637","pp":"EL0885147","name":"Siddiq Miah","dept":"Housekeeping","title":"Room Attendant","nationality":"BGD","gender":"M","dob":"1986-06-08","wp_expiry":"23-05-2026","pp_expiry":"23-05-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s441","emp_code":"441","cpr":"981029337","pp":"10911588","name":"Aitaraj Thebe","dept":"Housekeeping","title":"Room Attendant","nationality":"NPL","gender":"M","dob":"1998-10-31","wp_expiry":"26-11-2026","pp_expiry":"26-11-2026","status":"RENEWED","in_out":"OUT","offense":"","offense_desc":"","basic":140.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":140.0,"dependents":[]},{"id":"s530","emp_code":"530","cpr":"881406031","pp":"PA2631701","name":"Gopal Khadka","dept":"Housekeeping","title":"Room Attendant","nationality":"NPL","gender":"M","dob":"1988-05-31","wp_expiry":"17-07-2026","pp_expiry":"17-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":150.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":150.0,"dependents":[]},{"id":"s532","emp_code":"532","cpr":"900576189","pp":"P0539649C","name":"Rodrigo Jr. Placidas","dept":"Housekeeping","title":"Florist","nationality":"PHL","gender":"M","dob":"1990-05-17","wp_expiry":"31-07-2026","pp_expiry":"31-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s543","emp_code":"543","cpr":"740761226","pp":"","name":"Tuan Rasheed Bahaman","dept":"Housekeeping","title":"Housekeeping Manager","nationality":"LKA","gender":"M","dob":"1974-07-11","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":700.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":700.0,"dependents":[]},{"id":"s229","emp_code":"229","cpr":"","pp":"","name":"Hasan Ali","dept":"Human Resources","title":"PRO","nationality":"BHR","gender":"M","dob":"2001-01-01","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":760.0,"housing":0.0,"transport":100.0,"phone_allow":40.0,"allowances":140.0,"total":900.0,"dependents":[]},{"id":"s463","emp_code":"463","cpr":"770271430","pp":"EJ0683970","name":"MD Shah Alam Tarafdar","dept":"Human Resources","title":"HR Assistant","nationality":"BGD","gender":"M","dob":"1977-02-15","wp_expiry":"04-06-2026","pp_expiry":"04-06-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":140.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":140.0,"dependents":[]},{"id":"s473","emp_code":"473","cpr":"891204709","pp":"","name":"Khalid Farooq Saleh","dept":"Human Resources","title":"Asst. HR Manager","nationality":"BHR","gender":"M","dob":"1989-12-18","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":600.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":600.0,"dependents":[]},{"id":"s540","emp_code":"540","cpr":"11106255","pp":"","name":"Nabeela Ahmed Naji Yahya","dept":"Human Resources","title":"HR Specialist","nationality":"BHR","gender":"M","dob":"2001-11-12","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":500.0,"dependents":[]},{"id":"s332","emp_code":"332","cpr":"850837693","pp":"EN0232515","name":"Mohammed Japar Uddin","dept":"Kitchen","title":"Chef De Partie","nationality":"BGD","gender":"M","dob":"1985-08-10","wp_expiry":"15-02-2027","pp_expiry":"15-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":320.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":320.0,"dependents":[]},{"id":"s338","emp_code":"338","cpr":"851249523","pp":"N7655543","name":"Soshan Shenith Dilanka","dept":"Kitchen","title":"Sous Chef","nationality":"LKA","gender":"M","dob":"1985-12-18","wp_expiry":"13-12-2026","pp_expiry":"13-12-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":550.0,"housing":250.0,"transport":50.0,"phone_allow":0.0,"allowances":300.0,"total":850.0,"dependents":[{"id":"d870285033","name":"Ruvanthika Agampodi","cpr":"870285033","pp":"N8272720","nationality":"LKA","gender":"F","relation":"Dependent","wp_expiry":"13-12-2026","status":"RENEWED"},{"id":"d200718746","name":"Manuli Singappulige","cpr":"200718746","pp":"P0619661","nationality":"LKA","gender":"F","relation":"Dependent","wp_expiry":"13-12-2026","status":"RENEWED"}]},{"id":"s349","emp_code":"349","cpr":"830386785","pp":"EL0650648","name":"Mohammad Syful Islam","dept":"Kitchen","title":"Commis","nationality":"BGD","gender":"M","dob":"1983-03-12","wp_expiry":"26-05-2026","pp_expiry":"26-05-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s350","emp_code":"350","cpr":"840851251","pp":"PA3405585","name":"Hukum Bam","dept":"Kitchen","title":"Chef De Partie","nationality":"NPL","gender":"M","dob":"1984-08-18","wp_expiry":"12-05-2026","pp_expiry":"12-05-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":250.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":250.0,"dependents":[]},{"id":"s374","emp_code":"374","cpr":"871085259","pp":"A31287566","name":"Mohamed Farag Moustafa","dept":"Kitchen","title":"Sous Chef","nationality":"EGY","gender":"M","dob":"1987-10-04","wp_expiry":"17-11-2026","pp_expiry":"17-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":600.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":600.0,"dependents":[]},{"id":"s395","emp_code":"395","cpr":"991233751","pp":"A32157671","name":"Mohamed Mohamed","dept":"Kitchen","title":"Chef De Partie","nationality":"EGY","gender":"M","dob":"1999-12-02","wp_expiry":"21-02-2027","pp_expiry":"21-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":405.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":405.0,"dependents":[]},{"id":"s418","emp_code":"418","cpr":"910830525","pp":"Y2503946","name":"Digar Singh","dept":"Kitchen","title":"Chef De Partie","nationality":"IND","gender":"M","dob":"1991-08-01","wp_expiry":"11-07-2026","pp_expiry":"11-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s461","emp_code":"461","cpr":"670932485","pp":"YC5017162","name":"Carlo Cirone","dept":"Kitchen","title":"Cluster Executive Chef","nationality":"ITA","gender":"M","dob":"1967-09-17","wp_expiry":"21-05-2026","pp_expiry":"21-05-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":1920.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":1920.0,"dependents":[{"id":"d681239557","name":"Fatemeh Eizadi","cpr":"681239557","pp":"W66248645","nationality":"IRN","gender":"F","relation":"Dependent","wp_expiry":"10-05-2026","status":"TO_BE_RENEWED"}]},{"id":"s483","emp_code":"483","cpr":"991027396","pp":"N8123853","name":"Kavinda Manod Warnakulasuriya","dept":"Kitchen","title":"Baker","nationality":"LKA","gender":"M","dob":"1999-10-13","wp_expiry":"04-11-2026","pp_expiry":"04-11-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s506","emp_code":"506","cpr":"971040320","pp":"V2780848","name":"Paulami Paul","dept":"Kitchen","title":"Commis 1","nationality":"IND","gender":"F","dob":"1997-10-07","wp_expiry":"24-04-2026","pp_expiry":"24-04-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":220.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":220.0,"dependents":[]},{"id":"s525","emp_code":"525","cpr":"810353512","pp":"EN0154148","name":"Mohammad Rashid","dept":"Kitchen","title":"Pastry Chef","nationality":"BGD","gender":"M","dob":"1981-03-01","wp_expiry":"30-11-2026","pp_expiry":"30-11-2026","status":"MOBILIZED","in_out":"IN","offense":"","offense_desc":"","basic":550.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":550.0,"dependents":[]},{"id":"s552","emp_code":"552","cpr":"50628704","pp":"B8461937","name":"Aditi Bhondve","dept":"Kitchen","title":"Cook","nationality":"IND","gender":"M","dob":"2005-06-02","wp_expiry":"29-10-2026","pp_expiry":"29-10-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":80.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":80.0,"dependents":[]},{"id":"s567","emp_code":"567","cpr":"","pp":"","name":"Omar Ali","dept":"Kitchen","title":"Cook","nationality":"EGY","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":320.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":320.0,"dependents":[]},{"id":"s569","emp_code":"569","cpr":"990244377","pp":"A35043803","name":"Mohamed Elbakly","dept":"Kitchen","title":"Cook","nationality":"EGY","gender":"M","dob":"1999-02-13","wp_expiry":"04-02-2027","pp_expiry":"04-02-2027","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":260.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":260.0,"dependents":[]},{"id":"s353","emp_code":"353","cpr":"910451192","pp":"C1259191","name":"Ramkumar Kannan","dept":"Engineering","title":"Chief Engineer","nationality":"IND","gender":"M","dob":"1991-04-21","wp_expiry":"19-07-2026","pp_expiry":"19-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":900.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":900.0,"dependents":[{"id":"d221217886","name":"Sanvika Ramkumar","cpr":"221217886","pp":"X7409213","nationality":"IND","gender":"F","relation":"Dependent","wp_expiry":"19-07-2026","status":"TO_BE_RENEWED"},{"id":"d960139214","name":"Thulasi Anandan","cpr":"960139214","pp":"S6214051","nationality":"IND","gender":"F","relation":"Dependent","wp_expiry":"19-07-2026","status":"TO_BE_RENEWED"},{"id":"d240614100","name":"Karthic Ramkumar","cpr":"240614100","pp":"C3299164","nationality":"IND","gender":"M","relation":"Dependent","wp_expiry":"19-07-2026","status":"TO_BE_RENEWED"}]},{"id":"s394","emp_code":"394","cpr":"970133685","pp":"R9472830","name":"MD Shahbaz Khan","dept":"Engineering","title":"AC Technician","nationality":"IND","gender":"M","dob":"1997-01-20","wp_expiry":"28-01-2027","pp_expiry":"28-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":200.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":200.0,"dependents":[]},{"id":"s408","emp_code":"408","cpr":"930522729","pp":"X7610347","name":"Asarudeen Ameen Basheer","dept":"Engineering","title":"Duty Engineer","nationality":"IND","gender":"M","dob":"1993-05-11","wp_expiry":"13-08-2026","pp_expiry":"13-08-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":300.0,"dependents":[]},{"id":"s444","emp_code":"444","cpr":"910271534","pp":"U5537461","name":"Sadham Hussain Ameer Batcha","dept":"Engineering","title":"Electrical General","nationality":"IND","gender":"M","dob":"1991-02-19","wp_expiry":"30-01-2027","pp_expiry":"30-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":180.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":180.0,"dependents":[]},{"id":"s452","emp_code":"452","cpr":"940838117","pp":"X5665120","name":"Melvin Thomas","dept":"Engineering","title":"Electrical Supervisor","nationality":"IND","gender":"M","dob":"1994-08-17","wp_expiry":"26-02-2027","pp_expiry":"26-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":280.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":280.0,"dependents":[]},{"id":"s453","emp_code":"453","cpr":"980327725","pp":"R9749044","name":"Albin Antony","dept":"Engineering","title":"AC Technician","nationality":"IND","gender":"M","dob":"1998-03-07","wp_expiry":"22-02-2027","pp_expiry":"22-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":220.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":220.0,"dependents":[]},{"id":"s468","emp_code":"468","cpr":"910159106","pp":"A21263950","name":"Shafiqul Islam","dept":"Engineering","title":"Electrician","nationality":"BGD","gender":"M","dob":"1991-01-01","wp_expiry":"09-06-2026","pp_expiry":"09-06-2026","status":"TO_BE_RENEWED","in_out":"OUT","offense":"","offense_desc":"","basic":200.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":200.0,"dependents":[]},{"id":"s555","emp_code":"555","cpr":"","pp":"","name":"Palwinder Pal","dept":"Engineering","title":"Electrician","nationality":"IND","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":200.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":200.0,"dependents":[]},{"id":"s366","emp_code":"366","cpr":"931221862","pp":"BK611738","name":"Kibwana Ramadhan","dept":"Recreation","title":"Lifeguard","nationality":"KEN","gender":"M","dob":"1993-12-21","wp_expiry":"08-11-2026","pp_expiry":"08-11-2026","status":"RENEWED","in_out":"OUT","offense":"","offense_desc":"","basic":250.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":250.0,"dependents":[]},{"id":"s445","emp_code":"445","cpr":"971142912","pp":"P1501875","name":"Vishnu Valappil","dept":"Recreation","title":"GYM Instructor","nationality":"IND","gender":"M","dob":"1997-11-02","wp_expiry":"30-01-2027","pp_expiry":"30-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":400.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":400.0,"dependents":[]},{"id":"s537","emp_code":"537","cpr":"911015361","pp":"PA4422621","name":"Smriti Rana Magar","dept":"Recreation","title":"GYM Instructor","nationality":"NPL","gender":"F","dob":"1991-10-17","wp_expiry":"22-10-2026","pp_expiry":"22-10-2026","status":"MOBILIZED","in_out":"IN","offense":"","offense_desc":"","basic":300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":300.0,"dependents":[]},{"id":"s341","emp_code":"341","cpr":"901254835","pp":"P7871335B","name":"Lily Ann Cadacio","dept":"Sales &amp; Marketing","title":"Reservation Supervisor","nationality":"PHL","gender":"F","dob":"1990-12-27","wp_expiry":"27-02-2027","pp_expiry":"27-02-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":320.0,"housing":50.0,"transport":0.0,"phone_allow":0.0,"allowances":50.0,"total":370.0,"dependents":[]},{"id":"s518","emp_code":"518","cpr":"790930480","pp":"P4091470B","name":"Kristine Reyes","dept":"Sales &amp; Marketing","title":"Reservation Manager","nationality":"PHL","gender":"F","dob":"1979-09-11","wp_expiry":"13-07-2026","pp_expiry":"13-07-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":800.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":800.0,"dependents":[]},{"id":"s541","emp_code":"541","cpr":"791341623","pp":"","name":"Mohammed Azeemuddin","dept":"Sales &amp; Marketing","title":"Director of Sales","nationality":"IND","gender":"M","dob":"1979-05-22","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":1300.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":1300.0,"dependents":[]},{"id":"s542","emp_code":"542","cpr":"950549487","pp":"","name":"Noman Tariq","dept":"Sales &amp; Marketing","title":"Sales Coordinator","nationality":"PAK","gender":"M","dob":"1995-05-10","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":400.0,"housing":100.0,"transport":25.0,"phone_allow":0.0,"allowances":125.0,"total":525.0,"dependents":[]},{"id":"s566","emp_code":"566","cpr":"931235286","pp":"ME7567461","name":"El Rhalia Rami","dept":"Sales &amp; Marketing","title":"Sales Executive","nationality":"MAR","gender":"F","dob":"1993-12-18","wp_expiry":"24-12-2026","pp_expiry":"24-12-2026","status":"VISA_PRINTED","in_out":"IN","offense":"","offense_desc":"","basic":400.0,"housing":200.0,"transport":50.0,"phone_allow":0.0,"allowances":250.0,"total":650.0,"dependents":[]},{"id":"s570","emp_code":"570","cpr":"","pp":"","name":"Kateryna Yanhol","dept":"Sales &amp; Marketing","title":"Sales Executive","nationality":"UKR","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":400.0,"housing":150.0,"transport":50.0,"phone_allow":0.0,"allowances":200.0,"total":600.0,"dependents":[]},{"id":"s070","emp_code":"070","cpr":"","pp":"","name":"Sayed Jalal Alawi","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":285.0,"housing":40.0,"transport":20.0,"phone_allow":0.0,"allowances":60.0,"total":345.0,"dependents":[]},{"id":"s297","emp_code":"297","cpr":"971008086","pp":"","name":"Hussain Ali","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"1997-10-26","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":400.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":400.0,"dependents":[]},{"id":"s336","emp_code":"336","cpr":"920406203","pp":"","name":"Hasan Ali Hasan","dept":"Security &amp; Safety","title":"Security Officer","nationality":"BHR","gender":"M","dob":"1992-04-13","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":500.0,"dependents":[]},{"id":"s488","emp_code":"488","cpr":"30304245","pp":"","name":"Haider Ahmed Husain","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"2003-03-14","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s509","emp_code":"509","cpr":"900287608","pp":"A12006602","name":"James Chikwado Okpe","dept":"Security &amp; Safety","title":"Security Guard","nationality":"NGA","gender":"M","dob":"1990-02-14","wp_expiry":"24-04-2026","pp_expiry":"24-04-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":160.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":160.0,"dependents":[]},{"id":"s534","emp_code":"534","cpr":"720705754","pp":"","name":"Mohamed Janahi","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"1972-07-10","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":500.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":500.0,"dependents":[]},{"id":"s545","emp_code":"545","cpr":"880712112","pp":"","name":"Fowad Abdulqadir Durra Mir","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"1988-07-16","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s560","emp_code":"560","cpr":"61102466","pp":"","name":"Hasan Alhayki","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"2006-11-07","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s561","emp_code":"561","cpr":"70906939","pp":"","name":"Murtadha Hasan","dept":"Security &amp; Safety","title":"Security Guard","nationality":"BHR","gender":"M","dob":"2007-09-19","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"","offense_desc":"","basic":350.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":350.0,"dependents":[]},{"id":"s278","emp_code":"278","cpr":"870478150","pp":"EJ0970930","name":"Kabir Miah","dept":"Stewarding","title":"Stewarding","nationality":"BGD","gender":"M","dob":"1987-04-10","wp_expiry":"29-12-2026","pp_expiry":"29-12-2026","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s328","emp_code":"328","cpr":"871305283","pp":"EJ0919986","name":"Anwar Hossain Hasmot","dept":"Stewarding","title":"Stewarding","nationality":"BGD","gender":"M","dob":"1987-01-01","wp_expiry":"16-03-2026","pp_expiry":"16-03-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s447","emp_code":"447","cpr":"10218564","pp":"DM3701342","name":"Muhammad Bilal","dept":"Stewarding","title":"Stewarding Team Leader","nationality":"PAK","gender":"M","dob":"2001-02-13","wp_expiry":"31-01-2027","pp_expiry":"31-01-2027","status":"RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":140.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":140.0,"dependents":[]},{"id":"s467","emp_code":"467","cpr":"851171478","pp":"11914847","name":"Deu Kumar Magar","dept":"Stewarding","title":"Stewarding","nationality":"NPL","gender":"M","dob":"1985-11-12","wp_expiry":"09-06-2026","pp_expiry":"09-06-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s508","emp_code":"508","cpr":"961239166","pp":"FA2858982","name":"Muhammad Usman","dept":"Stewarding","title":"Stewarding","nationality":"PAK","gender":"M","dob":"1996-12-15","wp_expiry":"24-04-2026","pp_expiry":"24-04-2026","status":"TO_BE_RENEWED","in_out":"IN","offense":"","offense_desc":"","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s568","emp_code":"568","cpr":"","pp":"","name":"Muhammad Farooq","dept":"Stewarding","title":"Stewarding","nationality":"PAK","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]},{"id":"s573","emp_code":"573","cpr":"","pp":"","name":"Prem Kumar","dept":"Stewarding","title":"Stewarding","nationality":"PAK","gender":"M","dob":"","wp_expiry":"","pp_expiry":"","status":"NO_RESIDENCY","in_out":"IN","offense":"No Residency / Pending","offense_desc":"Obtain Work Visa &amp; CPR","basic":120.0,"housing":0.0,"transport":0.0,"phone_allow":0.0,"allowances":0.0,"total":120.0,"dependents":[]}]</div>
-
-<!-- LOGIN MODAL -->
-
-
-
-
-
-</body>
-</html>
 
 
 </body>
