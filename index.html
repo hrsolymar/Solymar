@@ -4171,10 +4171,23 @@ async function sbLoadEmployees(){
   }catch(e){console.warn('Supabase load employees failed:',e);return false;}
 }
 
+// Exact Supabase table columns — strip everything else
+var _SB_EMP_COLS=['id','emp_code','cpr','pp','name','dept','title','nationality','gender','dob','wp_expiry','pp_expiry','status','in_out','offense','offense_desc','basic','housing','transport','phone_allow','allowances','total','dependents'];
+function _cleanEmp(obj){
+  var c={};
+  _SB_EMP_COLS.forEach(function(k){
+    if(k==='dependents'){c[k]=Array.isArray(obj[k])?obj[k]:[];}
+    else if(['basic','housing','transport','phone_allow','allowances','total'].indexOf(k)>=0){c[k]=parseFloat(obj[k])||0;}
+    else{c[k]=(obj[k]!==undefined&&obj[k]!==null)?String(obj[k]):'';} 
+  });
+  if(!c['id'])c['id']='s'+Math.random().toString(36).slice(2,10);
+  return c;
+}
+
 async function sbSaveEmployee(emp){
   if(!SB_KEY) return;
   try{
-    var res=await fetch(SB_URL+'/rest/v1/employees',{method:'POST',headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify(emp)});
+    var res=await fetch(SB_URL+'/rest/v1/employees',{method:'POST',headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify(_cleanEmp(emp))});
     if(!res.ok){var e=await res.text();console.warn('sbSaveEmployee error:',e);}
   }catch(e){console.warn('sbSaveEmployee failed:',e);}
 }
@@ -4182,7 +4195,8 @@ async function sbSaveEmployee(emp){
 async function sbSaveAllEmployees(){
   if(!SB_KEY||!EMP.length) return;
   try{
-    await fetch(SB_URL+'/rest/v1/employees',{method:'POST',headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify(EMP)});
+    var cleaned=EMP.map(_cleanEmp);
+    await fetch(SB_URL+'/rest/v1/employees',{method:'POST',headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify(cleaned)});
   }catch(e){console.warn('sbSaveAll failed:',e);}
 }
 
@@ -5330,23 +5344,23 @@ window.onload=function(){
   try{var sd=document.getElementById("seed-data");if(sd)SEED=JSON.parse(sd.textContent||sd.innerText);}catch(e){}
   load(); // load from localStorage/seed first (instant)
   renderHBadges();
-  // Then load from Supabase in background and refresh if data found
+  // Load from Supabase, then restore session so data is ready before UI renders
   sbLoadEmployees().then(function(loaded){
-    if(loaded){renderHBadges();if(typeof renderDash==='function')renderDash();if(typeof renderDir==='function')renderDir();}
-  });
-
-  // Restore session only on page refresh (not on fresh tab open)
-  try{
-    var navType=(performance.navigation&&performance.navigation.type);
-    // type 1 = reload/refresh; also check navigation entries for modern browsers
-    var isReload=(navType===1)||(performance.getEntriesByType&&performance.getEntriesByType('navigation').length>0&&performance.getEntriesByType('navigation')[0].type==='reload');
-    if(isReload){
+    if(loaded){
+      try{localStorage.setItem(SK,JSON.stringify(EMP));}catch(e){}
+      renderHBadges();
+      if(typeof renderDash==='function')renderDash();
+      if(typeof renderDir==='function')renderDir();
+      if(typeof renderAlerts==='function')renderAlerts();
+    }
+    // Restore session AFTER data is loaded
+    try{
       var savedRole=sessionStorage.getItem('solymar_role');
       if(savedRole&&['admin','hr','hrfinance','view'].indexOf(savedRole)!==-1){
         _loginOK(savedRole);
       }
-    }
-  }catch(e){}
+    }catch(e){}
+  });
 
   // Load saved attendance data
   loadTAData();
@@ -9526,14 +9540,20 @@ async function dbImportConfirm(){
   _dbImportParsed.forEach(function(r){
     if(r.action==='skip')return;
     if(r.action==='new'){
-      var ne=Object.assign({id:'s'+Math.random().toString(36).slice(2,10),dependents:[]},r.data);
-      EMP.push(ne);toSave.push(ne);added++;
+      var ne=Object.assign({id:'s'+Math.random().toString(36).slice(2,10),dependents:[],offense:'',offense_desc:'',emp_code:'',dept:'',title:'',dob:'',basic:0,housing:0,transport:0,phone_allow:0,allowances:0,total:0},r.data);
+      EMP.push(ne);toSave.push(_cleanEmp(ne));added++;
     } else if(r.action==='update'){
       var e=r.existing;
+      var SALARY_FIELDS=['basic','housing','transport','phone_allow','allowances','total'];
       Object.keys(r.data).forEach(function(k){
-        if(r.data[k]!==''&&r.data[k]!==null&&r.data[k]!==undefined)e[k]=r.data[k];
+        if(SALARY_FIELDS.indexOf(k)>=0){
+          // Only update salary if Excel actually has a value > 0
+          if(r.data[k]&&parseFloat(r.data[k])>0) e[k]=r.data[k];
+        } else {
+          if(r.data[k]!==''&&r.data[k]!==null&&r.data[k]!==undefined) e[k]=r.data[k];
+        }
       });
-      toSave.push(e);updated++;
+      toSave.push(_cleanEmp(e));updated++;
     }
   });
   save();
