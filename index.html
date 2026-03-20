@@ -677,6 +677,24 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
       <span class="ni-label">OT Calculator</span>
     </div>
+    <div class="nav-item" onclick="showPg('payslip');closeSidebar()" data-pg="payslip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      <span class="ni-label">Payslip Generator</span>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:8px 0 4px"></div>
+    <div class="nav-section-label">Admin</div>
+    <div class="nav-item" onclick="showPg('discipline');closeSidebar()" data-pg="discipline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span class="ni-label">Disciplinary Log</span>
+    </div>
+    <div class="nav-item" id="nav-audit" onclick="showPg('audit');closeSidebar()" data-pg="audit" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span class="ni-label">Audit Log</span>
+    </div>
+    <div class="nav-item" id="nav-github" onclick="showPg('github');closeSidebar()" data-pg="github" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      <span class="ni-label">GitHub Data</span>
+    </div>
   </nav>
 
   <div id="sidebar-footer">
@@ -747,7 +765,13 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
         <option value="">All Departments</option>
       </select>
     </div>
-    <div id="dcount" style="font-size:11px;color:var(--text-2);margin-bottom:9px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div id="dcount" style="font-size:11px;color:var(--text-2)"></div>
+      <button onclick="exportEmpCSV()" style="height:30px;padding:0 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;display:flex;align-items:center;gap:5px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
     <div id="dcards"></div>
   </div>
 
@@ -1583,6 +1607,211 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
     <div id="cal-list" class="card" style="display:none"></div>
   </div>
 
+
+<!-- ═══ PAYSLIP GENERATOR PAGE ═══ -->
+<div id="pg-payslip" class="pg">
+<div class="back-btn-container" onclick="showPg('dash')">
+  <div class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    BACK
+  </div>
+</div>
+  <div style="background:linear-gradient(135deg,#0a1f44,#1c3a6e);border-radius:var(--r);padding:14px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
+      <div><div style="font-size:15px;color:#fff;font-weight:700">Payslip Generator</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Generate monthly payslips for any employee</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Employee &amp; Period</div>
+    <div class="fgrid">
+      <div class="fl"><label>Select Employee</label>
+        <select id="ps-emp" onchange="psLoadEmp()" style="width:100%;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:10px 11px;font-size:13px;font-family:var(--font);height:42px">
+          <option value="">— Select Employee —</option>
+        </select>
+      </div>
+      <div class="fl"><label>Pay Period (Month/Year)</label><input id="ps-period" type="month" oninput="psCalc()" style="width:100%"/></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Salary Components</div>
+    <div class="fgrid">
+      <div class="fl"><label>Basic Salary (BD)</label><input id="ps-basic" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Housing Allowance (BD)</label><input id="ps-housing" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Transport Allowance (BD)</label><input id="ps-transport" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Phone Allowance (BD)</label><input id="ps-phone" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Overtime Pay (BD)</label><input id="ps-ot" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Other Earnings (BD)</label><input id="ps-other-earn" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:10px">
+    <div style="font-size:10px;font-weight:700;color:#8E3E3E;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Deductions</div>
+    <div class="fgrid">
+      <div class="fl"><label>LMRA (BD)</label><input id="ps-lmra" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>GOSI (BD)</label><input id="ps-gosi-ded" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Advance Deduction (BD)</label><input id="ps-advance" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Absent Days Deduction (BD)</label><input id="ps-absent-ded" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+      <div class="fl"><label>Other Deductions (BD)</label><input id="ps-other-ded" type="number" step="0.001" placeholder="0.000" oninput="psCalc()"/></div>
+    </div>
+  </div>
+  <div id="ps-result" style="display:none;margin-bottom:10px"></div>
+  <div style="display:flex;gap:9px;margin-bottom:20px">
+    <button onclick="psReset()" class="btn bgh" style="flex:1;padding:12px">Reset</button>
+    <button onclick="psPrint()" class="btn bg" style="flex:2;padding:12px">🖨 Print Payslip</button>
+  </div>
+</div>
+
+<!-- ═══ DISCIPLINARY LOG PAGE ═══ -->
+<div id="pg-discipline" class="pg">
+<div class="back-btn-container" onclick="showPg('dash')">
+  <div class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    BACK
+  </div>
+</div>
+  <div style="background:linear-gradient(135deg,#7c2d12,#9a3412);border-radius:var(--r);padding:14px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div><div style="font-size:15px;color:#fff;font-weight:700">Disciplinary Log</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Track offences and disciplinary actions</div></div>
+      </div>
+      <button id="disc-add-btn" onclick="openAddDisc()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer">+ Add Record</button>
+    </div>
+  </div>
+  <!-- Stats -->
+  <div id="disc-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"></div>
+  <!-- Filters -->
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+    <input class="sbar" id="disc-search" placeholder="Search employee or offence..." oninput="renderDisc()" style="flex:1;min-width:160px;margin-bottom:0"/>
+    <select id="disc-filter-type" onchange="renderDisc()" style="height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-white);color:var(--text);font-size:12px;padding:0 10px;cursor:pointer">
+      <option value="">All Types</option>
+      <option value="Warning">Warning</option>
+      <option value="Suspension">Suspension</option>
+      <option value="Final Warning">Final Warning</option>
+      <option value="Termination">Termination</option>
+      <option value="Demotion">Demotion</option>
+      <option value="Other">Other</option>
+    </select>
+    <select id="disc-filter-status" onchange="renderDisc()" style="height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-white);color:var(--text);font-size:12px;padding:0 10px;cursor:pointer">
+      <option value="">All Statuses</option>
+      <option value="Open">Open</option>
+      <option value="Resolved">Resolved</option>
+      <option value="Pending">Pending</option>
+    </select>
+  </div>
+  <div id="disc-count" style="font-size:11px;color:var(--text-2);margin-bottom:8px"></div>
+  <div id="disc-cards"></div>
+</div>
+
+<!-- Disciplinary Add/Edit Modal -->
+<div id="disc-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+    <div style="background:linear-gradient(135deg,#7c2d12,#9a3412);border-radius:16px 16px 0 0;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div><div id="disc-modal-title" style="font-size:14px;font-weight:700;color:#fff">Add Disciplinary Record</div></div>
+      <button onclick="closeDiscModal()" style="background:rgba(255,255,255,0.15);border:none;border-radius:8px;width:32px;height:32px;color:#fff;font-size:16px;cursor:pointer">✕</button>
+    </div>
+    <div style="padding:20px">
+      <input type="hidden" id="disc-edit-id"/>
+      <div class="fl"><label>Employee</label>
+        <select id="disc-emp-sel" style="width:100%;height:42px;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:0 11px;font-size:13px;font-family:var(--font)">
+          <option value="">— Select Employee —</option>
+        </select>
+      </div>
+      <div class="fgrid">
+        <div class="fl"><label>Action Type</label>
+          <select id="disc-type" style="width:100%;height:42px;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:0 11px;font-size:13px;font-family:var(--font)">
+            <option>Warning</option><option>Suspension</option><option>Final Warning</option>
+            <option>Termination</option><option>Demotion</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fl"><label>Date</label><input id="disc-date" type="date" style="width:100%"/></div>
+      </div>
+      <div class="fl"><label>Offence / Reason</label><input id="disc-offence" placeholder="Describe the offence..." style="width:100%"/></div>
+      <div class="fl"><label>Details / Action Taken</label>
+        <textarea id="disc-details" placeholder="Enter full details..." rows="3" style="width:100%;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:10px 11px;font-size:13px;font-family:var(--font);resize:vertical"></textarea>
+      </div>
+      <div class="fgrid">
+        <div class="fl"><label>Status</label>
+          <select id="disc-status" style="width:100%;height:42px;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:0 11px;font-size:13px;font-family:var(--font)">
+            <option>Open</option><option>Pending</option><option>Resolved</option>
+          </select>
+        </div>
+        <div class="fl"><label>Penalty (BD, if any)</label><input id="disc-penalty" type="number" step="0.001" placeholder="0.000" style="width:100%"/></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button onclick="closeDiscModal()" style="flex:1;height:40px;background:#f5f5f5;border:1px solid #ddd;border-radius:8px;font-size:13px;cursor:pointer">Cancel</button>
+        <button onclick="saveDisc()" style="flex:2;height:40px;background:linear-gradient(135deg,#7c2d12,#9a3412);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Save Record</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ AUDIT LOG PAGE (Admin only) ═══ -->
+<div id="pg-audit" class="pg">
+<div class="back-btn-container" onclick="showPg('dash')">
+  <div class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    BACK
+  </div>
+</div>
+  <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:var(--r);padding:14px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div><div style="font-size:15px;color:#fff;font-weight:700">Audit Log</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Admin only — all system actions recorded</div></div>
+      </div>
+      <button onclick="clearAuditLog()" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;cursor:pointer">🗑 Clear Log</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+    <input class="sbar" id="audit-search" placeholder="Search log entries..." oninput="renderAudit()" style="flex:1;min-width:160px;margin-bottom:0"/>
+    <select id="audit-filter" onchange="renderAudit()" style="height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg-white);color:var(--text);font-size:12px;padding:0 10px">
+      <option value="">All Actions</option>
+      <option value="ADD">Added</option>
+      <option value="EDIT">Edited</option>
+      <option value="DELETE">Deleted</option>
+      <option value="LOGIN">Login</option>
+      <option value="EXPORT">Export</option>
+      <option value="DISC">Disciplinary</option>
+    </select>
+  </div>
+  <div id="audit-log-body"></div>
+</div>
+
+<!-- ═══ GITHUB DATA PAGE (Admin only) ═══ -->
+<div id="pg-github" class="pg">
+<div class="back-btn-container" onclick="showPg('dash')">
+  <div class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    BACK
+  </div>
+</div>
+  <div style="background:linear-gradient(135deg,#0d1117,#161b22);border-radius:var(--r);padding:14px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </div>
+      <div><div style="font-size:15px;color:#fff;font-weight:700">GitHub Data Viewer</div><div style="font-size:10px;color:rgba(255,255,255,0.5)">Admin only — view & sync employee data from GitHub</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">GitHub Raw URL</div>
+    <div style="display:flex;gap:8px">
+      <input id="gh-url" placeholder="https://raw.githubusercontent.com/user/repo/main/data.json" style="flex:1;background:var(--bg-white);border:1px solid var(--border);border-radius:var(--rs);padding:10px 11px;font-size:12px;font-family:var(--font);color:var(--text)"/>
+      <button onclick="ghFetch()" style="background:#0a1629;color:#fff;border:none;border-radius:var(--rs);padding:0 16px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0">Fetch</button>
+    </div>
+    <div style="font-size:10px;color:var(--text-2);margin-top:6px">Paste a raw GitHub URL to a JSON employee data file. Admin access only.</div>
+  </div>
+  <div id="gh-status" style="margin-bottom:10px"></div>
+  <div id="gh-preview"></div>
+</div>
+
 </div><!-- /main -->
 
   </main>
@@ -1673,7 +1902,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <div style="display:flex;gap:8px">
         <button id="mlb-en" onclick="setLang('en');updateMenuLangBtns()" style="flex:1;padding:10px;border-radius:9px;border:1px solid rgba(201,169,110,0.6);background:rgba(201,169,110,0.2);color:#e8c97e;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">EN English</button>
         <button id="mlb-ar" onclick="setLang('ar');updateMenuLangBtns()" style="flex:1;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:var(--bg3);color:#8a7a6a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">&#1593;&#1585; &#1593;&#1585;&#1576;&#1610;</button>
-        <button id="mlb-ru" onclick="setLang('ru');updateMenuLangBtns()" style="flex:1;padding:10px;border-radius:9px;border:1px solid rgba(255,255,255,0.1);background:var(--bg3);color:#8a7a6a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">&#1056;&#1091; &#1056;&#1091;&#1089;</button>
+
       </div>
     </div>
 
@@ -1716,7 +1945,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
     </button>
 
     <!-- Export Seed Data -->
-    <button onclick="closeMenu();exportSeedData()" style="width:100%;padding:13px;border-radius:10px;border:1px solid rgba(184,144,77,0.25);background:rgba(184,144,77,0.06);color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;margin-bottom:10px;text-align:left">
+    <button id="btn-export-github" onclick="closeMenu();exportSeedData()" style="display:none;width:100%;padding:13px;border-radius:10px;border:1px solid rgba(184,144,77,0.25);background:rgba(184,144,77,0.06);color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;align-items:center;gap:10px;margin-bottom:10px;text-align:left">
       <span style="font-size:20px">&#128229;</span>
       <div>
         <div>Export Data for GitHub</div>
@@ -1755,7 +1984,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button id="rbtn-admin" onclick="selRole('admin')" class="rbtn on" style="flex:1;min-width:70px;padding:9px 4px;background:var(--primary);border:1px solid var(--primary);color:#fff;font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:1px">Admin</button>
         <button id="rbtn-hr" onclick="selRole('hr')" class="rbtn" style="flex:1;min-width:70px;padding:9px 4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:1px">HR</button>
-        <button id="rbtn-hrfinance" onclick="selRole('hrfinance')" class="rbtn" style="flex:1;min-width:70px;padding:9px 4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px">HR/Finance</button>
+        <button id="rbtn-hrfinance" onclick="selRole('hrfinance')" class="rbtn" style="flex:1;min-width:70px;padding:9px 4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);font-size:9px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px">Finance</button>
         <button id="rbtn-view" onclick="selRole('view')" class="rbtn" style="flex:1;min-width:70px;padding:9px 4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2);font-size:10px;font-weight:700;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:1px"> View</button>
       </div>
       <input type="hidden" id="l-role" value="admin"/>
@@ -3316,6 +3545,7 @@ var MNS3=MTHS;
 var _role='view';
 var _selRole='admin';
 function canEdit(){return _role==='admin';}
+function canDisc(){return _role==='admin'||_role==='hr';}
 function canSal(){return _role==='admin'||_role==='hr'||_role==='hrfinance';}
 function selRole(r){
   _selRole=r;
@@ -3357,7 +3587,7 @@ function doLogin(){
   else{var er=document.getElementById('l-err');if(er)er.style.display='block';if(i)i.focus();}
 }
 
-function showLL(role,cb){var ll=document.getElementById('ll');if(!ll){if(cb)cb();return;}var names={admin:'Admin',hr:'HR Manager',hrfinance:'HR / Finance',view:'Viewer'};var n=document.getElementById('ll-name');var r=document.getElementById('ll-role');if(n)n.textContent='Welcome, '+(names[role]||'');if(r)r.textContent='Solymar Hotel \u00b7 HR System';ll.classList.add('show');setTimeout(function(){ll.classList.add('out');setTimeout(function(){ll.classList.remove('show');ll.classList.remove('out');if(cb)cb();},700);},3000);}
+function showLL(role,cb){var ll=document.getElementById('ll');if(!ll){if(cb)cb();return;}var names={admin:'Admin',hr:'HR Manager',hrfinance:'Finance',view:'Viewer'};var n=document.getElementById('ll-name');var r=document.getElementById('ll-role');if(n)n.textContent='Welcome, '+(names[role]||'');if(r)r.textContent='Solymar Hotel \u00b7 HR System';ll.classList.add('show');setTimeout(function(){ll.classList.add('out');setTimeout(function(){ll.classList.remove('show');ll.classList.remove('out');if(cb)cb();},700);},3000);}
 function loginOK(role){showLL(role,function(){_loginOK(role);});}
 function _loginOK(role){
   _role=role;
@@ -3365,7 +3595,7 @@ function _loginOK(role){
 
   var m=document.getElementById('l-modal');
   if(m){m.style.display='none';}
-  var icons={admin:'Admin',hr:'HR',hrfinance:'HR/Finance',view:' View'};
+  var icons={admin:'Admin',hr:'HR',hrfinance:'Finance',view:' View'};
   var colors={admin:'#c9a96e',hr:'#bc9754',hrfinance:'#bc9754',view:'#8a7a6a'};
   var b=document.getElementById('role-badge');
   if(b){b.innerHTML=icons[role];b.style.color=colors[role];b.style.display='inline-block';}
@@ -3609,7 +3839,7 @@ ru:{dir:'ltr',dashboard:'\u041f\u0430\u043d\u0435\u043b\u044c',directory:'\u0421
 var _lang='en';
 function t(k){return(LANGS[_lang]&&LANGS[_lang][k])||LANGS.en[k]||k;}
 
-function cycleLang(){var ls=['en','ar','ru'],i=ls.indexOf(_lang);setLang(ls[(i+1)%ls.length]);}
+function cycleLang(){var ls=['en','ar'],i=ls.indexOf(_lang);setLang(ls[(i+1)%ls.length]);}
 
 var ADMIN_PASS='Admin@2026';
 var HR_PASS='HR@Solymar';
@@ -3630,7 +3860,7 @@ function closeMenu(){
   document.getElementById('menu-ov').style.display='none';
 }
 function updateMenuLangBtns(){
-  var ls=['en','ar','ru'];
+  var ls=['en','ar'];
   ls.forEach(function(l){
     var b=document.getElementById('mlb-'+l);
     if(!b)return;
@@ -3845,7 +4075,7 @@ function showPg(id){
   if(el)el.classList.add('on');
   curPg=id;
   document.querySelectorAll('.nav-item[data-pg]').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-pg')===id);});
-  var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',leave:'Leave Tracker',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance'};
+  var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',leave:'Leave Tracker',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance',payslip:'Payslip Generator',discipline:'Disciplinary Log',audit:'Audit Log',github:'GitHub Data Viewer'};
   var tb=document.getElementById('topbar-title');
   if(tb)tb.textContent=titles[id]||'Solymar HR';
   var ab=document.getElementById('btn-add');
@@ -4303,7 +4533,7 @@ function setLang(l){
   var ids={'l-sign-txt':t('signIn'),'l-access-lbl':t('accessLevel'),'l-pass-lbl':t('password'),'l-btn':t('loginBtn'),'v-hint':t('viewMode'),'lang-sub':t('hrSub'),'btn-add':t('addEmp')};
   Object.keys(ids).forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=ids[id];});
   var pi=document.getElementById('l-pass');if(pi)pi.placeholder=t('enterPass');
-  ['en','ar','ru'].forEach(function(lc){
+  ['en','ar'].forEach(function(lc){
     var b=document.getElementById('lb-'+lc);if(!b)return;
     b.style.background=lc===l?'rgba(201,169,110,0.2)':'var(--bg3)';
     b.style.borderColor=lc===l?'rgba(201,169,110,0.6)':'rgba(255,255,255,0.1)';
@@ -4312,7 +4542,7 @@ function setLang(l){
   var ltb=document.getElementById('lang-toggle-btn');if(ltb)ltb.textContent=l.toUpperCase();
   try{if(curPg==='dash')renderDash();else if(curPg==='dir')renderDir();else if(curPg==='alerts')renderAlerts();}catch(ex){}
 }
-function cycleLang(){var ls=['en','ar','ru'],i=ls.indexOf(_lang);setLang(ls[(i+1)%ls.length]);}
+function cycleLang(){var ls=['en','ar'],i=ls.indexOf(_lang);setLang(ls[(i+1)%ls.length]);}
 
 var ADMIN_PASS='Admin@2026';
 var HR_PASS='HR@Solymar';
@@ -4872,6 +5102,556 @@ window.onload=function(){
 };
 
 function toggleSidebar(){document.body.classList.toggle("sidebar-open");}
+
+// ═══════════════════════════════════════════════════════
+// AUDIT LOG
+// ═══════════════════════════════════════════════════════
+var _auditKey = 'solymar_audit_v1';
+function _auditLoad(){ try{var r=localStorage.getItem(_auditKey);return r?JSON.parse(r):[];}catch(e){return[];} }
+function _auditSave(log){ try{localStorage.setItem(_auditKey,JSON.stringify(log));}catch(e){} }
+function auditLog(action, detail){
+  var log = _auditLoad();
+  log.unshift({id:'a'+Date.now(), ts:new Date().toISOString(), role:_role||'?', action:action, detail:detail});
+  if(log.length > 500) log = log.slice(0, 500);
+  _auditSave(log);
+}
+function renderAudit(){
+  var log = _auditLoad();
+  var q = (document.getElementById('audit-search')||{value:''}).value.toLowerCase();
+  var f = (document.getElementById('audit-filter')||{value:''}).value;
+  var filtered = log.filter(function(e){
+    var mQ = !q || (e.detail||'').toLowerCase().indexOf(q)>=0 || (e.action||'').toLowerCase().indexOf(q)>=0;
+    var mF = !f || (e.action||'').toUpperCase().indexOf(f)>=0;
+    return mQ && mF;
+  });
+  var colMap = {ADD:'#16a34a',EDIT:'#2563eb',DELETE:'#dc2626',LOGIN:'#7c3aed',EXPORT:'#0891b2',DISC:'#ea580c'};
+  var body = document.getElementById('audit-log-body');
+  if(!body) return;
+  if(!filtered.length){
+    body.innerHTML='<div class="card" style="text-align:center;padding:32px;color:var(--text-2)">📋 No audit entries found</div>';
+    return;
+  }
+  var h = '<div class="card" style="padding:0;overflow:hidden">';
+  h += '<table style="width:100%;border-collapse:collapse;font-size:11px">';
+  h += '<thead><tr style="background:var(--bg);border-bottom:1px solid var(--border)">';
+  h += '<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--text-2)">Time</th>';
+  h += '<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--text-2)">Role</th>';
+  h += '<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--text-2)">Action</th>';
+  h += '<th style="padding:10px 12px;text-align:left;font-weight:600;color:var(--text-2)">Detail</th>';
+  h += '</tr></thead><tbody>';
+  filtered.forEach(function(e,i){
+    var bg = i%2===0?'':'background:#f9fafb';
+    var d = new Date(e.ts);
+    var ts = d.toLocaleDateString('en-GB')+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    var aKey = Object.keys(colMap).find(function(k){return (e.action||'').indexOf(k)>=0;})||'';
+    var col = colMap[aKey]||'#64748b';
+    h += '<tr style="border-bottom:1px solid var(--border-l);'+bg+'">';
+    h += '<td style="padding:8px 12px;color:var(--text-2);white-space:nowrap">'+ts+'</td>';
+    h += '<td style="padding:8px 12px"><span style="background:#e0f2fe;color:#0369a1;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700">'+(e.role||'?').toUpperCase()+'</span></td>';
+    h += '<td style="padding:8px 12px"><span style="background:'+col+'20;color:'+col+';padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">'+(e.action||'')+'</span></td>';
+    h += '<td style="padding:8px 12px;color:var(--text)">'+(e.detail||'')+'</td>';
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  body.innerHTML = h;
+}
+function clearAuditLog(){
+  if(!confirm('Clear all audit log entries? This cannot be undone.')) return;
+  _auditSave([]);
+  renderAudit();
+  toast('Audit log cleared','w');
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT EMPLOYEE CSV
+// ═══════════════════════════════════════════════════════
+function exportEmpCSV(){
+  var q=(document.getElementById('dsearch')||{value:''}).value.toLowerCase();
+  var st=(document.getElementById('dstatus')||{value:''}).value;
+  var dept=(document.getElementById('ddept')||{value:''}).value;
+  var list=EMP.filter(function(e){
+    var ms=!st||e.status===st;
+    var md=!dept||e.dept===dept;
+    var mq=!q||(e.name||'').toLowerCase().indexOf(q)>=0||(e.cpr||'').indexOf(q)>=0;
+    return ms&&md&&mq;
+  });
+  var cols=['emp_code','name','dept','title','nationality','gender','dob','cpr','pp','wp_expiry','pp_expiry','status','in_out','basic','housing','transport','phone_allow','allowances','total','offense'];
+  var csv=cols.join(',')+'\n';
+  list.forEach(function(e){
+    csv+=cols.map(function(c){
+      var v=e[c]||'';
+      return typeof v==='string'&&v.indexOf(',')>=0?'"'+v+'"':v;
+    }).join(',')+'\n';
+  });
+  var blob=new Blob([csv],{type:'text/csv'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='solymar_employees_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  auditLog('EXPORT','Exported '+list.length+' employee records to CSV');
+  toast('Exported '+list.length+' records','s');
+}
+
+// ═══════════════════════════════════════════════════════
+// DISCIPLINARY LOG
+// ═══════════════════════════════════════════════════════
+var _discKey = 'solymar_disc_v1';
+function _discLoad(){ try{var r=localStorage.getItem(_discKey);return r?JSON.parse(r):[];}catch(e){return[];} }
+function _discSave(d){ try{localStorage.setItem(_discKey,JSON.stringify(d));}catch(e){} }
+
+var _discTypeColors={Warning:'#d97706',Suspension:'#dc2626','Final Warning':'#9a3412',Termination:'#1e1b4b',Demotion:'#7c3aed',Other:'#64748b'};
+var _discStatusColors={Open:'#dc2626',Pending:'#d97706',Resolved:'#16a34a'};
+
+function openAddDisc(){
+  if(!canDisc()){toast('Admin/HR access required','w');return;}
+  document.getElementById('disc-edit-id').value='';
+  document.getElementById('disc-modal-title').textContent='Add Disciplinary Record';
+  document.getElementById('disc-offence').value='';
+  document.getElementById('disc-details').value='';
+  document.getElementById('disc-penalty').value='';
+  document.getElementById('disc-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('disc-type').value='Warning';
+  document.getElementById('disc-status').value='Open';
+  var sel=document.getElementById('disc-emp-sel');
+  sel.innerHTML='<option value="">— Select Employee —</option>';
+  EMP.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' ('+e.dept+')';
+    sel.appendChild(o);
+  });
+  document.getElementById('disc-modal').style.display='flex';
+}
+function closeDiscModal(){ document.getElementById('disc-modal').style.display='none'; }
+function saveDisc(){
+  var empId=document.getElementById('disc-emp-sel').value;
+  var type=document.getElementById('disc-type').value;
+  var date=document.getElementById('disc-date').value;
+  var offence=document.getElementById('disc-offence').value.trim();
+  var details=document.getElementById('disc-details').value.trim();
+  var status=document.getElementById('disc-status').value;
+  var penalty=parseFloat(document.getElementById('disc-penalty').value)||0;
+  var editId=document.getElementById('disc-edit-id').value;
+  if(!empId||!offence||!date){alert('Please fill Employee, Date and Offence fields.');return;}
+  var emp=EMP.find(function(e){return e.id===empId;});
+  if(!emp)return;
+  var recs=_discLoad();
+  var rec={id:editId||'d'+Date.now(),empId:empId,empName:emp.name,empCode:emp.emp_code,dept:emp.dept,title:emp.title,type:type,date:date,offence:offence,details:details,status:status,penalty:penalty,createdBy:_role,createdAt:new Date().toISOString()};
+  if(editId){
+    var idx=recs.findIndex(function(r){return r.id===editId;});
+    if(idx>=0)recs[idx]=rec; else recs.unshift(rec);
+  } else { recs.unshift(rec); }
+  _discSave(recs);
+  // Also update emp offense field
+  var empObj=EMP.find(function(e){return e.id===empId;});
+  if(empObj){empObj.offense=offence;empObj.offense_desc=details;save();}
+  auditLog('DISC','['+type+'] '+emp.name+' — '+offence);
+  closeDiscModal();
+  renderDisc();
+  toast('Disciplinary record saved','s');
+}
+function editDisc(id){
+  var recs=_discLoad();
+  var rec=recs.find(function(r){return r.id===id;});
+  if(!rec)return;
+  openAddDisc();
+  setTimeout(function(){
+    document.getElementById('disc-edit-id').value=rec.id;
+    document.getElementById('disc-modal-title').textContent='Edit Disciplinary Record';
+    document.getElementById('disc-emp-sel').value=rec.empId;
+    document.getElementById('disc-type').value=rec.type;
+    document.getElementById('disc-date').value=rec.date;
+    document.getElementById('disc-offence').value=rec.offence;
+    document.getElementById('disc-details').value=rec.details||'';
+    document.getElementById('disc-status').value=rec.status;
+    document.getElementById('disc-penalty').value=rec.penalty||'';
+  },50);
+}
+function deleteDisc(id){
+  if(!canDisc()){toast('Admin/HR access required','w');return;}
+  if(!confirm('Delete this disciplinary record?'))return;
+  var recs=_discLoad().filter(function(r){return r.id!==id;});
+  _discSave(recs);
+  auditLog('DELETE','Deleted disciplinary record '+id);
+  renderDisc();
+  toast('Record deleted','w');
+}
+function updateDiscStatus(id,status){
+  var recs=_discLoad();
+  var rec=recs.find(function(r){return r.id===id;});
+  if(rec){rec.status=status;_discSave(recs);renderDisc();toast('Status updated','s');}
+}
+function renderDisc(){
+  var recs=_discLoad();
+  var q=(document.getElementById('disc-search')||{value:''}).value.toLowerCase();
+  var ft=(document.getElementById('disc-filter-type')||{value:''}).value;
+  var fs=(document.getElementById('disc-filter-status')||{value:''}).value;
+  var list=recs.filter(function(r){
+    var mq=!q||(r.empName||'').toLowerCase().indexOf(q)>=0||(r.offence||'').toLowerCase().indexOf(q)>=0;
+    var mt=!ft||r.type===ft;
+    var ms=!fs||r.status===fs;
+    return mq&&mt&&ms;
+  });
+  // Stats
+  var statsEl=document.getElementById('disc-stats');
+  if(statsEl){
+    var open=recs.filter(function(r){return r.status==='Open';}).length;
+    var pending=recs.filter(function(r){return r.status==='Pending';}).length;
+    var resolved=recs.filter(function(r){return r.status==='Resolved';}).length;
+    statsEl.innerHTML=
+      '<div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.2);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:#dc2626">'+open+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase">Open</div></div>'
+      +'<div style="background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.2);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:#d97706">'+pending+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase">Pending</div></div>'
+      +'<div style="background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:12px;padding:12px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:800;color:#16a34a">'+resolved+'</div>'
+      +'<div style="font-size:10px;color:var(--text-2);font-weight:600;text-transform:uppercase">Resolved</div></div>';
+  }
+  var cnt=document.getElementById('disc-count');
+  if(cnt)cnt.innerHTML='<strong>'+list.length+'</strong> record'+(list.length!==1?'s':'');
+  var cards=document.getElementById('disc-cards');
+  if(!cards)return;
+  if(!list.length){
+    cards.innerHTML='<div class="card" style="text-align:center;padding:32px">'
+      +'<div style="font-size:36px;margin-bottom:10px">🛡️</div>'
+      +'<div style="font-weight:600;color:var(--text-2);font-size:13px">No disciplinary records</div>'
+      +'<div style="font-size:11px;color:var(--text-3);margin-top:4px">Click \"Add Record\" to log a disciplinary action</div></div>';
+    return;
+  }
+  var out='';
+  list.forEach(function(r){
+    var tc=_discTypeColors[r.type]||'#64748b';
+    var sc=_discStatusColors[r.status]||'#64748b';
+    var d=new Date(r.date);
+    var ds=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+    out+='<div style="background:var(--bg-white);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04)">'
+      +'<div style="border-left:4px solid '+tc+';padding:13px 14px">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">'
+      +'<div style="flex:1">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+      +'<span style="font-weight:700;font-size:13px;color:var(--text)">'+r.empName+'</span>'
+      +'<span style="background:'+tc+'20;color:'+tc+';border:1px solid '+tc+'40;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">'+r.type+'</span>'
+      +'<span style="background:'+sc+'20;color:'+sc+';border:1px solid '+sc+'40;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">'+r.status+'</span>'
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--text-2);margin-bottom:4px">'+(r.title||'')+(r.dept?' · '+r.dept:'')+(r.empCode?' · #'+r.empCode:'')+'</div>'
+      +'<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">📋 '+r.offence+'</div>'
+      +(r.details?'<div style="font-size:11px;color:var(--text-2);line-height:1.5">'+r.details+'</div>':'')
+      +(r.penalty>0?'<div style="margin-top:5px;font-size:11px;color:#dc2626;font-weight:600">💰 Penalty: BD '+r.penalty.toFixed(3)+'</div>':'')
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0">'
+      +'<div style="font-size:11px;color:var(--text-2);margin-bottom:8px">'+ds+'</div>'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">'
+      +(canDisc()?'<button onclick="editDisc(\''+r.id+'\')" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:600;cursor:pointer;color:var(--text-2)">✏ Edit</button>':'')
+      +(canDisc()&&r.status!=='Resolved'?'<button onclick="updateDiscStatus(\''+r.id+'\',\'Resolved\')" style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:6px;padding:5px 10px;font-size:10px;font-weight:600;cursor:pointer;color:#16a34a">✓ Resolve</button>':'')
+      +(canDisc()?'<button onclick="deleteDisc(\''+r.id+'\')" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:6px;padding:5px 8px;font-size:10px;cursor:pointer;color:#dc2626">🗑</button>':'')
+      +'</div></div></div></div></div>';
+  });
+  cards.innerHTML=out;
+}
+
+// ═══════════════════════════════════════════════════════
+// PAYSLIP GENERATOR
+// ═══════════════════════════════════════════════════════
+function psLoadEmp(){
+  var sel=document.getElementById('ps-emp');
+  if(!sel)return;
+  var id=sel.value;
+  if(!id)return;
+  var e=EMP.find(function(x){return x.id===id;});
+  if(!e)return;
+  document.getElementById('ps-basic').value=e.basic||0;
+  document.getElementById('ps-housing').value=e.housing||0;
+  document.getElementById('ps-transport').value=e.transport||0;
+  document.getElementById('ps-phone').value=e.phone_allow||0;
+  document.getElementById('ps-ot').value='';
+  document.getElementById('ps-other-earn').value='';
+  document.getElementById('ps-lmra').value='';
+  document.getElementById('ps-gosi-ded').value='';
+  document.getElementById('ps-advance').value='';
+  document.getElementById('ps-absent-ded').value='';
+  document.getElementById('ps-other-ded').value='';
+  psCalc();
+}
+function psInitEmpList(){
+  var sel=document.getElementById('ps-emp');
+  if(!sel||sel.options.length>1)return;
+  EMP.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' (#'+e.emp_code+') — '+e.dept;
+    sel.appendChild(o);
+  });
+}
+function psCalc(){
+  var basic=parseFloat(document.getElementById('ps-basic').value)||0;
+  var housing=parseFloat(document.getElementById('ps-housing').value)||0;
+  var transport=parseFloat(document.getElementById('ps-transport').value)||0;
+  var phone=parseFloat(document.getElementById('ps-phone').value)||0;
+  var ot=parseFloat(document.getElementById('ps-ot').value)||0;
+  var otherEarn=parseFloat(document.getElementById('ps-other-earn').value)||0;
+  var lmra=parseFloat(document.getElementById('ps-lmra').value)||0;
+  var gosi=parseFloat(document.getElementById('ps-gosi-ded').value)||0;
+  var advance=parseFloat(document.getElementById('ps-advance').value)||0;
+  var absentDed=parseFloat(document.getElementById('ps-absent-ded').value)||0;
+  var otherDed=parseFloat(document.getElementById('ps-other-ded').value)||0;
+  var totalEarnings=basic+housing+transport+phone+ot+otherEarn;
+  var totalDed=lmra+gosi+advance+absentDed+otherDed;
+  var net=totalEarnings-totalDed;
+  var res=document.getElementById('ps-result');
+  if(!res)return;
+  if(!basic){res.style.display='none';return;}
+  res.style.display='block';
+  function row(lbl,val,col){
+    if(!val)return '';
+    return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-l);font-size:12px">'
+      +'<span style="color:var(--text-2)">'+lbl+'</span>'
+      +'<span style="font-weight:700;color:'+(col||'var(--text)')+'">BD '+val.toFixed(3)+'</span></div>';
+  }
+  var h='<div class="card" style="margin-bottom:0">'
+    +'<div style="font-size:10px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">▲ Earnings</div>'
+    +row('Basic Salary',basic)
+    +row('Housing Allowance',housing)
+    +row('Transport Allowance',transport)
+    +row('Phone Allowance',phone)
+    +row('Overtime Pay',ot,'#0891b2')
+    +row('Other Earnings',otherEarn,'#0891b2')
+    +'<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;font-weight:700;color:#16a34a">'
+    +'<span>Total Earnings</span><span>BD '+totalEarnings.toFixed(3)+'</span></div>'
+    +'<div style="height:1px;background:var(--border);margin:8px 0"></div>'
+    +'<div style="font-size:10px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">▼ Deductions</div>'
+    +row('LMRA',lmra,'#dc2626')
+    +row('GOSI',gosi,'#dc2626')
+    +row('Advance Deduction',advance,'#dc2626')
+    +row('Absent Days Deduction',absentDed,'#dc2626')
+    +row('Other Deductions',otherDed,'#dc2626')
+    +'<div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;font-weight:700;color:#dc2626">'
+    +'<span>Total Deductions</span><span>BD '+totalDed.toFixed(3)+'</span></div>'
+    +'<div style="height:2px;background:var(--primary);margin:10px 0"></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:10px 14px;background:rgba(10,22,41,0.04);border-radius:12px;font-size:16px;font-weight:800">'
+    +'<span style="color:var(--primary)">Net Pay</span>'
+    +'<span style="color:var(--primary)">BD '+net.toFixed(3)+'</span></div>'
+    +'</div>';
+  res.innerHTML=h;
+}
+function psReset(){
+  ['ps-emp','ps-period','ps-basic','ps-housing','ps-transport','ps-phone','ps-ot','ps-other-earn','ps-lmra','ps-gosi-ded','ps-advance','ps-absent-ded','ps-other-ded'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  var res=document.getElementById('ps-result');if(res)res.style.display='none';
+}
+function psPrint(){
+  var selEl=document.getElementById('ps-emp');
+  var empId=selEl?selEl.value:'';
+  var e=empId?EMP.find(function(x){return x.id===empId;}):null;
+  var period=(document.getElementById('ps-period')||{value:''}).value;
+  var basic=parseFloat(document.getElementById('ps-basic').value)||0;
+  if(!basic){alert('Please enter salary details first.');return;}
+  var housing=parseFloat(document.getElementById('ps-housing').value)||0;
+  var transport=parseFloat(document.getElementById('ps-transport').value)||0;
+  var phone=parseFloat(document.getElementById('ps-phone').value)||0;
+  var ot=parseFloat(document.getElementById('ps-ot').value)||0;
+  var otherEarn=parseFloat(document.getElementById('ps-other-earn').value)||0;
+  var lmra=parseFloat(document.getElementById('ps-lmra').value)||0;
+  var gosi=parseFloat(document.getElementById('ps-gosi-ded').value)||0;
+  var advance=parseFloat(document.getElementById('ps-advance').value)||0;
+  var absentDed=parseFloat(document.getElementById('ps-absent-ded').value)||0;
+  var otherDed=parseFloat(document.getElementById('ps-other-ded').value)||0;
+  var totalEarnings=basic+housing+transport+phone+ot+otherEarn;
+  var totalDed=lmra+gosi+advance+absentDed+otherDed;
+  var net=totalEarnings-totalDed;
+  var periodLabel='';
+  if(period){var pd=new Date(period+'-01');periodLabel=pd.toLocaleDateString('en-GB',{month:'long',year:'numeric'});}
+  var empName=e?e.name:(selEl&&selEl.options[selEl.selectedIndex]?selEl.options[selEl.selectedIndex].text:'Employee');
+  function tr(lbl,val,col){
+    if(!val)return '';
+    return '<tr><td style="padding:6px 16px;font-size:11px;color:#555;border-bottom:1px solid #f0f0f0">'+lbl+'</td>'
+      +'<td style="padding:6px 16px;font-size:11px;font-weight:700;text-align:right;border-bottom:1px solid #f0f0f0;color:'+(col||'#222')+'">BD '+val.toFixed(3)+'</td></tr>';
+  }
+  var body='<div style="max-width:600px;margin:60px auto 20px;font-family:Arial,sans-serif;background:#fff;color:#000">'
+    +'<div style="background:#0a1629;color:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center">'
+    +'<div><div style="font-size:16px;font-weight:800;color:#c9a96e;letter-spacing:1px">THE SOLYMAR HOTEL</div>'
+    +'<div style="font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:2px;margin-top:2px">AMWAJ ISLAND, BAHRAIN</div></div>'
+    +'<div style="text-align:right"><div style="font-size:13px;font-weight:700;color:#fff">PAYSLIP</div>'
+    +(periodLabel?'<div style="font-size:10px;color:#c9a96e">'+periodLabel+'</div>':'')+'</div></div>'
+    +'<div style="background:#f8f6f0;padding:12px 20px;border-bottom:2px solid #c9a96e;display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+    +'<div><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:1px">Employee</div><div style="font-size:13px;font-weight:700">'+empName+'</div></div>'
+    +(e?'<div><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:1px">Employee Code</div><div style="font-size:13px;font-weight:700">#'+(e.emp_code||'-')+'</div></div>'
+    +'<div><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:1px">Department</div><div style="font-size:12px;font-weight:600">'+(e.dept||'-')+'</div></div>'
+    +'<div><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:1px">Designation</div><div style="font-size:12px;font-weight:600">'+(e.title||'-')+'</div></div>':'')
+    +'</div>'
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:0">'
+    +'<tr style="background:#1b5e20"><td colspan="2" style="padding:8px 16px;font-size:11px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:1.5px">Earnings</td></tr>'
+    +tr('Basic Salary',basic)
+    +tr('Housing Allowance',housing)
+    +tr('Transport Allowance',transport)
+    +tr('Phone Allowance',phone)
+    +tr('Overtime Pay',ot,'#006600')
+    +tr('Other Earnings',otherEarn,'#006600')
+    +'<tr style="background:#e8f5e9"><td style="padding:8px 16px;font-size:12px;font-weight:700;color:#1b5e20">Total Earnings</td>'
+    +'<td style="padding:8px 16px;font-size:12px;font-weight:800;text-align:right;color:#1b5e20">BD '+totalEarnings.toFixed(3)+'</td></tr>'
+    +'<tr style="background:#b71c1c"><td colspan="2" style="padding:8px 16px;font-size:11px;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:1.5px">Deductions</td></tr>'
+    +tr('LMRA',lmra,'#dc2626')
+    +tr('GOSI',gosi,'#dc2626')
+    +tr('Advance Deduction',advance,'#dc2626')
+    +tr('Absent Days Deduction',absentDed,'#dc2626')
+    +tr('Other Deductions',otherDed,'#dc2626')
+    +'<tr style="background:#fde8e8"><td style="padding:8px 16px;font-size:12px;font-weight:700;color:#b71c1c">Total Deductions</td>'
+    +'<td style="padding:8px 16px;font-size:12px;font-weight:800;text-align:right;color:#b71c1c">BD '+totalDed.toFixed(3)+'</td></tr>'
+    +'<tr style="background:#0a1629"><td style="padding:12px 16px;font-size:14px;font-weight:700;color:#c9a96e">NET PAY</td>'
+    +'<td style="padding:12px 16px;font-size:16px;font-weight:900;text-align:right;color:#fff">BD '+net.toFixed(3)+'</td></tr>'
+    +'</table>'
+    +'<div style="padding:12px 20px;background:#f9f6f0;border-top:1px solid #e8d5b0;display:flex;justify-content:space-around;margin-top:0">'
+    +'<div style="text-align:center"><div style="border-top:1px solid #000;width:120px;margin:30px auto 4px;font-size:10px">Employee Signature</div></div>'
+    +'<div style="text-align:center"><div style="border-top:1px solid #000;width:120px;margin:30px auto 4px;font-size:10px">HR Manager</div></div>'
+    +'<div style="text-align:center"><div style="border-top:1px solid #000;width:120px;margin:30px auto 4px;font-size:10px">Finance Controller</div></div>'
+    +'</div>'
+    +'<div style="text-align:center;padding:8px;font-size:9px;color:#aaa">Generated '+new Date().toLocaleDateString('en-GB')+' — CONFIDENTIAL — Solymar Hotel HR System</div>'
+    +'</div>'
+    +'<div id="pb" style="position:fixed;top:0;left:0;right:0;background:#0a1629;padding:10px 16px;display:flex;gap:8px;z-index:99">'
+    +'<span style="color:#c9a96e;font-weight:700;flex:1">Payslip — '+empName+(periodLabel?' — '+periodLabel:'')+'</span>'
+    +'<button id="pbtn" style="padding:8px 18px;background:#c9a96e;color:#0a1629;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer">🖨 Print / PDF</button>'
+    +'<button id="bbtn" style="padding:8px 14px;background:#555;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer">← Close</button>'
+    +'</div>'
+    +'<style>@media print{#pb{display:none!important}@page{margin:8mm;size:A4}}</style>';
+  var w=window.open('','_blank','width=700,height=960');
+  if(!w){alert('Please allow popups');return;}
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Payslip - '+empName+'</title></head><body style="margin:0;background:#f0ede6">'+body+'</body></html>');
+  w.document.close();
+  setTimeout(function(){
+    w.document.getElementById('pbtn').onclick=function(){w.print();};
+    w.document.getElementById('bbtn').onclick=function(){w.close();};
+  },300);
+  auditLog('EXPORT','Printed payslip for '+(e?e.name:empName)+(periodLabel?' — '+periodLabel:''));
+}
+
+// ═══════════════════════════════════════════════════════
+// GITHUB DATA FETCH (Admin only)
+// ═══════════════════════════════════════════════════════
+function ghFetch(){
+  if(_role!=='admin'){toast('Admin access required','w');return;}
+  var url=(document.getElementById('gh-url')||{value:''}).value.trim();
+  if(!url){toast('Please enter a GitHub raw URL','w');return;}
+  var status=document.getElementById('gh-status');
+  var preview=document.getElementById('gh-preview');
+  if(status)status.innerHTML='<div style="padding:12px 16px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;font-size:12px;color:#0369a1">⏳ Fetching from GitHub...</div>';
+  if(preview)preview.innerHTML='';
+  fetch(url,{cache:'no-cache'})
+    .then(function(r){
+      if(!r.ok)throw new Error('HTTP '+r.status+': '+r.statusText);
+      return r.json();
+    })
+    .then(function(data){
+      if(!Array.isArray(data))throw new Error('Data is not a JSON array');
+      if(status)status.innerHTML='<div style="padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:12px;color:#15803d">✅ Fetched '+data.length+' records from GitHub</div>';
+      // Preview table
+      var h='<div class="card" style="padding:0;overflow:hidden">';
+      h+='<div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">';
+      h+='<div style="font-size:13px;font-weight:700">Preview — '+data.length+' records</div>';
+      h+='<button onclick="ghMerge()" style="background:#0a1629;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer">↓ Load into System</button>';
+      h+='</div>';
+      h+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px;min-width:600px">';
+      h+='<thead><tr style="background:var(--bg);border-bottom:1px solid var(--border)">';
+      ['#','Name','Dept','Title','Nationality','Status','Total (BD)'].forEach(function(c){h+='<th style="padding:8px 10px;text-align:left;font-weight:600;color:var(--text-2)">'+c+'</th>';});
+      h+='</tr></thead><tbody>';
+      data.slice(0,50).forEach(function(e,i){
+        h+='<tr style="border-bottom:1px solid var(--border-l);'+(i%2===0?'':'background:#f9fafb')+'">';
+        h+='<td style="padding:7px 10px;color:var(--text-2)">'+(e.emp_code||i+1)+'</td>';
+        h+='<td style="padding:7px 10px;font-weight:600;color:var(--text)">'+(e.name||'—')+'</td>';
+        h+='<td style="padding:7px 10px;color:var(--text-2)">'+(e.dept||'—')+'</td>';
+        h+='<td style="padding:7px 10px;color:var(--text-2)">'+(e.title||'—')+'</td>';
+        h+='<td style="padding:7px 10px;color:var(--text-2)">'+(e.nationality||'—')+'</td>';
+        h+='<td style="padding:7px 10px"><span style="background:rgba(22,163,74,0.1);color:#16a34a;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:600">'+(e.status||'—')+'</span></td>';
+        h+='<td style="padding:7px 10px;font-weight:600;color:var(--text)">'+(e.total||0)+'</td>';
+        h+='</tr>';
+      });
+      if(data.length>50)h+='<tr><td colspan="7" style="padding:10px;text-align:center;color:var(--text-2);font-size:11px">... and '+(data.length-50)+' more records</td></tr>';
+      h+='</tbody></table></div></div>';
+      if(preview)preview.innerHTML=h;
+      window._ghData=data;
+      auditLog('EXPORT','Fetched '+data.length+' records from GitHub: '+url);
+    })
+    .catch(function(err){
+      if(status)status.innerHTML='<div style="padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;font-size:12px;color:#dc2626">❌ Error: '+err.message+'</div>';
+      if(preview)preview.innerHTML='';
+    });
+}
+function ghMerge(){
+  if(!window._ghData||!Array.isArray(window._ghData)){toast('No data to load','w');return;}
+  if(!confirm('Load '+window._ghData.length+' records from GitHub into the system?\n\nThis will REPLACE the current employee data.'))return;
+  EMP=JSON.parse(JSON.stringify(window._ghData));
+  save();
+  renderHBadges();
+  renderDash();
+  auditLog('EDIT','Replaced employee data with '+EMP.length+' records from GitHub');
+  toast('Loaded '+EMP.length+' records from GitHub','s');
+  showPg('dir');
+}
+
+// ═══════════════════════════════════════════════════════
+// PATCH: Intercept save/edit/delete to write audit entries
+// ═══════════════════════════════════════════════════════
+var _origSaveEmp = typeof saveEmp === 'function' ? saveEmp : null;
+// Wrap openAdd to track new vs edit mode
+var _psSaveEmpPatched = false;
+function _patchAudit(){
+  if(_psSaveEmpPatched)return;
+  _psSaveEmpPatched=true;
+  var origSaveEmp=window.saveEmp;
+  window.saveEmp=function(){
+    var isEdit=!!(editId);
+    origSaveEmp.apply(this,arguments);
+    try{
+      var name=document.getElementById('f-name');
+      auditLog(isEdit?'EDIT':'ADD',(isEdit?'Edited employee: ':'Added employee: ')+(name?name.value:''));
+    }catch(e){}
+  };
+  var origConfirmDel=window.confirmDel;
+  window.confirmDel=function(){
+    try{
+      var e=EMP.find(function(x){return x.id===delId;});
+      if(e)auditLog('DELETE','Deleted employee: '+e.name+' (#'+e.emp_code+')');
+    }catch(err){}
+    origConfirmDel.apply(this,arguments);
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// PATCH showPg to run page-specific init
+// ═══════════════════════════════════════════════════════
+var _origShowPg = window.showPg;
+window.showPg = function(id){
+  _origShowPg(id);
+  if(id==='payslip')psInitEmpList();
+  if(id==='discipline')renderDisc();
+  if(id==='audit'){if(_role!=='admin'){toast('Admin access only','w');showPg('dash');return;}renderAudit();}
+  if(id==='github'){if(_role!=='admin'){toast('Admin access only','w');showPg('dash');return;}}
+};
+
+// ═══════════════════════════════════════════════════════
+// PATCH loginOK to show admin-only nav items and log
+// ═══════════════════════════════════════════════════════
+var _origLoginOK=window._loginOK;
+window._loginOK=function(role){
+  _origLoginOK(role);
+  _patchAudit();
+  // Show/hide admin-only nav
+  var auditNav=document.getElementById('nav-audit');
+  var ghNav=document.getElementById('nav-github');
+  if(auditNav)auditNav.style.display=role==='admin'?'flex':'none';
+  if(ghNav)ghNav.style.display=role==='admin'?'flex':'none';
+  var exportBtn=document.getElementById('btn-export-github');
+  if(exportBtn)exportBtn.style.display=role==='admin'?'flex':'none';
+  // Hide discipline add btn for non-editors
+  var discBtn=document.getElementById('disc-add-btn');
+  if(discBtn)discBtn.style.display=(role==='admin'||role==='hr')?'block':'none';
+  auditLog('LOGIN','Logged in as '+role);
+  // Set payslip period to current month
+  var psPeriod=document.getElementById('ps-period');
+  if(psPeriod&&!psPeriod.value){
+    var now=new Date();
+    psPeriod.value=now.getFullYear()+'-'+(String(now.getMonth()+1).padStart(2,'0'));
+  }
+};
 function closeSidebar(){document.body.classList.remove("sidebar-open");}
 
 // ═══ LEAVE TRACKER ═══
@@ -5433,6 +6213,13 @@ function printLvSettle(){
     try{ iframe.contentWindow.focus(); iframe.contentWindow.print(); }
     catch(e){ alert('Print failed: '+e.message+'. Try long-pressing the page to save as PDF.'); }
   }, 500);
+}
+
+function clearAuditLog(){
+  if(!confirm('Clear all audit log entries? This cannot be undone.')) return;
+  _auditSave([]);
+  renderAudit();
+  toast('Audit log cleared','w');
 }
 </script>
 
