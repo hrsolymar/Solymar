@@ -1818,6 +1818,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   <div id="gh-preview"></div>
 </div>
 
+
 <!-- IMPORT DATA PAGE -->
 <div id="pg-dbimport" class="pg">
 <div class="back-btn-container" onclick="showPg('dash')">
@@ -1827,12 +1828,12 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   </div>
 </div>
 <div class="page-header" style="margin-top:50px">
-  <div><h1>&#128202; Import Data</h1><p>Upload Excel or CSV to update the live Supabase database</p></div>
+  <div><h1>&#128202; Import Data</h1><p>Upload Excel or CSV &#8212; works with your existing report format</p></div>
 </div>
 <div class="card" style="margin-bottom:16px">
-  <div style="font-size:13px;font-weight:700;color:#0A1629;margin-bottom:4px">Upload Excel or CSV File</div>
-  <div style="font-size:11px;color:#64748b;margin-bottom:16px">Supports .xlsx, .xls and .csv &#8212; employees matched by CPR number</div>
-  <div id="dbimport-dropzone" onclick="document.getElementById('dbimport-file').click()" style="border:2px dashed #e2e8f0;border-radius:16px;padding:32px;text-align:center;cursor:pointer;background:#fafbfc">
+  <div style="font-size:13px;font-weight:700;color:#0A1629;margin-bottom:4px">Upload File</div>
+  <div style="font-size:11px;color:#64748b;margin-bottom:16px">Supports .xlsx, .xls, .csv &#8212; your column names are auto-detected</div>
+  <div id="dbimport-dropzone" onclick="document.getElementById('dbimport-file').click()" style="border:2px dashed #e2e8f0;border-radius:16px;padding:32px;text-align:center;cursor:pointer;background:#fafbfc;transition:all 0.2s">
     <div style="font-size:36px;margin-bottom:8px">&#128194;</div>
     <div style="font-size:14px;font-weight:600;color:#0A1629">Tap to choose file</div>
     <div style="font-size:11px;color:#94a3b8;margin-top:4px">.xlsx, .xls or .csv</div>
@@ -1841,24 +1842,20 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   <div id="dbimport-filename" style="margin-top:10px;font-size:12px;color:#059669;font-weight:600;display:none"></div>
 </div>
 <div class="card" style="margin-bottom:16px">
-  <div style="font-size:13px;font-weight:700;color:#0A1629;margin-bottom:12px">Required Column Names in your file</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>name</b> &#8212; Full name</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>cpr</b> &#8212; CPR (key field)*</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>emp_code</b> &#8212; Employee #</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>pp</b> &#8212; Passport no.</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>dept</b> &#8212; Department</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>title</b> &#8212; Job title</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>nationality</b> &#8212; e.g. IND</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>gender</b> &#8212; M or F</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>wp_expiry</b> &#8212; DD-MM-YYYY</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>pp_expiry</b> &#8212; DD-MM-YYYY</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>status</b> &#8212; RENEWED etc.</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>basic</b> &#8212; Basic salary</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>housing</b> &#8212; Housing allow.</div>
-    <div style="background:#f8fafc;border-radius:8px;padding:8px 10px"><b>transport</b> &#8212; Transport allow.</div>
+  <div style="font-size:13px;font-weight:700;color:#0A1629;margin-bottom:8px">&#9989; Auto-detected column names</div>
+  <div style="font-size:11px;color:#64748b;line-height:1.8">
+    The importer recognises your columns automatically including:<br>
+    <b>Name:</b> Expat Name, Employee Name, Full Name, Staff Name, Name<br>
+    <b>CPR:</b> Expat CPR #, CPR No, CPR Number, CPR<br>
+    <b>Passport:</b> Expat PP #, PP No, Passport Number, PP<br>
+    <b>WP Expiry:</b> WP Expiry Date, WP Expiry, Work Permit Expiry<br>
+    <b>PP Expiry:</b> PP Expiry Date, PP Expiry, Passport Expiry<br>
+    <b>Status:</b> Expat Current Status, Status, Visa Status, WP Status<br>
+    <b>Gender:</b> Expat Gender, Gender<br>
+    <b>IN/OUT:</b> IN/OUT Status, In Out, InOut<br>
+    <b>Nationality:</b> Nationality, Nat<br>
+    <b>Offense:</b> Offence Code, Offense Classification, Offence<br>
   </div>
-  <div style="margin-top:8px;font-size:10px;color:#94a3b8">* CPR matches existing employees. New CPR = new employee added.</div>
 </div>
 <div id="dbimport-preview-wrap" style="display:none">
   <div class="card" style="margin-bottom:16px">
@@ -1870,15 +1867,14 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
         <span id="dbimport-badge-skip" style="display:none;background:#f1f5f9;color:#64748b;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700"></span>
       </div>
     </div>
-    <div id="dbimport-preview-list" style="max-height:320px;overflow-y:auto"></div>
+    <div id="dbimport-preview-list" style="max-height:350px;overflow-y:auto"></div>
   </div>
-  <button id="dbimport-confirm-btn" onclick="dbImportConfirm()" style="width:100%;padding:16px;background:#0A1629;color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+  <button id="dbimport-confirm-btn" onclick="dbImportConfirm()" style="width:100%;padding:16px;background:#0A1629;color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px">
     <span>&#128640;</span> Confirm &amp; Save to Supabase
   </button>
 </div>
 </div>
 <!-- END IMPORT DATA PAGE -->
-
 </div><!-- /main -->
 
   </main>
@@ -9316,115 +9312,197 @@ function confirmCSVImport(){
   save();
   renderDir();
   closeCSVModal();
-  if(SB_KEY){
-    sbSaveAllEmployees().then(function(){
-      toast('✅ تم: اضافة '+added+' موظف، تحديث '+updated+' موظف — Synced to Supabase','s');
-    });
-  } else {
-    toast('تم: اضافة '+added+' موظف، تحديث '+updated+' موظف','s');
-  }
+  toast('تم: اضافة '+added+' موظف، تحديث '+updated+' موظف','s');
   auditLog('IMPORT','CSV: +'+added+' updated:'+updated);
+  setTimeout(function(){toast('لا تنسَ Export لحفظ التغييرات على GitHub','s');},2500);
 }
 
 // ===========================================
-// EXCEL / CSV IMPORT TO SUPABASE
+// SMART EXCEL / CSV IMPORT TO SUPABASE
 // ===========================================
 var _dbImportParsed=[];
+
+// Smart column name resolver - maps ANY variation to our field name
+function _dbResolveCol(headers, candidates){
+  for(var i=0;i<candidates.length;i++){
+    var c=candidates[i].toLowerCase().trim();
+    for(var j=0;j<headers.length;j++){
+      if(headers[j].toLowerCase().trim()===c) return j;
+    }
+  }
+  // Partial match fallback
+  for(var i=0;i<candidates.length;i++){
+    var c=candidates[i].toLowerCase().trim();
+    for(var j=0;j<headers.length;j++){
+      if(headers[j].toLowerCase().trim().indexOf(c)>=0||c.indexOf(headers[j].toLowerCase().trim())>=0) return j;
+    }
+  }
+  return -1;
+}
+
+var _dbColMap = {
+  name:        ['expat name','employee name','full name','staff name','name','worker name','expatriate name'],
+  cpr:         ['expat cpr #','expat cpr','cpr no','cpr number','cpr #','cpr','id number','civil id'],
+  pp:          ['expat pp #','expat pp','pp no','pp number','passport no','passport number','passport #','pp'],
+  emp_code:    ['employee code','emp code','emp no','staff id','employee no','employee #','emp_code'],
+  dept:        ['department','dept','section','division'],
+  title:       ['job title','title','position','designation','role'],
+  nationality: ['nationality','nat','country','citizenship'],
+  gender:      ['expat gender','gender','sex'],
+  dob:         ['date of birth','dob','birth date','birthdate'],
+  wp_expiry:   ['wp expiry date','wp expiry','work permit expiry','work permit date','wp date','permit expiry','wp_expiry'],
+  pp_expiry:   ['pp expiry date','pp expiry','passport expiry','passport exp date','pp_expiry'],
+  status:      ['expat current status','current status','visa status','wp status','status'],
+  in_out:      ['in/out status','in out status','in_out','inout','in/out','presence'],
+  offense:     ['offence code','offense code','offense classification','offence classification','offence'],
+  offense_desc:['offence description','offense description','offence desc'],
+};
 
 function dbImportRead(input){
   var file=input.files[0];
   if(!file)return;
   var ext=file.name.split('.').pop().toLowerCase();
   var fn=document.getElementById('dbimport-filename');
-  if(fn){fn.textContent='File: '+file.name;fn.style.display='block';}
+  if(fn){fn.textContent='File loaded: '+file.name;fn.style.display='block';}
   var dz=document.getElementById('dbimport-dropzone');
   if(dz){dz.style.borderColor='#3ECF8E';dz.style.background='#f0fdf9';}
+
   if(ext==='csv'){
     var r=new FileReader();
     r.onload=function(e){_dbImportProcess(e.target.result);};
     r.readAsText(file);
   } else if(ext==='xlsx'||ext==='xls'){
-    if(typeof XLSX==='undefined'){
-      var s=document.createElement('script');
-      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      s.onload=function(){
-        var r2=new FileReader();
-        r2.onload=function(e){
+    var loadXLSX=function(fileObj){
+      var r2=new FileReader();
+      r2.onload=function(e){
+        try{
           var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
           var ws=wb.Sheets[wb.SheetNames[0]];
           _dbImportProcess(XLSX.utils.sheet_to_csv(ws));
-        };
-        r2.readAsArrayBuffer(file);
+        }catch(err){toast('Error reading file: '+err.message,'w');}
       };
+      r2.readAsArrayBuffer(fileObj);
+    };
+    if(typeof XLSX==='undefined'){
+      var s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload=function(){loadXLSX(file);};
       document.head.appendChild(s);
     } else {
-      var r3=new FileReader();
-      r3.onload=function(e){
-        var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-        var ws=wb.Sheets[wb.SheetNames[0]];
-        _dbImportProcess(XLSX.utils.sheet_to_csv(ws));
-      };
-      r3.readAsArrayBuffer(file);
+      loadXLSX(file);
     }
   } else {
-    toast('Please upload .xlsx, .xls or .csv file','w');
+    toast('Please upload .xlsx, .xls or .csv','w');
   }
+}
+
+function _dbSplitCSVLine(line){
+  var res=[],cur='',inQ=false;
+  for(var i=0;i<line.length;i++){
+    var c=line[i];
+    if(c==='"'){inQ=!inQ;}
+    else if(c===','&&!inQ){res.push(cur.trim());cur='';}
+    else{cur+=c;}
+  }
+  res.push(cur.trim());
+  return res;
 }
 
 function _dbImportProcess(csvText){
   var lines=csvText.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
-  if(lines.length<2){toast('File is empty','w');return;}
-  var headers=lines[0].split(',').map(function(h){return h.replace(/^"|"$/g,'').trim().toLowerCase().replace(/\s+/g,'_');});
-  function col(row,name){var idx=headers.indexOf(name);if(idx<0)return '';return (row[idx]||'').replace(/^"|"$/g,'').trim();}
-  function splitLine(line){var res=[],cur='',inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){res.push(cur);cur='';}else{cur+=c;}}res.push(cur);return res;}
+  if(lines.length<2){toast('File appears empty','w');return;}
+
+  var headers=_dbSplitCSVLine(lines[0]);
+  console.log('Detected headers:',headers);
+
+  // Build index map for all our fields
+  var idx={};
+  Object.keys(_dbColMap).forEach(function(field){
+    idx[field]=_dbResolveCol(headers,_dbColMap[field]);
+  });
+  console.log('Column mapping:',idx);
+
+  function getVal(row,field){
+    if(idx[field]<0)return '';
+    var v=(row[idx[field]]||'').replace(/^"|"$/g,'').trim();
+    return v;
+  }
 
   _dbImportParsed=[];
   var newC=0,updC=0,skipC=0;
+
   for(var i=1;i<lines.length;i++){
-    var row=splitLine(lines[i]);
-    var name=col(row,'name');
-    var cpr=col(row,'cpr');
+    var row=_dbSplitCSVLine(lines[i]);
+    var name=getVal(row,'name');
+    var cpr=getVal(row,'cpr');
     if(!name&&!cpr)continue;
+
     var d={
-      name:name,cpr:cpr,
-      emp_code:col(row,'emp_code')||col(row,'empcode')||col(row,'employee_code')||'',
-      pp:col(row,'pp')||col(row,'passport')||'',
-      dept:col(row,'dept')||col(row,'department')||'',
-      title:col(row,'title')||col(row,'job_title')||'',
-      nationality:col(row,'nationality')||col(row,'nat')||'',
-      gender:col(row,'gender')||'',
-      dob:col(row,'dob')||'',
-      wp_expiry:col(row,'wp_expiry')||col(row,'wp')||'',
-      pp_expiry:col(row,'pp_expiry')||'',
-      status:col(row,'status')||'RENEWED',
-      in_out:col(row,'in_out')||col(row,'inout')||'IN',
-      basic:parseFloat(col(row,'basic'))||0,
-      housing:parseFloat(col(row,'housing'))||0,
-      transport:parseFloat(col(row,'transport'))||0,
-      phone_allow:parseFloat(col(row,'phone_allow')||col(row,'phone'))||0,
-      allowances:parseFloat(col(row,'allowances'))||0,
-      total:parseFloat(col(row,'total'))||0
+      name:name,
+      cpr:cpr,
+      emp_code:getVal(row,'emp_code'),
+      pp:getVal(row,'pp'),
+      dept:getVal(row,'dept'),
+      title:getVal(row,'title'),
+      nationality:getVal(row,'nationality'),
+      gender:getVal(row,'gender'),
+      dob:getVal(row,'dob'),
+      wp_expiry:getVal(row,'wp_expiry'),
+      pp_expiry:getVal(row,'pp_expiry'),
+      status:getVal(row,'status')||'RENEWED',
+      in_out:getVal(row,'in_out')||'IN',
+      offense:getVal(row,'offense'),
+      offense_desc:getVal(row,'offense_desc'),
+      basic:parseFloat(getVal(row,'basic'))||0,
+      housing:parseFloat(getVal(row,'housing'))||0,
+      transport:parseFloat(getVal(row,'transport'))||0,
+      phone_allow:parseFloat(getVal(row,'phone_allow'))||0,
+      allowances:parseFloat(getVal(row,'allowances'))||0,
+      total:parseFloat(getVal(row,'total'))||0
     };
-    if(!d.total)d.total=d.basic+d.housing+d.transport+d.phone_allow+d.allowances;
+    if(!d.total&&d.basic)d.total=d.basic+d.housing+d.transport+d.phone_allow+d.allowances;
+
+    // Normalize status values from government report format
+    var statusMap={'expat_arrived':'RENEWED','renewed':'RENEWED','to_be_renewed':'TO_BE_RENEWED','expired':'EXPIRED','terminated':'TERMINATED','mobilized':'MOBILIZED','visa_printed':'VISA_PRINTED'};
+    var sLower=(d.status||'').toLowerCase().replace(/\s+/g,'_');
+    if(statusMap[sLower])d.status=statusMap[sLower];
+
+    // Normalize gender
+    if(d.gender==='Male'||d.gender==='male')d.gender='M';
+    if(d.gender==='Female'||d.gender==='female')d.gender='F';
+
     var ex=EMP.find(function(e){return e.cpr&&e.cpr===cpr;});
     if(ex){
-      var changed=Object.keys(d).some(function(k){return d[k]!==''&&String(ex[k])!==String(d[k]);});
+      var changed=Object.keys(d).some(function(k){
+        if(!d[k]&&d[k]!==0)return false;
+        return String(ex[k]||'')!==String(d[k]);
+      });
       if(changed){_dbImportParsed.push({action:'update',existing:ex,data:d});updC++;}
       else{_dbImportParsed.push({action:'skip',data:d});skipC++;}
     } else {
       _dbImportParsed.push({action:'new',data:d});newC++;
     }
   }
+
+  // Render preview
   var html='';
   _dbImportParsed.forEach(function(r){
     if(r.action==='skip')return;
-    var badge=r.action==='new'
+    var isNew=r.action==='new';
+    var badge=isNew
       ?'<span style="background:#dcfce7;color:#16a34a;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0">NEW</span>'
       :'<span style="background:#dbeafe;color:#2563eb;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0">UPDATE</span>';
     var d=r.data;
-    html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9">'+badge+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#0A1629">'+d.name+'</div><div style="font-size:10px;color:#94a3b8">CPR: '+d.cpr+' | '+(d.dept||'&#8212;')+' | '+(d.title||'&#8212;')+'</div><div style="font-size:10px;color:#64748b">WP: '+(d.wp_expiry||'&#8212;')+' | Status: '+(d.status||'&#8212;')+'</div></div></div>';
+    html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9">'
+      +badge
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:13px;font-weight:600;color:#0A1629">'+(d.name||'—')+'</div>'
+      +'<div style="font-size:10px;color:#94a3b8">CPR: '+(d.cpr||'—')+' | '+(d.nationality||'—')+' | '+(d.gender||'—')+'</div>'
+      +'<div style="font-size:10px;color:#64748b">WP: '+(d.wp_expiry||'—')+' | Status: '+(d.status||'—')+'</div>'
+      +'</div></div>';
   });
-  if(!html)html='<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">No changes found</div>';
+  if(!html)html='<div style="padding:24px;text-align:center;color:#94a3b8;font-size:13px">No changes found — data may already be up to date</div>';
+
   document.getElementById('dbimport-preview-list').innerHTML=html;
   var nb=document.getElementById('dbimport-badge-new');
   var ub=document.getElementById('dbimport-badge-update');
@@ -9436,23 +9514,25 @@ function _dbImportProcess(csvText){
   if(pw)pw.style.display='block';
   var cb=document.getElementById('dbimport-confirm-btn');
   if(cb)cb.style.display=(newC+updC)?'flex':'none';
-  toast('Read '+(newC+updC+skipC)+' rows: '+newC+' new, '+updC+' updates','s');
+  toast('Read '+(newC+updC+skipC)+' rows — '+newC+' new, '+updC+' updates, '+skipC+' unchanged','s');
 }
 
 async function dbImportConfirm(){
   if(!_dbImportParsed.length){toast('No data to import','w');return;}
-  if(!SB_KEY){toast('Connect Supabase first via menu → Supabase Database','w');return;}
+  if(!SB_KEY){toast('Connect Supabase first via menu \u2192 Supabase Database','w');return;}
   var btn=document.getElementById('dbimport-confirm-btn');
-  if(btn){btn.disabled=true;btn.innerHTML='⏳ Saving...';}
+  if(btn){btn.disabled=true;btn.innerHTML='&#9203; Saving to Supabase...';}
   var toSave=[];var added=0,updated=0;
   _dbImportParsed.forEach(function(r){
     if(r.action==='skip')return;
     if(r.action==='new'){
-      var ne=Object.assign({id:'s'+Math.random().toString(36).slice(2,10),offense:'',offense_desc:'',dependents:[]},r.data);
+      var ne=Object.assign({id:'s'+Math.random().toString(36).slice(2,10),dependents:[]},r.data);
       EMP.push(ne);toSave.push(ne);added++;
     } else if(r.action==='update'){
       var e=r.existing;
-      Object.keys(r.data).forEach(function(k){if(r.data[k]!==''&&r.data[k]!==0||k==='basic'||k==='total')e[k]=r.data[k];});
+      Object.keys(r.data).forEach(function(k){
+        if(r.data[k]!==''&&r.data[k]!==null&&r.data[k]!==undefined)e[k]=r.data[k];
+      });
       toSave.push(e);updated++;
     }
   });
@@ -9470,17 +9550,17 @@ async function dbImportConfirm(){
       });
       if(!res.ok){var err=await res.text();throw new Error(err);}
     }
-    toast('✅ '+added+' added, '+updated+' updated — Saved to Supabase!','s');
+    toast('\u2705 Done! '+added+' added, '+updated+' updated \u2014 All saved to Supabase!','s');
     auditLog('DB_IMPORT','Added:'+added+' Updated:'+updated);
     _dbImportParsed=[];
     var pw=document.getElementById('dbimport-preview-wrap');if(pw)pw.style.display='none';
     var fn=document.getElementById('dbimport-filename');if(fn){fn.textContent='';fn.style.display='none';}
     var dz=document.getElementById('dbimport-dropzone');if(dz){dz.style.borderColor='#e2e8f0';dz.style.background='#fafbfc';}
     document.getElementById('dbimport-file').value='';
-  } catch(e){
+  }catch(e){
     toast('Supabase error: '+e.message,'w');
-  } finally {
-    if(btn){btn.disabled=false;btn.innerHTML='<span>🚀</span> Confirm & Save to Supabase';}
+  }finally{
+    if(btn){btn.disabled=false;btn.innerHTML='<span>&#128640;</span> Confirm & Save to Supabase';}
   }
 }
 
