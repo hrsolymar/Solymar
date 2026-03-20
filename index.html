@@ -4166,20 +4166,24 @@ function switchCompany(c){
   _company=c;
   try{localStorage.setItem('solymar_active_company',c);}catch(ex){}
   _updateCompanyUI();
-  if(typeof renderDash==='function')renderDash();
-  if(typeof renderDir==='function')renderDir();
-  if(typeof renderAlerts==='function')renderAlerts();
   if(typeof renderHBadges==='function')renderHBadges();
+  // Re-render whichever page is currently active
+  if(curPg==='dash'&&typeof renderDash==='function')renderDash();
+  else if(curPg==='dir'&&typeof renderDir==='function')renderDir();
+  else if(curPg==='alerts'&&typeof renderAlerts==='function')renderAlerts();
+  else if(typeof renderDash==='function')renderDash();
 }
 function _updateCompanyUI(){
   var switcher=document.getElementById('company-switcher');
   if(switcher){
     _companies.forEach(function(c){
-      var btn=document.getElementById('co-btn-'+c.replace(/\s/g,'-'));
+      var safeId=c.replace(/[^a-zA-Z0-9]/g,'-');
+      var btn=document.getElementById('co-btn-'+safeId);
       if(btn){
         btn.style.background=c===_company?_companyColors[_company]:'transparent';
         btn.style.color=c===_company?'#fff':'rgba(255,255,255,0.5)';
         btn.style.fontWeight=c===_company?'700':'500';
+        btn.style.border='none';
       }
     });
   }
@@ -5435,11 +5439,12 @@ window.onload=function(){
   sbLoadEmployees().then(function(loaded){
     if(loaded){
       try{localStorage.setItem(SK,JSON.stringify(EMP));}catch(e){}
-      renderHBadges();
-      if(typeof renderDash==='function')renderDash();
-      if(typeof renderDir==='function')renderDir();
-      if(typeof renderAlerts==='function')renderAlerts();
     }
+    // Restore saved company BEFORE restoring session so UI is correct
+    try{
+      var savedCo=localStorage.getItem('solymar_active_company');
+      if(savedCo&&_companies.indexOf(savedCo)>=0) _company=savedCo;
+    }catch(ex){}
     // Restore session AFTER data is loaded
     try{
       var savedRole=sessionStorage.getItem('solymar_role');
@@ -6010,9 +6015,12 @@ window._loginOK=function(role){
   if(importNav)importNav.style.display=role==='admin'?'flex':'none';
   var coSwitcher=document.getElementById('company-switcher');
   if(coSwitcher)coSwitcher.style.display='block';
-  // Restore last selected company
+  // Restore last selected company and refresh all views
   try{var savedCo=localStorage.getItem('solymar_active_company');if(savedCo&&_companies.indexOf(savedCo)>=0)_company=savedCo;}catch(ex){}
   _updateCompanyUI();
+  // Re-render with correct company filter
+  if(typeof renderHBadges==='function')renderHBadges();
+  if(typeof renderDash==='function')renderDash();
   var sbLabel=document.getElementById('sb-status-label');
   if(sbLabel)sbLabel.textContent=SB_KEY?'✅ Connected':'Connect live database';
   // Hide discipline add btn for non-editors
