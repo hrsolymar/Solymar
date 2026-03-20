@@ -720,6 +720,8 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
     <div id="topbar-title">Dashboard</div>
     <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
       <span id="role-badge" style="display:none;font-size:10px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:3px 8px;border-radius:4px;letter-spacing:0.3px"></span>
+      <button id="btn-import-csv" class="topbar-btn" onclick="triggerImportCSV()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> استيراد</button>
+      <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVImport(this)"/>
       <button id="btn-add" class="topbar-btn primary" onclick="openAdd()" style="display:none">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Employee
@@ -1953,6 +1955,22 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       </div>
     </button>
 
+    <!-- Publish to GitHub -->
+    <button id="btn-publish-gh" onclick="closeMenu();publishToGitHub()" style="display:none;width:100%;padding:13px;border-radius:10px;border:1px solid rgba(22,163,74,0.25);background:rgba(22,163,74,0.06);color:#16a34a;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;align-items:center;gap:10px;margin-bottom:10px;text-align:left">
+      <span style="font-size:20px">🚀</span>
+      <div>
+        <div>نشر على GitHub</div>
+        <div style="font-size:10px;color:#64748b;margin-top:2px">رفع مباشر — الموقع يتحدث خلال دقيقة</div>
+      </div>
+    </button>
+    <!-- GitHub Token Settings -->
+    <button onclick="closeMenu();openGHSettings()" id="btn-gh-token" style="display:none;width:100%;padding:13px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:var(--bg);color:var(--text-2);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;align-items:center;gap:10px;margin-bottom:10px;text-align:left">
+      <span style="font-size:20px">🔑</span>
+      <div>
+        <div>إعدادات GitHub Token</div>
+        <div style="font-size:10px;color:#94a3b8;margin-top:2px">تغيير أو تحديث الـ Token</div>
+      </div>
+    </button>
     <!-- Logout -->
     <button onclick="closeMenu();doLogout()" style="width:100%;padding:13px;border-radius:10px;border:1px solid rgba(239,68,68,0.25);background:rgba(188,151,84,0.06);color:#d4aa60;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;text-align:left">
       <span style="font-size:20px">&#128682;</span>
@@ -4045,12 +4063,21 @@ function load(){
   EMP=JSON.parse(JSON.stringify(SEED));save();
 }
 
-// Export current data as seed for GitHub deployment
+// Export full index.html — upload directly to GitHub
 function exportSeedData(){
-  var data=JSON.stringify(EMP,null,2);
-  var blob=new Blob(['<script id="seed-data" type="application/json">\n'+data+'\n<\/script>'],{type:'text/plain'});
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='seed-data-snippet.txt';a.click();
-  alert('Paste the downloaded snippet just before </body> in your index.html, then re-upload to GitHub.');
+  var empData=JSON.stringify(EMP,null,2);
+  var discData=JSON.stringify(_discLoad(),null,2);
+  var lvRaw=localStorage.getItem(_lvKey());
+  var leaveData=JSON.stringify(lvRaw?JSON.parse(lvRaw):[],null,2);
+  var html=document.documentElement.outerHTML;
+  var so='<'+'script',sc='<'+'/script>';
+  var r1=new RegExp(so+' id="seed-data"[^>]*>[\\s\\S]*?'+sc);
+  html=html.replace(r1,so+' id="seed-data" type="application/json">\n'+empData+'\n'+sc);
+  if(html.indexOf('id="seed-disc"')>=0){var r2=new RegExp(so+' id="seed-disc"[^>]*>[\\s\\S]*?'+sc);html=html.replace(r2,so+' id="seed-disc" type="application/json">\n'+discData+'\n'+sc);}
+  else{html=html.replace(sc+'\n\n<'+'/body>',sc+'\n'+so+' id="seed-disc" type="application/json">\n'+discData+'\n'+sc+'\n\n<'+'/body>');}
+  var blob=new Blob([html],{type:'text/html'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';a.click();
+  toast('تم تحميل index.html — ارفعه على GitHub','s');
 }
 
 // ===========================================
@@ -4080,6 +4107,8 @@ function showPg(id){
   if(tb)tb.textContent=titles[id]||'Solymar HR';
   var ab=document.getElementById('btn-add');
   if(ab)ab.style.display=(id==='dir'&&canEdit())?'flex':'none';
+  var ib=document.getElementById('btn-import-csv');
+  if(ib)ib.style.display=(id==='dir'&&canEdit())?'inline-flex':'none';
   if(id==='dash')renderDash();
   if(id==='dir')renderDir();
   if(id==='alerts')renderAlerts();
@@ -5196,7 +5225,11 @@ function exportEmpCSV(){
 // DISCIPLINARY LOG
 // ═══════════════════════════════════════════════════════
 var _discKey = 'solymar_disc_v1';
-function _discLoad(){ try{var r=localStorage.getItem(_discKey);return r?JSON.parse(r):[];}catch(e){return[];} }
+function _discLoad(){
+  try{var r=localStorage.getItem(_discKey);if(r){var p=JSON.parse(r);if(p&&p.length>0)return p;}}catch(e){}
+  try{var sd=document.getElementById('seed-disc');if(sd){var s=JSON.parse(sd.textContent||sd.innerText);if(s&&s.length>0){_discSave(s);return s;}}}catch(e){}
+  return[];
+}
 function _discSave(d){ try{localStorage.setItem(_discKey,JSON.stringify(d));}catch(e){} }
 
 var _discTypeColors={Warning:'#d97706',Suspension:'#dc2626','Final Warning':'#9a3412',Termination:'#1e1b4b',Demotion:'#7c3aed',Other:'#64748b'};
@@ -5641,6 +5674,10 @@ window._loginOK=function(role){
   if(ghNav)ghNav.style.display=role==='admin'?'flex':'none';
   var exportBtn=document.getElementById('btn-export-github');
   if(exportBtn)exportBtn.style.display=role==='admin'?'flex':'none';
+  var publishBtn=document.getElementById('btn-publish-gh');
+  if(publishBtn)publishBtn.style.display=role==='admin'?'flex':'none';
+  var tokenBtn=document.getElementById('btn-gh-token');
+  if(tokenBtn)tokenBtn.style.display=role==='admin'?'flex':'none';
   // Hide discipline add btn for non-editors
   var discBtn=document.getElementById('disc-add-btn');
   if(discBtn)discBtn.style.display=(role==='admin'||role==='hr')?'block':'none';
@@ -8900,5 +8937,283 @@ function clearAuditLog(){
 ]
 </script>
 
+
+<div id="csv-import-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:520px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+    <div style="padding:20px 20px 0;flex-shrink:0">
+      <div style="font-size:17px;font-weight:700;color:#0A1629;margin-bottom:4px">استيراد من CSV</div>
+      <div id="csv-import-summary" style="font-size:12px;color:#64748B;margin-bottom:14px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <span id="csv-badge-new" style="display:none;background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700"></span>
+        <span id="csv-badge-update" style="display:none;background:#dbeafe;color:#2563eb;border:1px solid #bfdbfe;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700"></span>
+        <span id="csv-badge-skip" style="display:none;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700"></span>
+      </div>
+    </div>
+    <div id="csv-preview-list" style="flex:1;overflow-y:auto;padding:0 20px"></div>
+    <div style="padding:16px 20px;border-top:1px solid #f1f5f9;display:flex;gap:10px;flex-shrink:0">
+      <button onclick="closeCSVModal()" style="flex:1;padding:11px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:13px;font-weight:600;cursor:pointer">إلغاء</button>
+      <button id="csv-confirm-btn" onclick="confirmCSVImport()" style="flex:2;padding:11px;border-radius:10px;border:none;background:#0A1629;color:#fff;font-size:13px;font-weight:700;cursor:pointer">تأكيد الاستيراد</button>
+    </div>
+  </div>
+</div>
+<script>
+var _csvParsed=[];
+var _csvStatusMap={
+  'RENEWED':'RENEWED',
+  'TO_BE_RENEWED':'TO_BE_RENEWED',
+  'TO_BE_RENEWED  (EXPIRED)':'EXPIRED',
+  'TO_BE_RENEWED (EXPIRED)':'EXPIRED',
+  'MOBILIZED':'MOBILIZED',
+  'VISA_PRINTED':'VISA_PRINTED',
+  'TERMINATED':'TERMINATED',
+  'CANCELLED':'TERMINATED'
+};
+
+function triggerImportCSV(){
+  document.getElementById('csv-file-input').value='';
+  document.getElementById('csv-file-input').click();
+}
+
+function handleCSVImport(input){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){ parseAndPreviewCSV(e.target.result); };
+  reader.readAsText(file,'UTF-8');
+}
+
+function parseAndPreviewCSV(text){
+  var sep=text.indexOf('\r\n')>=0?'\r\n':text.indexOf('\r')>=0?'\r':'\n';
+  var lines=text.split(sep);
+  if(lines.length<2){toast('الملف فارغ','w');return;}
+  var headers=lines[0].split(',').map(function(h){return h.trim().replace(/^"|"$/g,'');});
+  function col(row,name){
+    var idx=headers.indexOf(name);
+    if(idx<0)return'';
+    var v=(row[idx]||'').trim().replace(/^"|"$/g,'');
+    return v==='null'?'':v;
+  }
+  _csvParsed=[];
+  var newCount=0,updateCount=0,skipCount=0,depCount=0;
+  for(var i=1;i<lines.length;i++){
+    var line=lines[i].trim();
+    if(!line)continue;
+    var row=line.split(',');
+    if(col(row,'WP Type')==='dep'){depCount++;continue;}
+    var cpr=col(row,'Expat CPR #');
+    var pp=col(row,'Expat PP #');
+    var nat=col(row,'Nationality');
+    var name=col(row,'Expat Name');
+    var gender=col(row,'Expat Gender')==='F'?'F':'M';
+    var wpExp=col(row,'WP Expiry Date');
+    var ppExp=col(row,'PP Expiry Date');
+    var rawStatus=col(row,'Status');
+    var status=_csvStatusMap[rawStatus]||rawStatus||'RENEWED';
+    var inOut=col(row,'IN/OUT Status')||'IN';
+    if(!cpr&&!name)continue;
+    var existing=null;
+    for(var j=0;j<EMP.length;j++){if(EMP[j].cpr===cpr&&cpr!==''){existing=EMP[j];break;}}
+    if(existing){
+      var changed=(pp&&existing.pp!==pp)||(wpExp&&existing.wp_expiry!==wpExp)||(ppExp&&existing.pp_expiry!==ppExp)||(existing.status!==status)||(existing.in_out!==inOut);
+      if(changed){_csvParsed.push({action:'update',emp:existing,cpr:cpr,pp:pp,nat:nat,name:name,gender:gender,wpExp:wpExp,ppExp:ppExp,status:status,inOut:inOut});updateCount++;}
+      else{_csvParsed.push({action:'skip',name:name,cpr:cpr});skipCount++;}
+    } else {
+      _csvParsed.push({action:'new',cpr:cpr,pp:pp,nat:nat,name:name,gender:gender,wpExp:wpExp,ppExp:ppExp,status:status,inOut:inOut});newCount++;
+    }
+  }
+  var html='';
+  for(var k=0;k<_csvParsed.length;k++){
+    var r=_csvParsed[k];
+    if(r.action==='skip')continue;
+    var badge=r.action==='new'
+      ?'<span style="background:#dcfce7;color:#16a34a;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;flex-shrink:0">جديد</span>'
+      :'<span style="background:#dbeafe;color:#2563eb;border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;flex-shrink:0">تحديث</span>';
+    var details=r.action==='update'
+      ?'<div style="font-size:10px;color:#64748b;margin-top:2px">جواز: '+(r.pp||'—')+' | WP: '+(r.wpExp||'—')+'</div>'
+      :'<div style="font-size:10px;color:#64748b;margin-top:2px">'+r.nat+' | '+r.gender+' | WP: '+(r.wpExp||'—')+'</div>';
+    html+='<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9">'+badge+'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#0A1629">'+r.name+'</div><div style="font-size:10px;color:#94a3b8">CPR: '+r.cpr+'</div>'+details+'</div></div>';
+  }
+  if(!html)html='<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">لا توجد تغييرات</div>';
+  document.getElementById('csv-preview-list').innerHTML=html;
+  document.getElementById('csv-import-summary').textContent='تم قراءة: '+(newCount+updateCount+skipCount)+' موظف'+(depCount?' (تجاهل '+depCount+' تابع)':'');
+  var nb=document.getElementById('csv-badge-new');
+  var ub=document.getElementById('csv-badge-update');
+  var sb=document.getElementById('csv-badge-skip');
+  if(nb){nb.style.display=newCount?'inline':'none';nb.textContent='✅ '+newCount+' جديد';}
+  if(ub){ub.style.display=updateCount?'inline':'none';ub.textContent='🔄 '+updateCount+' تحديث';}
+  if(sb){sb.style.display=skipCount?'inline':'none';sb.textContent='— '+skipCount+' بدون تغيير';}
+  var cb=document.getElementById('csv-confirm-btn');
+  if(cb)cb.style.display=(newCount+updateCount)?'block':'none';
+  document.getElementById('csv-import-modal').style.display='flex';
+}
+
+function closeCSVModal(){
+  document.getElementById('csv-import-modal').style.display='none';
+  _csvParsed=[];
+}
+
+function confirmCSVImport(){
+  var added=0,updated=0;
+  for(var i=0;i<_csvParsed.length;i++){
+    var r=_csvParsed[i];
+    if(r.action==='new'){
+      EMP.push({id:'s'+Math.random().toString(36).slice(2,8),emp_code:'',cpr:r.cpr,pp:r.pp,name:r.name,dept:'',title:'',nationality:r.nat,gender:r.gender,dob:'',wp_expiry:r.wpExp,pp_expiry:r.ppExp,status:r.status,in_out:r.inOut,offense:'',offense_desc:'',basic:0,housing:0,transport:0,phone_allow:0,allowances:0,total:0,dependents:[]});
+      added++;
+    } else if(r.action==='update'){
+      for(var j=0;j<EMP.length;j++){
+        if(EMP[j].id===r.emp.id){
+          if(r.pp)EMP[j].pp=r.pp;
+          if(r.wpExp)EMP[j].wp_expiry=r.wpExp;
+          if(r.ppExp)EMP[j].pp_expiry=r.ppExp;
+          EMP[j].status=r.status;
+          EMP[j].in_out=r.inOut;
+          updated++;break;
+        }
+      }
+    }
+  }
+  save();
+  renderDir();
+  closeCSVModal();
+  toast('تم: اضافة '+added+' موظف، تحديث '+updated+' موظف','s');
+  auditLog('IMPORT','CSV: +'+added+' updated:'+updated);
+  setTimeout(function(){toast('لا تنسَ Export لحفظ التغييرات على GitHub','s');},2500);
+}
+
+</script>
+
+<!-- GitHub Token Modal -->
+<div id="gh-token-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:400px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+    <div style="font-size:17px;font-weight:700;color:#0A1629;margin-bottom:6px">🔑 GitHub Token</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:16px">أدخل الـ Personal Access Token الخاص بـ GitHub. يُحفظ في متصفحك فقط.</div>
+    <input id="gh-token-input" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:11px;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:monospace;margin-bottom:8px;box-sizing:border-box"/>
+    <div style="font-size:10px;color:#94a3b8;margin-bottom:16px">الـ Token يُحفظ في المتصفح فقط ولا يُرسل لأي مكان غير GitHub</div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeGHSettings()" style="flex:1;padding:11px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:13px;font-weight:600;cursor:pointer">إلغاء</button>
+      <button onclick="saveGHSettings()" style="flex:2;padding:11px;border-radius:10px;border:none;background:#0A1629;color:#fff;font-size:13px;font-weight:700;cursor:pointer">حفظ Token</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ GITHUB AUTO-PUBLISH ═══
+var GH_USER = 'hrsolymar';
+var GH_REPO = 'Solymar';
+var GH_FILE = 'index.html';
+var GH_BRANCH = 'main';
+
+function getGHToken(){
+  try{ return localStorage.getItem('solymar_gh_token')||''; }catch(e){return '';}
+}
+function saveGHToken(t){
+  try{ localStorage.setItem('solymar_gh_token', t); }catch(e){}
+}
+
+function openGHSettings(){
+  var ov = document.getElementById('gh-token-modal');
+  if(ov){
+    var inp = document.getElementById('gh-token-input');
+    if(inp) inp.value = getGHToken();
+    ov.style.display = 'flex';
+  }
+}
+function closeGHSettings(){
+  var ov = document.getElementById('gh-token-modal');
+  if(ov) ov.style.display = 'none';
+}
+function saveGHSettings(){
+  var inp = document.getElementById('gh-token-input');
+  if(!inp) return;
+  var token = inp.value.trim();
+  if(!token){ toast('الرجاء إدخال الـ Token','w'); return; }
+  saveGHToken(token);
+  closeGHSettings();
+  toast('تم حفظ الـ Token ✅','s');
+}
+
+async function publishToGitHub(){
+  var token = getGHToken();
+  if(!token){
+    openGHSettings();
+    toast('أدخل GitHub Token أولاً','w');
+    return;
+  }
+
+  // Build the full HTML with current data
+  var empData = JSON.stringify(EMP, null, 2);
+  var discData = JSON.stringify(_discLoad(), null, 2);
+  var lvRaw = localStorage.getItem(_lvKey());
+  var leaveData = JSON.stringify(lvRaw ? JSON.parse(lvRaw) : [], null, 2);
+  var html = document.documentElement.outerHTML;
+  var so = '<'+'script', sc = '<'+'/script>';
+  var r1 = new RegExp(so+' id="seed-data"[^>]*>[\\s\\S]*?'+sc);
+  html = html.replace(r1, so+' id="seed-data" type="application/json">\n'+empData+'\n'+sc);
+  if(html.indexOf('id="seed-disc"')>=0){
+    var r2=new RegExp(so+' id="seed-disc"[^>]*>[\\s\\S]*?'+sc);
+    html=html.replace(r2,so+' id="seed-disc" type="application/json">\n'+discData+'\n'+sc);
+  } else {
+    html=html.replace(sc+'\n</body>',sc+'\n'+so+' id="seed-disc" type="application/json">\n'+discData+'\n'+sc+'\n</body>');
+  }
+
+  // Show loading
+  toast('جاري النشر على GitHub...','s');
+  var publishBtn = document.getElementById('btn-publish-gh');
+  if(publishBtn){ publishBtn.disabled=true; publishBtn.textContent='⏳ جاري...'; }
+
+  try{
+    // Get current file SHA (needed for update)
+    var apiBase = 'https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+GH_FILE;
+    var headers = {
+      'Authorization': 'token '+token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+
+    var shaRes = await fetch(apiBase+'?ref='+GH_BRANCH, {headers: headers});
+    if(!shaRes.ok && shaRes.status !== 404){
+      throw new Error('فشل الاتصال بـ GitHub: '+shaRes.status);
+    }
+    var sha = '';
+    if(shaRes.ok){
+      var shaData = await shaRes.json();
+      sha = shaData.sha || '';
+    }
+
+    // Encode content to base64
+    var encoded = btoa(unescape(encodeURIComponent(html)));
+
+    // Upload
+    var body = {
+      message: 'HR System update - '+new Date().toLocaleString('ar'),
+      content: encoded,
+      branch: GH_BRANCH
+    };
+    if(sha) body.sha = sha;
+
+    var upRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(body)
+    });
+
+    if(upRes.ok){
+      toast('✅ تم النشر على GitHub! الموقع سيتحدث خلال دقيقة','s');
+      auditLog('PUBLISH','Published to GitHub successfully');
+    } else {
+      var err = await upRes.json();
+      throw new Error(err.message || 'فشل الرفع');
+    }
+  } catch(e){
+    toast('خطأ: '+e.message,'w');
+    if(e.message && e.message.indexOf('Bad credentials')>=0){
+      toast('الـ Token غير صحيح - تحقق منه في الإعدادات','w');
+    }
+  } finally {
+    if(publishBtn){ publishBtn.disabled=false; publishBtn.textContent='🚀 نشر على GitHub'; }
+  }
+}
+
+</script>
 </body>
 </html>
