@@ -3799,6 +3799,45 @@ function renderHBadges(){
 // ===========================================
 
 
+function _makeModal(title,rows){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;overflow-y:auto;padding:60px 12px 24px';
+  ov.onclick=function(ev){if(ev.target===ov)document.body.removeChild(ov);};
+  var wrap=document.createElement('div');
+  wrap.style.cssText='background:#fff;border-radius:20px;width:100%;max-width:520px;margin:0 auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)';
+  var hdr=document.createElement('div');
+  hdr.style.cssText='background:#0A1629;padding:16px 20px;display:flex;align-items:center;justify-content:space-between';
+  hdr.innerHTML='<div style="color:#fff;font-size:15px;font-weight:700">'+title+'</div><button style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:18px">&#215;</button>';
+  hdr.querySelector('button').onclick=function(){document.body.removeChild(ov);};
+  wrap.appendChild(hdr);
+  var body=document.createElement('div');
+  body.style.cssText='padding:12px 14px 16px;max-height:70vh;overflow-y:auto';
+  rows.forEach(function(e){
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:#f8fafc;margin-bottom:5px';
+    var info='<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#1a202c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div><div style="font-size:10px;color:#64748b">'+(e.title||'')+(e.dept?' &middot; '+e.dept:'')+'</div></div>';
+    var sal=e.total>0?'<div style="text-align:right;flex-shrink:0;margin-right:6px"><div style="font-size:13px;font-weight:800;color:#c9a96e">BD '+e.total.toLocaleString()+'</div><div style="font-size:9px;color:#94a3b8">'+e.basic+' + '+(e.allowances||0)+'</div></div>':'<div style="font-size:11px;font-weight:600;color:#94a3b8;flex-shrink:0;margin-right:6px">BD 0</div>';
+    var editBtn=canEdit()?'<button class="sbEditBtn" data-eid="'+e.id+'" style="background:#0A1629;color:#fff;border:none;border-radius:7px;padding:4px 9px;font-size:10px;cursor:pointer;flex-shrink:0">Edit</button>':'';
+    row.innerHTML=info+sal+editBtn;
+    body.appendChild(row);
+  });
+  if(!rows.length){body.innerHTML='<div style="text-align:center;padding:24px;color:#94a3b8">No records found</div>';}
+  wrap.appendChild(body);
+  ov.appendChild(wrap);
+  document.body.appendChild(ov);
+  ov.querySelectorAll('.sbEditBtn').forEach(function(btn){
+    btn.onclick=function(ev){ev.stopPropagation();document.body.removeChild(ov);openEdit(btn.getAttribute('data-eid'));};
+  });
+}
+function showStaffBox(){
+  var withSal=_activeEMP().filter(function(e){return e.total>0&&e.payroll_company!=='Others';}).sort(function(a,b){return b.total-a.total;});
+  _makeModal('Staff with Salary — '+withSal.length+' employees',withSal);
+}
+function showOthersBox(){
+  var noSal=_activeEMP().filter(function(e){return e.payroll_company==='Others'||(!e.total||e.total===0);}).sort(function(a,b){return a.name.localeCompare(b.name);});
+  _makeModal('Others (No Salary) — '+noSal.length+' employees',noSal);
+}
+
 // ===========================================
 // DIRECTORY
 // ===========================================
@@ -4472,7 +4511,10 @@ function renderDash(){
   var toR=AEMP.filter(function(e){return e.status==='TO_BE_RENEWED';});
   var soon=AEMP.filter(function(e){var d=dl(e.wp_expiry);return d!==null&&d>=0&&d<=30;});
   var pay=AEMP.reduce(function(s,e){return s+(e.total||0);},0);
-  var khtml='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="kv">'+AEMP.length+'</div><div class="kl">Total Records</div></div>';
+  var withSal=AEMP.filter(function(e){return e.total>0&&e.payroll_company!=='Others';});
+  var noSal=AEMP.filter(function(e){return e.payroll_company==='Others'||(!e.total||e.total===0);});
+  var khtml='<div class="kpi" style="cursor:pointer" onclick="showStaffBox()" title="View staff list"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="kv">'+withSal.length+'</div><div class="kl">Staff with Salary</div><div style="font-size:9px;color:#c9a96e;margin-top:3px">Tap to view list ›</div></div>'
+    +'<div class="kpi" style="cursor:pointer" onclick="showOthersBox()" title="View others list"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="kv">'+noSal.length+'</div><div class="kl">Others</div><div style="font-size:9px;color:#94a3b8;margin-top:3px">No salary ›</div></div>';
   khtml+='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="kv">'+exp.length+'</div><div class="kl">Expired</div></div>';
   khtml+='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="kv">'+soon.length+'</div><div class="kl">Expiring &le;30d</div></div>';
   khtml+='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="kv">'+toR.length+'</div><div class="kl">To Renew</div></div>';
@@ -4492,6 +4534,45 @@ function renderDash(){
   document.getElementById('ddeps').innerHTML=wDeps.length?wDeps.map(function(e){
     return '<div onclick="openDet(\''+e.id+'\')" style="padding:8px 0;border-bottom:1px solid var(--bg3);cursor:pointer"><div style="font-weight:700;font-size:12px;margin-bottom:4px">'+e.name+' <span style="font-size:10px;color:#c9a96e">'+e.dependents.length+' dep(s)</span></div><div style="display:flex;flex-wrap:wrap;gap:4px">'+e.dependents.map(function(d){return '<span class="badge" style="background:rgba(188,151,84,0.12);color:var(--text-2);border:1px solid rgba(188,151,84,0.25);font-size:9px">'+(d.gender==='F'?'&#128105;':'&#128102;')+' '+d.name.split(' ')[0]+'</span>';}).join('')+'</div></div>';
   }).join(''):'<div style="text-align:center;padding:12px;color:#8a7a6a;font-size:12px">No dependents registered</div>';
+}
+
+function _makeModal(title,rows){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;overflow-y:auto;padding:60px 12px 24px';
+  ov.onclick=function(ev){if(ev.target===ov)document.body.removeChild(ov);};
+  var wrap=document.createElement('div');
+  wrap.style.cssText='background:#fff;border-radius:20px;width:100%;max-width:520px;margin:0 auto;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3)';
+  var hdr=document.createElement('div');
+  hdr.style.cssText='background:#0A1629;padding:16px 20px;display:flex;align-items:center;justify-content:space-between';
+  hdr.innerHTML='<div style="color:#fff;font-size:15px;font-weight:700">'+title+'</div><button style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:18px">&#215;</button>';
+  hdr.querySelector('button').onclick=function(){document.body.removeChild(ov);};
+  wrap.appendChild(hdr);
+  var body=document.createElement('div');
+  body.style.cssText='padding:12px 14px 16px;max-height:70vh;overflow-y:auto';
+  rows.forEach(function(e){
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:#f8fafc;margin-bottom:5px';
+    var info='<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#1a202c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div><div style="font-size:10px;color:#64748b">'+(e.title||'')+(e.dept?' &middot; '+e.dept:'')+'</div></div>';
+    var sal=e.total>0?'<div style="text-align:right;flex-shrink:0;margin-right:6px"><div style="font-size:13px;font-weight:800;color:#c9a96e">BD '+e.total.toLocaleString()+'</div><div style="font-size:9px;color:#94a3b8">'+e.basic+' + '+(e.allowances||0)+'</div></div>':'<div style="font-size:11px;font-weight:600;color:#94a3b8;flex-shrink:0;margin-right:6px">BD 0</div>';
+    var editBtn=canEdit()?'<button class="sbEditBtn" data-eid="'+e.id+'" style="background:#0A1629;color:#fff;border:none;border-radius:7px;padding:4px 9px;font-size:10px;cursor:pointer;flex-shrink:0">Edit</button>':'';
+    row.innerHTML=info+sal+editBtn;
+    body.appendChild(row);
+  });
+  if(!rows.length){body.innerHTML='<div style="text-align:center;padding:24px;color:#94a3b8">No records found</div>';}
+  wrap.appendChild(body);
+  ov.appendChild(wrap);
+  document.body.appendChild(ov);
+  ov.querySelectorAll('.sbEditBtn').forEach(function(btn){
+    btn.onclick=function(ev){ev.stopPropagation();document.body.removeChild(ov);openEdit(btn.getAttribute('data-eid'));};
+  });
+}
+function showStaffBox(){
+  var withSal=_activeEMP().filter(function(e){return e.total>0&&e.payroll_company!=='Others';}).sort(function(a,b){return b.total-a.total;});
+  _makeModal('Staff with Salary — '+withSal.length+' employees',withSal);
+}
+function showOthersBox(){
+  var noSal=_activeEMP().filter(function(e){return e.payroll_company==='Others'||(!e.total||e.total===0);}).sort(function(a,b){return a.name.localeCompare(b.name);});
+  _makeModal('Others (No Salary) — '+noSal.length+' employees',noSal);
 }
 
 // ===========================================
@@ -9519,7 +9600,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oy1cux3",
+    "id": "o4y0ex2",
     "emp_code": "",
     "cpr": "900592060",
     "pp": "N9122984",
@@ -9573,7 +9654,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "on2h41o",
+    "id": "o97akrf",
     "emp_code": "",
     "cpr": "861407172",
     "pp": "AB8830665",
@@ -9600,7 +9681,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "ovez74l",
+    "id": "odf5kpa",
     "emp_code": "",
     "cpr": "21136610",
     "pp": "AC4228432",
@@ -9627,7 +9708,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oq388ha",
+    "id": "ocjxlz0",
     "emp_code": "",
     "cpr": "851728",
     "pp": "W5516886",
@@ -9654,7 +9735,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o1fr9ec",
+    "id": "oql648l",
     "emp_code": "",
     "cpr": "770266410",
     "pp": "U0212555",
@@ -9681,7 +9762,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o6aeo71",
+    "id": "ohc98as",
     "emp_code": "",
     "cpr": "20534833",
     "pp": "PE1125032",
@@ -9708,7 +9789,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o0tgaa2",
+    "id": "o1pslhk",
     "emp_code": "",
     "cpr": "970345798",
     "pp": "762451610",
@@ -9735,7 +9816,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oar9aww",
+    "id": "o3n5d37",
     "emp_code": "",
     "cpr": "860844420",
     "pp": "BI4439302",
@@ -9762,7 +9843,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oraywky",
+    "id": "o13qciz",
     "emp_code": "",
     "cpr": "980556325",
     "pp": "R4229775",
@@ -9789,7 +9870,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o396khl",
+    "id": "ossj2db",
     "emp_code": "",
     "cpr": "681239557",
     "pp": "W66248645",
@@ -9816,7 +9897,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o4ed4r0",
+    "id": "ob2a33o",
     "emp_code": "",
     "cpr": "1029282",
     "pp": "YI7289098",
@@ -9843,7 +9924,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o8y4o4h",
+    "id": "o9ygil7",
     "emp_code": "",
     "cpr": "353914",
     "pp": "P4944445B",
@@ -9870,7 +9951,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "opnhm09",
+    "id": "onhaujp",
     "emp_code": "",
     "cpr": "860666042",
     "pp": "A12335892",
@@ -9897,7 +9978,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oakpees",
+    "id": "orafgsf",
     "emp_code": "",
     "cpr": "870799339",
     "pp": "P0319931",
@@ -9924,7 +10005,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oapcp6c",
+    "id": "ow30ogz",
     "emp_code": "",
     "cpr": "240614100",
     "pp": "C3299164",
@@ -9951,7 +10032,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "olvf0i4",
+    "id": "o66im44",
     "emp_code": "",
     "cpr": "910371601",
     "pp": "B51795740",
@@ -10005,7 +10086,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o63ds0v",
+    "id": "otnnf7j",
     "emp_code": "",
     "cpr": "30128307",
     "pp": "W6812404",
@@ -10032,7 +10113,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "og0j9nw",
+    "id": "osqqcpi",
     "emp_code": "",
     "cpr": "200718746",
     "pp": "P0619661",
@@ -10059,7 +10140,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "ojswj6a",
+    "id": "o28gqz5",
     "emp_code": "",
     "cpr": "810654105",
     "pp": "V4239069",
@@ -10086,7 +10167,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "osj0acu",
+    "id": "oydbm3k",
     "emp_code": "",
     "cpr": "50531220",
     "pp": "MN1846132",
@@ -10113,7 +10194,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o8llgv3",
+    "id": "oyip4su",
     "emp_code": "",
     "cpr": "980849381",
     "pp": "AC3597018",
@@ -10140,7 +10221,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o106fi7",
+    "id": "oc5d843",
     "emp_code": "",
     "cpr": "980849381",
     "pp": "AC3597018",
@@ -10167,7 +10248,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oflffqq",
+    "id": "ol6blfi",
     "emp_code": "",
     "cpr": "890956197",
     "pp": "EP6662601",
@@ -10221,7 +10302,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o123s7k",
+    "id": "o9be8sr",
     "emp_code": "",
     "cpr": "830324399",
     "pp": "ET1881662",
@@ -10302,7 +10383,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oefk1wo",
+    "id": "oqspwyk",
     "emp_code": "",
     "cpr": "950849154",
     "pp": "PE2302557",
@@ -10356,7 +10437,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o7cm6nf",
+    "id": "o5s244b",
     "emp_code": "",
     "cpr": "870285033",
     "pp": "N8272720",
@@ -10383,7 +10464,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "oorth38",
+    "id": "o2yun2b",
     "emp_code": "",
     "cpr": "221217886",
     "pp": "X7409213",
@@ -10410,7 +10491,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o7z3nni",
+    "id": "ooaretk",
     "emp_code": "",
     "cpr": "960139214",
     "pp": "S6214051",
@@ -10464,7 +10545,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o0lyi22",
+    "id": "o0xn6l9",
     "emp_code": "",
     "cpr": "11034467",
     "pp": "AA427067",
@@ -10491,7 +10572,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "ox8zvix",
+    "id": "ox5aeo9",
     "emp_code": "",
     "cpr": "891261184",
     "pp": "HB3467828",
@@ -10545,7 +10626,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "o2b8o53",
+    "id": "o2qclne",
     "emp_code": "",
     "cpr": "30619297",
     "pp": "T4982802",
@@ -10572,7 +10653,7 @@ function clearAuditLog(){
     "payroll_company": "Others"
   },
   {
-    "id": "bkbj97r",
+    "id": "biowewb",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10599,7 +10680,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bvbbs24",
+    "id": "b9lrtwk",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10626,7 +10707,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bg649yz",
+    "id": "blztxig",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10653,7 +10734,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b31cth1",
+    "id": "bfihkaf",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10680,7 +10761,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bsxvyaz",
+    "id": "bmc77zh",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10707,7 +10788,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b1manw6",
+    "id": "bibkd8d",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10734,7 +10815,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b6g48wo",
+    "id": "bx9kqod",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10761,7 +10842,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bir5da4",
+    "id": "blslenk",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10788,7 +10869,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bybo0iq",
+    "id": "bl4ljjb",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10815,7 +10896,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bhhfr3j",
+    "id": "bd3ho0c",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10842,7 +10923,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bc7uzt9",
+    "id": "b80co1l",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10869,7 +10950,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "besakxd",
+    "id": "bdja3sy",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10896,7 +10977,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bpas9h9",
+    "id": "bx3cvbm",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10923,7 +11004,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bv3379k",
+    "id": "b4ayt95",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10950,7 +11031,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bfzvcfz",
+    "id": "b539th8",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -10977,7 +11058,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "begj2xq",
+    "id": "bsanqjx",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11004,7 +11085,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bij819u",
+    "id": "bu8otht",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11031,7 +11112,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b42w40j",
+    "id": "bdyy2ms",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11058,7 +11139,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b9wsbpl",
+    "id": "bpcewda",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11085,7 +11166,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bbswgvs",
+    "id": "biw5sxh",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11112,7 +11193,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bbmypkv",
+    "id": "bfqyugc",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11139,7 +11220,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bgzjs3e",
+    "id": "bf6r2f7",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11166,7 +11247,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bx7b9z5",
+    "id": "byj397r",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11193,7 +11274,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bz6yhaj",
+    "id": "b63hhh2",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11220,7 +11301,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bwn5g5c",
+    "id": "bm1g1gr",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11247,7 +11328,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bjpu2a0",
+    "id": "bxbiqty",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11274,7 +11355,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "br5h0ou",
+    "id": "b2jp4mu",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11301,7 +11382,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bva0p0h",
+    "id": "bmdhil6",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11328,7 +11409,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b34lzlg",
+    "id": "br3ppiv",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11355,7 +11436,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b86q8zu",
+    "id": "baeg4j7",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11382,7 +11463,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bsiz0eb",
+    "id": "b1ew1yc",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11409,7 +11490,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bxrld4h",
+    "id": "bu2xlbq",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11436,7 +11517,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bv70xe2",
+    "id": "b3qziog",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11463,7 +11544,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b0tms9l",
+    "id": "btseqvy",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11490,7 +11571,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "byuh3ex",
+    "id": "bums77f",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11517,7 +11598,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bzqtu4t",
+    "id": "b9pc2yr",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11544,7 +11625,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bismbz3",
+    "id": "bey9uvq",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11571,7 +11652,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b58y84l",
+    "id": "bz6jba1",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11598,7 +11679,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b4smz78",
+    "id": "bb9loi5",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11625,7 +11706,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b09i6c9",
+    "id": "bmqd7ga",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11652,7 +11733,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bne3m8t",
+    "id": "b3apdbn",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11679,7 +11760,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bburdvk",
+    "id": "b4biazl",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11706,7 +11787,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bmhl8v8",
+    "id": "bhgtpt6",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11733,7 +11814,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bcghaat",
+    "id": "b8tz89y",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11760,7 +11841,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bw3dthz",
+    "id": "bqqlnlp",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11787,7 +11868,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bhvt81b",
+    "id": "b9uxsrv",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11814,7 +11895,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bpwe547",
+    "id": "bwk2qnn",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11841,7 +11922,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bsvhq4x",
+    "id": "bff5ezw",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11868,7 +11949,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "buw7z8x",
+    "id": "bupb37o",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11895,7 +11976,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b0020mm",
+    "id": "bxfmcp0",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11922,7 +12003,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b4cegxh",
+    "id": "bfwf0c0",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11949,7 +12030,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bbbibn4",
+    "id": "bittg56",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -11976,7 +12057,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bcpp5pu",
+    "id": "b6fimu6",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12003,7 +12084,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "begwe5e",
+    "id": "btdiut2",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12030,7 +12111,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bzvh2pi",
+    "id": "bkggrp5",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12057,7 +12138,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b00c311",
+    "id": "bxi11vm",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12084,7 +12165,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bcv3rxy",
+    "id": "b130qmr",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12111,7 +12192,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b43ttjb",
+    "id": "bejp07s",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12138,7 +12219,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b2n2e9t",
+    "id": "bsnzzfj",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12165,7 +12246,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bjznus0",
+    "id": "bowwqvl",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12192,7 +12273,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bmx2hl2",
+    "id": "bjkq1ot",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12219,7 +12300,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bmstini",
+    "id": "b1uh0z8",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12246,7 +12327,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bas66fm",
+    "id": "b62576h",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12273,7 +12354,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bhkuwn1",
+    "id": "bbuisbp",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12300,7 +12381,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b3yghx5",
+    "id": "b8k9buf",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12327,7 +12408,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "btgg6qh",
+    "id": "bkom3zs",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12354,7 +12435,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bpo1f1r",
+    "id": "bwz8jcn",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12381,7 +12462,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bkc1es8",
+    "id": "bsk91i2",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12408,7 +12489,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bcxw2u3",
+    "id": "bbc06pv",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12435,7 +12516,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b0ab5pm",
+    "id": "b68ta71",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12462,7 +12543,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b1kovbg",
+    "id": "bc4mqbx",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12489,7 +12570,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "b1bgesj",
+    "id": "buhoqsd",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12516,7 +12597,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bhrquth",
+    "id": "bo6x7qw",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12543,7 +12624,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bxgi34b",
+    "id": "bp8s6vl",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12570,7 +12651,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bjd2ftz",
+    "id": "bfvtmny",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12597,7 +12678,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "btr5qg3",
+    "id": "bhmr9bg",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12624,7 +12705,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bculocd",
+    "id": "b4de1ys",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12651,7 +12732,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "be1m4mv",
+    "id": "bud7y5n",
     "emp_code": "",
     "cpr": "",
     "pp": "",
@@ -12678,7 +12759,7 @@ function clearAuditLog(){
     "payroll_company": "Solymar Beach"
   },
   {
-    "id": "bcy8pv8",
+    "id": "bntlqra",
     "emp_code": "",
     "cpr": "",
     "pp": "",
