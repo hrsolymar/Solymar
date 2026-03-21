@@ -264,9 +264,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ═══ KPI GRID ═══ */
 .kgrid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:16px;margin-bottom:20px;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  margin-bottom:0;
 }
 /* ELITE BACK BUTTON */
 .back-btn-container{position:absolute;top:20px;left:20px;z-index:100;}
@@ -274,22 +275,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .back-btn:hover{background:#0A1629;color:#FFFFFF;transform:translateX(-3px);}
 
 .kpi,.analytics-box{
-  background:#FFFFFF !important;
-  border:1px solid rgba(0,0,0,0.03) !important;
-  border-radius:24px !important;
-  box-shadow:0 10px 40px rgba(10,22,41,0.03) !important;
-  padding:35px 20px !important;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  transition:all 0.4s cubic-bezier(0.165,0.84,0.44,1);
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  display:block;
+  text-align:left;
+  transition:none;
 }
-.kpi:hover{
-  transform:translateY(-5px);
-  box-shadow:0 20px 50px rgba(10,22,41,0.07) !important;
-}
+.kpi:hover{ transform:none; box-shadow:none !important; }
 .kpi-icon,.nav-icon,.card-icon{
   width:50px;height:50px;
   background:rgba(10,22,41,0.04) !important;
@@ -547,12 +542,12 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   }
   #hamburger{display:flex}
   #content{padding:14px}
-  .kgrid{grid-template-columns:repeat(2,1fr)}
+  .kgrid{flex-direction:column}
   .fgrid{grid-template-columns:1fr}
   .page-header{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:480px){
-  .kgrid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kgrid{flex-direction:column}
   .kpi{padding:12px}
   .kv{font-size:22px}
   #content{padding:12px}
@@ -612,6 +607,240 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   #main-wrap{width:100%!important}
   #content{padding:0!important}
 }
+
+
+/* ══════════════════════════════════════════
+   PREMIUM DASHBOARD LAYOUT — No boring grid
+   ══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+#dash-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0;
+  font-family: 'Sora', var(--font), sans-serif;
+}
+
+/* ── TOP SECTION: greeting + big 3 stats side by side ── */
+#dash-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 28px 24px 24px;
+  border-bottom: 1px solid var(--border-l);
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+#dash-greeting {}
+#dash-hotel-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+#dash-subtitle {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* The 3 hero numbers in a horizontal strip */
+#dash-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-l);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.hero-stat {
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 90px;
+  transition: background 0.15s;
+}
+.hero-stat:hover { background: var(--bg2); }
+.hero-stat-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--text-main);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hero-stat-label {
+  font-size: 9px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.hero-stat-link {
+  font-size: 10px;
+  color: var(--gold);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+.hero-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-l);
+  flex-shrink: 0;
+}
+
+/* ── PAYROLL BANNER ── */
+#dash-payroll {
+  margin: 0;
+  padding: 22px 24px;
+  background: var(--primary);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+#dash-payroll-label {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.40);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+#dash-payroll-amount {
+  font-family: 'Sora', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: #fff;
+  line-height: 1;
+  flex-shrink: 0;
+}
+#dash-payroll-meta {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.04em;
+}
+
+/* ── BOTTOM 3-COLUMN GRID ── */
+#dash-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  flex: 1;
+  border-top: 1px solid var(--border-l);
+  min-height: 0;
+}
+
+#dash-alerts-col,
+#dash-expiry-col,
+#dash-deps-col {
+  padding: 20px 20px;
+  border-right: 1px solid var(--border-l);
+  overflow-y: auto;
+  min-height: 200px;
+}
+#dash-deps-col { border-right: none; }
+
+.dash-section-label {
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-l);
+}
+
+/* ── STATUS PILLS ── */
+#dash-status-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 0;
+  cursor: default;
+}
+.status-pill.red { background: var(--red-bg); border: 1px solid rgba(142,62,62,0.15); }
+.status-pill.amber { background: var(--accent-soft); border: 1px solid rgba(184,144,77,0.20); }
+.status-pill.blue { background: var(--primary-light); border: 1px solid rgba(10,22,41,0.08); }
+.sp-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-main);
+}
+.sp-lbl {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ── MOBILE: stack columns ── */
+@media (max-width: 768px) {
+  #dash-top {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 16px 18px;
+    gap: 16px;
+  }
+  #dash-hero-stats {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .hero-stat { flex: 1; padding: 14px 10px; }
+  .hero-stat-num { font-size: 26px; }
+  #dash-payroll { padding: 16px 16px; gap: 12px; }
+  #dash-payroll-amount { font-size: 28px; }
+  #dash-bottom {
+    grid-template-columns: 1fr;
+  }
+  #dash-alerts-col,
+  #dash-expiry-col,
+  #dash-deps-col {
+    border-right: none;
+    border-bottom: 1px solid var(--border-l);
+    min-height: auto;
+  }
+  #dash-deps-col { border-bottom: none; }
+  #dash-hotel-name { font-size: 20px; }
+  #dash-payroll-label { display: none; }
+  #dash-status-row { flex-direction: row; }
+  .status-pill { flex: 1; flex-direction: column; align-items: flex-start; gap: 3px; }
+}
+
+/* ── Expiry rows inside dash ── */
+#dexp > div { padding: 8px 0 !important; border-bottom: 1px solid var(--border-l) !important; }
+#dexp > div:last-child { border-bottom: none !important; }
+#ddeps > div { padding: 8px 0 !important; border-bottom: 1px solid var(--border-l) !important; }
+#ddeps > div:last-child { border-bottom: none !important; }
+
 </style>
 </head>
 <body>
@@ -771,10 +1000,77 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   <main id="content">
       <!-- DASHBOARD -->
   <div id="pg-dash" class="pg on">
-    <div id="kpis" class="kgrid"></div>
-    <div id="dalerts"></div>
-    <div class="card"><div class="stitle">EXPIRING WITHIN 90 DAYS</div><div id="dexp"></div></div>
-    <div class="card"><div class="stitle">FAMILY DEPENDENTS</div><div id="ddeps"></div></div>
+    <div id="dash-wrap">
+      <!-- GREETING + HERO STATS ROW -->
+      <div id="dash-top">
+        <div id="dash-greeting">
+          <div id="dash-hotel-name">Solymar Hotel</div>
+          <div id="dash-subtitle">HR Overview</div>
+        </div>
+        <div id="dash-hero-stats">
+          <div class="hero-stat" id="hs-staff" onclick="showStaffBox()" style="cursor:pointer">
+            <div class="hero-stat-num" id="hs-staff-num">—</div>
+            <div class="hero-stat-label">On Payroll</div>
+            <div class="hero-stat-link">View list →</div>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat" id="hs-visa" onclick="showOthersBox()" style="cursor:pointer">
+            <div class="hero-stat-num" id="hs-visa-num">—</div>
+            <div class="hero-stat-label">Hotel Visa</div>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat" id="hs-deps" onclick="showDepsBox()" style="cursor:pointer">
+            <div class="hero-stat-num" id="hs-deps-num">—</div>
+            <div class="hero-stat-label">Dependants</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYROLL BANNER -->
+      <div id="dash-payroll" style="display:none">
+        <div id="dash-payroll-label">Monthly Payroll</div>
+        <div id="dash-payroll-amount">—</div>
+        <div id="dash-payroll-meta"></div>
+      </div>
+
+      <!-- BOTTOM GRID: alerts + expiry + deps -->
+      <div id="dash-bottom">
+        <!-- Alert strip -->
+        <div id="dash-alerts-col">
+          <div class="dash-section-label">Alerts</div>
+          <div id="dalerts"></div>
+          <!-- status pills row -->
+          <div id="dash-status-row">
+            <div class="status-pill red" id="sp-exp">
+              <span class="sp-num" id="sp-exp-num">0</span>
+              <span class="sp-lbl">Expired</span>
+            </div>
+            <div class="status-pill amber" id="sp-soon">
+              <span class="sp-num" id="sp-soon-num">0</span>
+              <span class="sp-lbl">≤30 days</span>
+            </div>
+            <div class="status-pill blue" id="sp-renew">
+              <span class="sp-num" id="sp-renew-num">0</span>
+              <span class="sp-lbl">To Renew</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expiry list -->
+        <div id="dash-expiry-col">
+          <div class="dash-section-label">Expiring Soon</div>
+          <div id="dexp"></div>
+        </div>
+
+        <!-- Dependents -->
+        <div id="dash-deps-col">
+          <div class="dash-section-label">Family Dependents</div>
+          <div id="ddeps"></div>
+        </div>
+      </div>
+
+    </div>
+    <div id="kpis" style="display:none"></div>
   </div>
 
   <!-- DIRECTORY -->
@@ -4689,6 +4985,33 @@ function renderDash(){
   var withSal=AEMP.filter(function(e){return e.total>0&&e.payroll_company!=='Others';});
   var noSal=AEMP.filter(function(e){return e.payroll_company==='Others';});
   var depCount=AEMP.reduce(function(s,e){return s+((e.dependents&&e.dependents.length)||0);},0);
+
+  // Feed new premium layout
+  var sn=document.getElementById('hs-staff-num');
+  var vn=document.getElementById('hs-visa-num');
+  var dn=document.getElementById('hs-deps-num');
+  if(sn)sn.textContent=withSal.length;
+  if(vn)vn.textContent=noSal.length;
+  if(dn)dn.textContent=depCount;
+
+  // Status pills
+  var spExp=document.getElementById('sp-exp-num');
+  var spSoon=document.getElementById('sp-soon-num');
+  var spRenew=document.getElementById('sp-renew-num');
+  if(spExp)spExp.textContent=exp.length;
+  if(spSoon)spSoon.textContent=soon.length;
+  if(spRenew)spRenew.textContent=toR.length;
+
+  // Payroll banner
+  var pb=document.getElementById('dash-payroll');
+  var pa=document.getElementById('dash-payroll-amount');
+  var pm=document.getElementById('dash-payroll-meta');
+  if(pb&&canSal()){
+    pb.style.display='flex';
+    if(pa)pa.innerHTML='<span style="font-size:16px;opacity:0.5;margin-right:3px">BD</span>'+pay.toLocaleString();
+    if(pm)pm.textContent=withSal.length+' employees · '+new Date().toLocaleString('en',{month:'long',year:'numeric'});
+  }
+
   var khtml='<div class="kpi" style="cursor:pointer" onclick="showStaffBox()" title="View staff list"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="kv">'+withSal.length+'</div><div class="kl">Staff with Salary</div><div style="font-size:9px;color:#c9a96e;margin-top:3px">Tap to view list ›</div></div>'
     +'<div class="kpi" style="cursor:pointer" onclick="showOthersBox()" title="View others list"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="kv">'+noSal.length+'</div><div class="kl">Hotel Visa</div><div style="font-size:9px;color:#94a3b8;margin-top:3px">Hotel Visa ›</div></div>';
   khtml+='<div class="kpi" style="cursor:pointer" onclick="showDepsBox()" title="View dependants"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div><div class="kv">'+depCount+'</div><div class="kl">Dependants</div><div style="font-size:9px;color:#c9a96e;margin-top:3px">Family members ›</div></div>';
@@ -4696,7 +5019,8 @@ function renderDash(){
   khtml+='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="kv">'+soon.length+'</div><div class="kl">Expiring &le;30d</div></div>';
   khtml+='<div class="kpi" style=""><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></div><div class="kv">'+toR.length+'</div><div class="kl">To Renew</div></div>';
   if(canSal()){khtml+='<div class="kpi" style="grid-column:1/-1"><div style="margin-bottom:8px;opacity:0.9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1629" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="kv"><span class=\"kv-currency\">BD</span> '+pay.toLocaleString()+'</div><div class="kl">Monthly Payroll</div></div>';}
-  document.getElementById('kpis').innerHTML=khtml;
+  // legacy kpis hidden, new layout used above
+  var kEl=document.getElementById('kpis');if(kEl)kEl.innerHTML=khtml;
   var ah='';
   if(exp.length>0){ah+='<div class="al alr"><strong>'+exp.length+' expired permit(s)</strong></div>';}
   var alrt=AEMP.filter(function(e){return e.offense;});
