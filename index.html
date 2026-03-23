@@ -2445,16 +2445,38 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 </div>
 <div id="toast" style="display:none"></div>
 <!-- ADMIN USER APPROVAL PANEL -->
-<div id="approve-ov" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,41,0.5);align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeApprovePanel()">
-  <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;box-shadow:0 24px 60px rgba(10,22,41,0.18)">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<div id="approve-ov" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,41,0.55);align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeApprovePanel()">
+  <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(10,22,41,0.18)">
+
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #EDF2F7;flex-shrink:0">
       <div>
-        <div style="font-size:16px;font-weight:700;color:#0A1629">User Approvals</div>
-        <div style="font-size:12px;color:#64748B;margin-top:2px">Approve or reject registration requests</div>
+        <div style="font-size:15px;font-weight:700;color:#0A1629">User Management</div>
+        <div style="font-size:11px;color:#64748B;margin-top:2px">Approve, remove or change roles</div>
       </div>
       <button onclick="closeApprovePanel()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748B;line-height:1">✕</button>
     </div>
-    <div id="approve-list"></div>
+
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:1px solid #EDF2F7;flex-shrink:0">
+      <div id="atab-pending" onclick="switchATab('pending')" style="flex:1;padding:11px;text-align:center;font-size:12px;font-weight:600;color:#b8904d;border-bottom:2px solid #b8904d;cursor:pointer">
+        Pending <span id="pending-badge" style="display:none;background:#EF4444;color:#fff;font-size:10px;padding:1px 6px;border-radius:99px;margin-left:3px">0</span>
+      </div>
+      <div id="atab-approved" onclick="switchATab('approved')" style="flex:1;padding:11px;text-align:center;font-size:12px;font-weight:600;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer">Active</div>
+      <div id="atab-rejected" onclick="switchATab('rejected')" style="flex:1;padding:11px;text-align:center;font-size:12px;font-weight:600;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer">Rejected</div>
+    </div>
+
+    <!-- Search -->
+    <div style="padding:10px 14px;border-bottom:1px solid #EDF2F7;flex-shrink:0">
+      <input id="approve-search" type="text" placeholder="🔍 Search name or email…" oninput="renderAUsers()"
+        style="width:100%;padding:9px 12px;border:1.5px solid #EDF2F7;border-radius:10px;font-size:13px;font-family:inherit;outline:none;color:#1A202C;background:#F8FAFC"/>
+    </div>
+
+    <!-- List -->
+    <div id="approve-list" style="flex:1;overflow-y:auto;padding:12px 14px">
+      <div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px">Loading…</div>
+    </div>
+
   </div>
 </div>
 
@@ -4344,122 +4366,173 @@ async function authSubmitRequest() {
 }
 
 // ── Admin approval panel ──────────────────────────────────────────────────
+var _aUsers = [];
+var _aTab = 'pending';
+
 async function openApprovePanel() {
   var ov = document.getElementById('approve-ov');
   if (ov) ov.style.display = 'flex';
   var list = document.getElementById('approve-list');
-  if (list) list.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px">Loading…</div>';
+  list.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px">Loading…</div>';
   try {
     var res = await fetch(SB_URL + '/rest/v1/app_users?select=*&order=created_at.desc', { headers: _sbAuthHeaders() });
-    var users = await res.json();
-    if (!users || !users.length) {
-      list.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px">No users yet.</div>';
-      return;
-    }
-    var statusColor = { pending:'#EA580C', approved:'#16A34A', rejected:'#DC2626' };
-    // Build cards using DOM instead of innerHTML to avoid quote issues
-    list.innerHTML = '';
-    users.forEach(function(u) {
-      var card = document.createElement('div');
-      card.style.cssText = 'padding:14px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;margin-bottom:8px';
-
-      var top = document.createElement('div');
-      top.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
-
-      var info = document.createElement('div');
-      info.innerHTML = '<div style="font-size:13px;font-weight:600;color:#0A1629">' + (u.full_name||'—') + '</div>' +
-        '<div style="font-size:11px;color:#64748B;margin-top:2px">' + (u.email||'—') + '</div>' +
-        '<div style="font-size:11px;color:#94A3B8;margin-top:1px">Role: <b>' + u.role + '</b></div>';
-
-      var badge = document.createElement('span');
-      badge.textContent = u.status.toUpperCase();
-      badge.style.cssText = 'font-size:10px;font-weight:700;color:' + (statusColor[u.status]||'#64748B') + ';padding:3px 10px;background:#f1f5f9;border-radius:99px;white-space:nowrap;margin-left:8px';
-
-      top.appendChild(info);
-      top.appendChild(badge);
-      card.appendChild(top);
-
-      if (u.status === 'pending') {
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
-
-        var sel = document.createElement('select');
-        sel.id = 'role-sel-' + u.id;
-        sel.style.cssText = 'flex:1;min-width:90px;padding:8px;border:1.5px solid #EDF2F7;border-radius:9px;font-size:12px;font-family:inherit;outline:none;background:#fff';
-        ['view','hr','hrfinance','admin'].forEach(function(r) {
-          var opt = document.createElement('option');
-          opt.value = r;
-          opt.textContent = {view:'Viewer',hr:'HR',hrfinance:'Finance',admin:'Admin'}[r];
-          if (u.role === r) opt.selected = true;
-          sel.appendChild(opt);
-        });
-
-        var btnApprove = document.createElement('button');
-        btnApprove.textContent = '✅ Approve';
-        btnApprove.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
-        btnApprove.onclick = function() { approveUser(u.id, 'approved'); };
-
-        var btnReject = document.createElement('button');
-        btnReject.textContent = '❌ Reject';
-        btnReject.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
-        btnReject.onclick = function() { approveUser(u.id, 'rejected'); };
-
-        row.appendChild(sel);
-        row.appendChild(btnApprove);
-        row.appendChild(btnReject);
-        card.appendChild(row);
-      } else {
-        var note = document.createElement('div');
-        note.style.cssText = 'font-size:11px;color:#94A3B8;margin-top:4px';
-        note.textContent = u.status === 'approved' ? '✅ Active — can log in' : '❌ Access denied';
-        card.appendChild(note);
-      }
-
-      list.appendChild(card);
-    });
-    var pending = users.filter(function(u){ return u.status==='pending'; }).length;
-    var badge = document.getElementById('pending-badge');
-    if (badge) { badge.textContent = pending; badge.style.display = pending ? 'inline' : 'none'; }
+    _aUsers = await res.json();
+    renderAUsers();
   } catch(e) {
-    list.innerHTML = '<div style="text-align:center;padding:30px;color:#EF4444;font-size:13px">Failed to load users.</div>';
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:#EF4444;font-size:13px">Failed to load.</div>';
   }
+}
+
+function switchATab(tab) {
+  _aTab = tab;
+  ['pending','approved','rejected'].forEach(function(t) {
+    var el = document.getElementById('atab-' + t);
+    if (!el) return;
+    if (t === tab) {
+      el.style.color = '#b8904d';
+      el.style.borderBottom = '2px solid #b8904d';
+    } else {
+      el.style.color = '#94A3B8';
+      el.style.borderBottom = '2px solid transparent';
+    }
+  });
+  renderAUsers();
+}
+
+function renderAUsers() {
+  var list = document.getElementById('approve-list');
+  var search = (document.getElementById('approve-search') ? document.getElementById('approve-search').value : '').toLowerCase();
+  var filtered = _aUsers.filter(function(u) {
+    if (u.status !== _aTab) return false;
+    if (!search) return true;
+    return (u.full_name||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search);
+  });
+
+  // Update pending badge
+  var pending = _aUsers.filter(function(u){ return u.status==='pending'; }).length;
+  var badge = document.getElementById('pending-badge');
+  if (badge) { badge.textContent = pending; badge.style.display = pending ? 'inline' : 'none'; }
+
+  list.innerHTML = '';
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:30px;color:#94A3B8;font-size:13px">No ' + _aTab + ' users</div>';
+    return;
+  }
+
+  filtered.forEach(function(u) {
+    var card = document.createElement('div');
+    card.style.cssText = 'padding:14px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;margin-bottom:8px';
+
+    var statusColor = { pending:'#EA580C', approved:'#16A34A', rejected:'#DC2626' };
+    var top = document.createElement('div');
+    top.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
+    var info = document.createElement('div');
+    info.innerHTML =
+      '<div style="font-size:13px;font-weight:600;color:#0A1629">' + (u.full_name||'—') + '</div>' +
+      '<div style="font-size:11px;color:#64748B;margin-top:2px">' + (u.email||'—') + '</div>' +
+      '<div style="font-size:11px;color:#94A3B8;margin-top:1px">Role: <b>' + u.role + '</b></div>';
+    var badge2 = document.createElement('span');
+    badge2.textContent = u.status.toUpperCase();
+    badge2.style.cssText = 'font-size:10px;font-weight:700;color:' + (statusColor[u.status]||'#64748B') + ';padding:3px 10px;background:#f1f5f9;border-radius:99px;white-space:nowrap;margin-left:8px';
+    top.appendChild(info); top.appendChild(badge2); card.appendChild(top);
+
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
+
+    if (u.status === 'pending') {
+      var sel = buildASelect(u.id, u.role);
+      var btnA = document.createElement('button');
+      btnA.textContent = '✅ Approve';
+      btnA.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnA.onclick = function() { approveUser(u.id, 'approved'); };
+      var btnR = document.createElement('button');
+      btnR.textContent = '❌ Reject';
+      btnR.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnR.onclick = function() { approveUser(u.id, 'rejected'); };
+      row.appendChild(sel); row.appendChild(btnA); row.appendChild(btnR);
+
+    } else if (u.status === 'approved') {
+      var sel2 = buildASelect(u.id, u.role);
+      var btnSave = document.createElement('button');
+      btnSave.textContent = '💾 Save Role';
+      btnSave.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#0A1629;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnSave.onclick = function() { changeARole(u.id); };
+      var btnRem = document.createElement('button');
+      btnRem.textContent = '🚫 Remove';
+      btnRem.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnRem.onclick = function() { if(confirm('Remove access for ' + (u.full_name||u.email) + '?')) approveUser(u.id, 'rejected'); };
+      row.appendChild(sel2); row.appendChild(btnSave); row.appendChild(btnRem);
+
+    } else if (u.status === 'rejected') {
+      var btnRestore = document.createElement('button');
+      btnRestore.textContent = '↩️ Restore';
+      btnRestore.style.cssText = 'flex:1;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnRestore.onclick = function() { approveUser(u.id, 'approved'); };
+      var btnDel = document.createElement('button');
+      btnDel.textContent = '🗑 Delete';
+      btnDel.style.cssText = 'flex:1;padding:8px;background:#64748B;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+      btnDel.onclick = function() { if(confirm('Permanently delete ' + (u.full_name||u.email) + '?')) deleteAUser(u.id); };
+      row.appendChild(btnRestore); row.appendChild(btnDel);
+    }
+
+    card.appendChild(row);
+    list.appendChild(card);
+  });
+}
+
+function buildASelect(id, current) {
+  var sel = document.createElement('select');
+  sel.id = 'role-sel-' + id;
+  sel.style.cssText = 'flex:1;min-width:90px;padding:8px;border:1.5px solid #EDF2F7;border-radius:9px;font-size:12px;font-family:inherit;outline:none;background:#fff';
+  [['view','Viewer'],['hr','HR'],['hrfinance','Finance'],['admin','Admin']].forEach(function(r) {
+    var opt = document.createElement('option');
+    opt.value = r[0]; opt.textContent = r[1];
+    if (current === r[0]) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  return sel;
 }
 
 async function approveUser(id, status) {
   var roleEl = document.getElementById('role-sel-' + id);
   var role = roleEl ? roleEl.value : 'view';
-
-  // 1. Update status in app_users
   await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id, {
     method: 'PATCH',
     headers: Object.assign({}, _sbAuthHeaders(), { 'Prefer': 'return=minimal' }),
     body: JSON.stringify({ status: status, role: role })
   });
-
-  // 2. If approving, auto-register email in Supabase Auth using admin API
   if (status === 'approved') {
-    // Get the user's email from app_users
-    var res = await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id + '&select=email', {
-      headers: _sbAuthHeaders()
-    });
+    var res = await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id + '&select=email', { headers: _sbAuthHeaders() });
     var data = await res.json();
     var email = data && data[0] ? data[0].email : null;
-
     if (email) {
-      // Call Edge Function to register user in Supabase Auth securely
       await fetch('https://gbnrzulpsgwakdljcvyb.supabase.co/functions/v1/approve-user', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SB_KEY,
-          'Authorization': 'Bearer ' + SB_KEY
-        },
+        headers: { 'Content-Type':'application/json', 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY },
         body: JSON.stringify({ email: email })
       });
     }
   }
+  await openApprovePanel();
+}
 
-  openApprovePanel();
+async function changeARole(id) {
+  var roleEl = document.getElementById('role-sel-' + id);
+  var role = roleEl ? roleEl.value : 'view';
+  await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id, {
+    method: 'PATCH',
+    headers: Object.assign({}, _sbAuthHeaders(), { 'Prefer': 'return=minimal' }),
+    body: JSON.stringify({ role: role })
+  });
+  await openApprovePanel();
+}
+
+async function deleteAUser(id) {
+  await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id, {
+    method: 'DELETE',
+    headers: _sbAuthHeaders()
+  });
+  await openApprovePanel();
 }
 
 function closeApprovePanel() {
