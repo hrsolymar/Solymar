@@ -4446,14 +4446,18 @@ async function approveUser(id, status) {
     var email = data && data[0] ? data[0].email : null;
 
     if (email) {
-      // Create user in Supabase Auth — they won't need a password, OTP only
+      // Create user in Supabase Auth using service role key
       await fetch(SB_URL + '/auth/v1/admin/users', {
         method: 'POST',
-        headers: Object.assign({}, _sbAuthHeaders(), { 'Authorization': 'Bearer ' + SB_KEY }),
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SB_SERVICE_KEY,
+          'Authorization': 'Bearer ' + SB_SERVICE_KEY
+        },
         body: JSON.stringify({
           email: email,
           email_confirm: true,
-          password: Math.random().toString(36) + Math.random().toString(36) // random password they'll never use
+          password: Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
         })
       });
     }
@@ -5201,6 +5205,7 @@ function exportSeedData(){
 // ===========================================
 var SB_URL = 'https://gbnrzulpsgwakdljcvyb.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdibnJ6dWxwc2d3YWtkbGpjdnliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjQ0NjAsImV4cCI6MjA4OTYwMDQ2MH0.6Qqjz0qN-AWbK5ZEmTrSCbPA_1807uuVLjCKmZSyApc';
+var SB_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdibnJ6dWxwc2d3YWtkbGpjdnliIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDAyNDQ2MCwiZXhwIjoyMDg5NjAwNDYwfQ.KyCSdV64ZZg9_dRvi4kkS38HrUSAPPq29jOteymDOpM';
 
 function _sbHeaders(){
   return {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
