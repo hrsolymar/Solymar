@@ -235,6 +235,55 @@ body::before {
 .nav-item.active svg{opacity:0.9}
 .nav-item .ni-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* ═══ COLLAPSIBLE SUB-MENU ═══ */
+.nav-group {}
+.nav-group .toggle-btn .ni-arrow {
+  margin-left:auto;
+  font-size:10px;
+  color:rgba(255,255,255,0.3);
+  transition:transform 0.25s ease;
+  flex-shrink:0;
+}
+.nav-group.open .toggle-btn .ni-arrow {
+  transform:rotate(180deg);
+}
+.nav-sub {
+  display:none;
+  margin:2px 15px 4px 15px;
+  border-left:1px solid rgba(255,255,255,0.08);
+  padding-left:12px;
+  overflow:hidden;
+}
+.nav-group.open .nav-sub {
+  display:block;
+}
+.nav-sub-item {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  font-size:12px;
+  font-weight:500;
+  color:rgba(255,255,255,0.4);
+  cursor:pointer;
+  border-radius:8px;
+  transition:all 0.2s ease;
+  user-select:none;
+  margin-bottom:2px;
+}
+.nav-sub-item:hover {
+  background:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.75);
+}
+.nav-sub-item.active {
+  background:rgba(255,255,255,0.08);
+  color:var(--accent);
+  font-weight:600;
+}
+.nav-sub-item svg {
+  width:13px;height:13px;flex-shrink:0;opacity:0.5;
+}
+
 /* ═══ SIDEBAR ICON ALIGNMENT — uniform footprint for emoji & SVG icons ═══ */
 /* Wrap nav SVGs in a fixed 24×24 container (handled by JS below) */
 .sidebar-icon-wrapper{
@@ -1058,46 +1107,68 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="ni-label">Employees</span>
     </div>
-    <div class="nav-item" onclick="showPg('alerts');closeSidebar()" data-pg="alerts">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="ni-label">Alerts</span>
-      <span id="hbadges" style="display:none;font-size:10px;font-weight:700;background:#EF4444;color:#fff;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center"></span>
+    <!-- Time Management group -->
+    <div class="nav-group open" id="ng-time">
+      <div class="nav-item toggle-btn" onclick="toggleNavGroup('ng-time')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="ni-label">Time Management</span>
+        <span class="ni-arrow">▾</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="showPg('alerts');closeSidebar()" data-pg="alerts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>Alerts</span>
+          <span id="hbadges" style="display:none;font-size:10px;font-weight:700;background:#EF4444;color:#fff;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center;margin-left:auto"></span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('cal');closeSidebar()" data-pg="cal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Calendar</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('leave');closeSidebar()" data-pg="leave">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+          <span>Leave Tracker</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('rep');closeSidebar()" data-pg="rep">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Reports</span>
+        </div>
+      </div>
     </div>
-    <div class="nav-item" onclick="showPg('cal');closeSidebar()" data-pg="cal">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      <span class="ni-label">Calendar</span>
-    </div>
-    <div class="nav-item" onclick="showPg('leave');closeSidebar()" data-pg="leave">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
-      <span class="ni-label">Leave Tracker</span>
-    </div>
-    <div class="nav-item" onclick="showPg('rep');closeSidebar()" data-pg="rep">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span class="ni-label">Reports</span>
-    </div>
+
     <div style="border-top:1px solid rgba(255,255,255,0.06);margin:8px 0 4px"></div>
     <div class="nav-section-label">Payroll</div>
-    <div class="nav-item" onclick="showPg('ta');closeSidebar()" data-pg="ta">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span class="ni-label">Time &amp; Attendance</span>
+
+    <!-- Payroll group -->
+    <div class="nav-group open" id="ng-payroll">
+      <div class="nav-item toggle-btn" onclick="toggleNavGroup('ng-payroll')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span class="ni-label">Payroll</span>
+        <span class="ni-arrow">▾</span>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-sub-item" onclick="showPg('ta');closeSidebar()" data-pg="ta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Time &amp; Attendance</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('fs');closeSidebar()" data-pg="fs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>Settlement</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('lv');closeSidebar()" data-pg="lv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Leave Salary</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('calc');closeSidebar()" data-pg="calc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+          <span>OT Calculator</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('payslip');closeSidebar()" data-pg="payslip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Payslip Generator</span>
+        </div>
+      </div>
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:8px 0 4px"></div>
-    <div class="nav-item" onclick="showPg('fs');closeSidebar()" data-pg="fs">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span class="ni-label">Settlement</span>
-    </div>
-    <div class="nav-item" onclick="showPg('lv');closeSidebar()" data-pg="lv">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span class="ni-label">Leave Salary</span>
-    </div>
-    <div class="nav-item" onclick="showPg('calc');closeSidebar()" data-pg="calc">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-      <span class="ni-label">OT Calculator</span>
-    </div>
-    <div class="nav-item" onclick="showPg('payslip');closeSidebar()" data-pg="payslip">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      <span class="ni-label">Payslip Generator</span>
-    </div>
+
     <div style="border-top:1px solid rgba(255,255,255,0.06);margin:8px 0 4px"></div>
     <div class="nav-section-label">Admin</div>
     <div class="nav-item" onclick="showPg('discipline');closeSidebar()" data-pg="discipline">
@@ -2599,7 +2670,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 
   <div id="auth-card" style="width:100%;max-width:360px;background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(10,22,41,0.10);">
 
-    <!-- STEP 1: Email entry -->
+    <!-- STEP 1: Choose login method -->
     <div id="auth-step-phone">
       <div style="font-size:13px;font-weight:700;color:#0A1629;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Sign In</div>
       <div style="font-size:12px;color:#64748B;margin-bottom:20px">Enter your registered email address</div>
@@ -2615,10 +2686,42 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
         style="width:100%;padding:14px;background:#0A1629;border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:1.5px;text-transform:uppercase;transition:opacity 0.2s">
         SEND CODE
       </button>
-      <div style="text-align:center;margin-top:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin:18px 0">
+        <div style="flex:1;height:1px;background:#EDF2F7"></div>
+        <span style="font-size:11px;color:#94A3B8;letter-spacing:1px">OR</span>
+        <div style="flex:1;height:1px;background:#EDF2F7"></div>
+      </div>
+      <button onclick="authShowAdmin()"
+        style="width:100%;padding:13px;background:transparent;border:1.5px solid #B8904D;border-radius:12px;color:#B8904D;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.2s"
+        onmouseover="this.style.background='rgba(184,144,77,0.08)'" onmouseout="this.style.background='transparent'">
+        🔑 &nbsp;ADMIN LOGIN
+      </button>
+      <div style="text-align:center;margin-top:14px">
         <span style="font-size:12px;color:#64748B">No access? </span>
         <span onclick="authShowRequest()" style="font-size:12px;color:#b8904d;font-weight:600;cursor:pointer;text-decoration:underline">Request Registration</span>
       </div>
+    </div>
+
+    <!-- STEP ADMIN: Password-only admin login -->
+    <div id="auth-step-admin" style="display:none">
+      <div style="font-size:13px;font-weight:700;color:#0A1629;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Admin Access</div>
+      <div style="font-size:12px;color:#64748B;margin-bottom:20px">Enter the admin password to continue</div>
+      <div style="position:relative;margin-bottom:8px">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px">🔑</span>
+        <input id="admin-pwd-input" type="password" placeholder="Admin password"
+          style="width:100%;padding:14px 14px 14px 42px;border:1.5px solid #EDF2F7;border-radius:12px;background:#F8FAFC;font-size:15px;font-family:'Inter',sans-serif;outline:none;color:#1A202C;transition:border 0.2s"
+          onfocus="this.style.borderColor='#b8904d'" onblur="this.style.borderColor='#EDF2F7'"
+          onkeydown="if(event.key==='Enter')adminPasswordLogin()"/>
+      </div>
+      <div id="admin-pwd-err" style="display:none;color:#8E3E3E;font-size:11px;margin-bottom:8px;padding:8px 10px;background:#FFF5F5;border-radius:8px"></div>
+      <button onclick="adminPasswordLogin()" id="admin-pwd-btn"
+        style="width:100%;padding:14px;background:linear-gradient(135deg,#B8904D,#8A6830);border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">
+        ENTER AS ADMIN
+      </button>
+      <button onclick="_authShowStep('phone')"
+        style="width:100%;padding:12px;background:transparent;border:1.5px solid #EDF2F7;border-radius:12px;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:1px">
+        ← BACK
+      </button>
     </div>
 
     <!-- STEP 2: OTP verification -->
@@ -4234,7 +4337,7 @@ function _setBtnLoading(id, loading, label) {
 }
 
 function _authShowStep(step) {
-  ['auth-step-phone','auth-step-otp','auth-step-request'].forEach(function(id){
+  ['auth-step-phone','auth-step-otp','auth-step-request','auth-step-admin'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -4243,6 +4346,33 @@ function _authShowStep(step) {
 }
 function authBackToPhone()  { _authShowStep('phone'); }
 function authShowRequest()  { _authShowStep('request'); }
+function authShowAdmin()    {
+  _authShowStep('admin');
+  var i = document.getElementById('admin-pwd-input');
+  if (i) { i.value = ''; setTimeout(function(){ i.focus(); }, 150); }
+  var e = document.getElementById('admin-pwd-err');
+  if (e) e.style.display = 'none';
+}
+
+var _ADMIN_BYPASS_PWD = 'ONLY ADMIN';
+
+function adminPasswordLogin() {
+  var input = document.getElementById('admin-pwd-input');
+  var errEl = document.getElementById('admin-pwd-err');
+  var btn   = document.getElementById('admin-pwd-btn');
+  if (!input || !errEl) return;
+  errEl.style.display = 'none';
+  var val = input.value;
+  if (val === _ADMIN_BYPASS_PWD) {
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = 'Signing in…'; }
+    loginOK('admin');
+  } else {
+    errEl.textContent = '❌ Wrong password. Please try again.';
+    errEl.style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
 
 var _authEmail = '';
 
@@ -5012,6 +5142,11 @@ function cycleLang(){var ls=['en','ar'],i=ls.indexOf(_lang);setLang(ls[(i+1)%ls.
 // Passwords already declared & loaded from localStorage above — do not re-declare here
 try{var _sl2=localStorage.getItem('slang');if(_sl2&&LANGS[_sl2])_lang=_sl2;}catch(ex){}
 
+function toggleNavGroup(id){
+  var g=document.getElementById(id);
+  if(!g)return;
+  g.classList.toggle('open');
+}
 
 function openMenu(){
   document.getElementById('menu-ov').style.display='flex';
@@ -5472,6 +5607,7 @@ function showPg(id){
   if(el)el.classList.add('on');
   curPg=id;
   document.querySelectorAll('.nav-item[data-pg]').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-pg')===id);});
+  document.querySelectorAll('.nav-sub-item[data-pg]').forEach(function(n){n.classList.toggle('active',n.getAttribute('data-pg')===id);});
   var titles={dash:'Dashboard',dir:'Employees',alerts:'Alerts',cal:'Calendar',leave:'Leave Tracker',rep:'HR Analytics',fs:'Full & Final Settlement',lv:'Leave Salary',calc:'OT Calculator',ta:'Time & Attendance',payslip:'Payslip Generator',discipline:'Disciplinary Log',audit:'Audit Log',github:'GitHub Data Viewer'};
   var tb=document.getElementById('topbar-title');
   if(tb)tb.textContent=titles[id]||'Solymar HR';
