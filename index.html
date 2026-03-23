@@ -4506,7 +4506,7 @@ async function approveUser(id, status) {
     var data = await res.json();
     var email = data && data[0] ? data[0].email : null;
     if (email) {
-      await fetch('https://gbnrzulpsgwakdljcvyb.supabase.co/functions/v1/approve-user', {
+      await fetch('https://gbnrzulpsgwakdljcvyb.supabase.co/functions/v1/create-user', {
         method: 'POST',
         headers: { 'Content-Type':'application/json', 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY },
         body: JSON.stringify({ email: email })
