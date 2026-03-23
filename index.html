@@ -6,6 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#ffffff"/>
+<meta name="color-scheme" content="light only"/>
 <link rel="manifest" href="/manifest.json">
 <title>Solymar HR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -60,6 +61,7 @@
   --font-serif:'Playfair Display',Georgia,serif;
 }
 
+:root { color-scheme: light only; }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
 
@@ -6085,7 +6087,7 @@ var THEMES={
   ocean:    {bg:'#060d1a',bg2:'#0a1428',bg3:'#0e1c38',gold:'#3a8acc',goldL:'#5aaaf0',goldD:'#246090',text:'#a8ccf0',muted:'#4a7aaa',border:'rgba(60,140,220,0.2)'},
   light:    {bg:'#f5f0e8',bg2:'#ede5d8',bg3:'#e5dac8',gold:'#8a5c1a',goldL:'#6a3c0a',goldD:'#aa7c3a',text:'#0a1f44',muted:'#1e3a6e',border:'rgba(100,70,20,0.2)'}
 };
-var _theme='light';
+var _theme='dark';
 function setTheme(t){
   if(!THEMES[t])return;
   _theme=t;
@@ -6659,7 +6661,7 @@ function lvPrint(){
 window.onload=function(){
   // Restore saved theme
   try{localStorage.removeItem('stheme');}catch(ex){}
-  try{var st=localStorage.getItem('stheme');if(st&&THEMES[st]){setTheme(st);}else{setTheme('light');updateThemeBtns();}}catch(ex){updateThemeBtns();}
+  try{var st=localStorage.getItem('stheme');if(st&&THEMES[st]){setTheme(st);}else{setTheme('dark');updateThemeBtns();}}catch(ex){updateThemeBtns();}
   // Force navy blue text regardless of theme
   var r=document.documentElement.style;
   var isDark=((_theme==='midnight')||(_theme==='forest')||(_theme==='ocean'));
