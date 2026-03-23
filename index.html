@@ -4232,7 +4232,7 @@ function _setBtnLoading(id, loading, label) {
 }
 
 function _authShowStep(step) {
-  ['auth-step-email','auth-step-otp','auth-step-request'].forEach(function(id){
+  ['auth-step-phone','auth-step-otp','auth-step-request'].forEach(function(id){
     var el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
