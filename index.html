@@ -4357,30 +4357,66 @@ async function openApprovePanel() {
       return;
     }
     var statusColor = { pending:'#EA580C', approved:'#16A34A', rejected:'#DC2626' };
-    list.innerHTML = users.map(function(u) {
-      return '<div style="padding:14px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;margin-bottom:8px">' +
-        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
-          '<div>' +
-            '<div style="font-size:13px;font-weight:600;color:#0A1629">' + (u.full_name||'—') + '</div>' +
-            '<div style="font-size:11px;color:#64748B;margin-top:2px">' + (u.email||'') + '</div>' +
-            '<div style="font-size:11px;color:#94A3B8;margin-top:1px">Role: <b>' + u.role + '</b></div>' +
-          '</div>' +
-          '<span style="font-size:10px;font-weight:700;color:' + (statusColor[u.status]||'#64748B') + ';padding:3px 10px;background:#f1f5f9;border-radius:99px;white-space:nowrap;margin-left:8px">' + u.status.toUpperCase() + '</span>' +
-        '</div>' +
-        (u.status === 'pending' ?
-          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-            '<select id="role-sel-' + u.id + '" style="flex:1;min-width:90px;padding:8px;border:1.5px solid #EDF2F7;border-radius:9px;font-size:12px;font-family:inherit;outline:none;background:#fff">' +
-              '<option value="view"'      + (u.role==="view"?      " selected":"") + '>Viewer</option>' +
-              '<option value="hr"'        + (u.role==="hr"?        " selected":"") + '>HR</option>' +
-              '<option value="hrfinance"' + (u.role==="hrfinance"? " selected":"") + '>Finance</option>' +
-              '<option value="admin"'     + (u.role==="admin"?     " selected":"") + '>Admin</option>' +
-            '</select>' +
-            '<button onclick="approveUser(\"' + u.id + '\",\"approved\")" style="flex:1;min-width:80px;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer">✅ Approve</button>' +
-            '<button onclick="approveUser(\"' + u.id + '\",\"rejected\")" style="flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer">❌ Reject</button>' +
-          '</div>'
-        : '<div style="font-size:11px;color:#94A3B8;margin-top:4px">' + (u.status==='approved' ? '✅ Active — can log in' : '❌ Access denied') + '</div>') +
-      '</div>';
-    }).join('');
+    // Build cards using DOM instead of innerHTML to avoid quote issues
+    list.innerHTML = '';
+    users.forEach(function(u) {
+      var card = document.createElement('div');
+      card.style.cssText = 'padding:14px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;margin-bottom:8px';
+
+      var top = document.createElement('div');
+      top.style.cssText = 'display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px';
+
+      var info = document.createElement('div');
+      info.innerHTML = '<div style="font-size:13px;font-weight:600;color:#0A1629">' + (u.full_name||'—') + '</div>' +
+        '<div style="font-size:11px;color:#64748B;margin-top:2px">' + (u.email||'—') + '</div>' +
+        '<div style="font-size:11px;color:#94A3B8;margin-top:1px">Role: <b>' + u.role + '</b></div>';
+
+      var badge = document.createElement('span');
+      badge.textContent = u.status.toUpperCase();
+      badge.style.cssText = 'font-size:10px;font-weight:700;color:' + (statusColor[u.status]||'#64748B') + ';padding:3px 10px;background:#f1f5f9;border-radius:99px;white-space:nowrap;margin-left:8px';
+
+      top.appendChild(info);
+      top.appendChild(badge);
+      card.appendChild(top);
+
+      if (u.status === 'pending') {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
+
+        var sel = document.createElement('select');
+        sel.id = 'role-sel-' + u.id;
+        sel.style.cssText = 'flex:1;min-width:90px;padding:8px;border:1.5px solid #EDF2F7;border-radius:9px;font-size:12px;font-family:inherit;outline:none;background:#fff';
+        ['view','hr','hrfinance','admin'].forEach(function(r) {
+          var opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = {view:'Viewer',hr:'HR',hrfinance:'Finance',admin:'Admin'}[r];
+          if (u.role === r) opt.selected = true;
+          sel.appendChild(opt);
+        });
+
+        var btnApprove = document.createElement('button');
+        btnApprove.textContent = '✅ Approve';
+        btnApprove.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+        btnApprove.onclick = function() { approveUser(u.id, 'approved'); };
+
+        var btnReject = document.createElement('button');
+        btnReject.textContent = '❌ Reject';
+        btnReject.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
+        btnReject.onclick = function() { approveUser(u.id, 'rejected'); };
+
+        row.appendChild(sel);
+        row.appendChild(btnApprove);
+        row.appendChild(btnReject);
+        card.appendChild(row);
+      } else {
+        var note = document.createElement('div');
+        note.style.cssText = 'font-size:11px;color:#94A3B8;margin-top:4px';
+        note.textContent = u.status === 'approved' ? '✅ Active — can log in' : '❌ Access denied';
+        card.appendChild(note);
+      }
+
+      list.appendChild(card);
+    });
     var pending = users.filter(function(u){ return u.status==='pending'; }).length;
     var badge = document.getElementById('pending-badge');
     if (badge) { badge.textContent = pending; badge.style.display = pending ? 'inline' : 'none'; }
