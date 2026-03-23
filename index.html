@@ -206,6 +206,25 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .nav-item.active svg{opacity:0.9}
 .nav-item .ni-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
+/* ═══ SIDEBAR ICON ALIGNMENT — uniform footprint for emoji & SVG icons ═══ */
+/* Wrap nav SVGs in a fixed 24×24 container (handled by JS below) */
+.sidebar-icon-wrapper{
+  width:24px;height:24px;
+  display:flex;justify-content:center;align-items:center;
+  flex-shrink:0;
+}
+/* Company switcher: emoji span matches same 24×24 footprint */
+#company-switcher .co-btn .co-emoji{
+  width:24px;height:24px;
+  display:flex;justify-content:center;align-items:center;
+  flex-shrink:0;font-size:16px;line-height:1;
+}
+/* Align company buttons exactly with nav items */
+#company-switcher .co-btn{
+  gap:10px;
+  padding:8px 16px;
+}
+
 #sidebar-footer{
   padding:12px 16px;
   border-top:1px solid rgba(255,255,255,0.06);
@@ -976,10 +995,10 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   <!-- Company Switcher -->
   <div id="company-switcher" style="display:none;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);">
     <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;padding-left:4px;">Company</div>
-    <button id="co-btn-Solymar-Hotel" onclick="switchCompany('Solymar Hotel')" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:#0A1629;color:#fff;">🏨 Solymar Hotel</button>
-    <button id="co-btn-Solymar-Beach" onclick="switchCompany('Solymar Beach')" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);">🏖️ Solymar Beach</button>
-    <button id="co-btn-CR-1" onclick="switchCompany('CR-1')" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);">🏢 CR-1</button>
-    <button id="co-btn-CR-2" onclick="switchCompany('CR-2')" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);">🏗️ CR-2</button>
+    <button id="co-btn-Solymar-Hotel" onclick="switchCompany('Solymar Hotel')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:#0A1629;color:#fff;"><svg style="width:16px;height:16px;flex-shrink:0;opacity:0.9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Solymar Hotel</span></button>
+    <button id="co-btn-Solymar-Beach" onclick="switchCompany('Solymar Beach')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);"><svg style="width:16px;height:16px;flex-shrink:0;opacity:0.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Solymar Beach</span></button>
+    <button id="co-btn-CR-1" onclick="switchCompany('CR-1')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);"><svg style="width:16px;height:16px;flex-shrink:0;opacity:0.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg><span>CR-1</span></button>
+    <button id="co-btn-CR-2" onclick="switchCompany('CR-2')" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 16px;border-radius:10px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;text-align:left;margin-bottom:2px;background:transparent;color:rgba(255,255,255,0.5);"><svg style="width:16px;height:16px;flex-shrink:0;opacity:0.4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg><span>CR-2</span></button>
   </div>
 
   <nav id="sidebar-nav">
@@ -1072,7 +1091,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div id="topbar-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Dashboard</div>
-    <span id="company-badge" style="display:none;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;white-space:nowrap"></span>
+
     <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
       <span id="role-badge" style="display:none;font-size:10px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:3px 8px;border-radius:4px;letter-spacing:0.3px"></span>
       <button id="btn-import-csv" class="topbar-btn" onclick="triggerImportCSV()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
@@ -1081,9 +1100,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Employee
       </button>
-      <button class="topbar-btn" onclick="openMenu()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
+
     </div>
   </header>
 
@@ -4056,7 +4073,13 @@ var MNS3=MTHS;
 // ===========================================
 // AUTH
 // ===========================================
-// Passwords: ADMIN_PASS / HR_PASS
+// Passwords — declared here so doLogin() can reference them immediately
+var ADMIN_PASS='Admin@2026';
+var HR_PASS='HR@Solymar';
+var VIEW_PASS='View@2026';
+try{var _ap2=localStorage.getItem('spwd_admin');if(_ap2)ADMIN_PASS=_ap2;}catch(ex){}
+try{var _hp2=localStorage.getItem('spwd_hr');if(_hp2)HR_PASS=_hp2;}catch(ex){}
+
 var _role='view';
 var _selRole='admin';
 function canEdit(){return _role==='admin';}
@@ -4776,13 +4799,15 @@ function _updateCompanyUI(){
         btn.style.color=c===_company?'#fff':'rgba(255,255,255,0.5)';
         btn.style.fontWeight=c===_company?'700':'500';
         btn.style.border='none';
+        var svg=btn.querySelector('svg');
+        if(svg)svg.style.opacity=c===_company?'0.9':'0.4';
       }
     });
   }
   var tb=document.getElementById('topbar-title');
-  if(tb) tb.textContent=_companyIcons[_company]+' '+_company;
-  var badge=document.getElementById('company-badge');
-  if(badge){badge.style.display='inline';badge.textContent=_company;badge.style.background=_companyColors[_company]+'22';badge.style.color=_companyColors[_company];}
+  if(tb) tb.textContent=_company;
+  var hn=document.getElementById('dash-hotel-name');
+  if(hn) hn.textContent=_company;
 }
 var curPg='dash';
 var editId=null;
@@ -13669,5 +13694,19 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+<script>
+// ═══ SIDEBAR ICON ALIGNMENT — wrap nav SVGs in uniform 24×24 box ═══
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.nav-item').forEach(function(item) {
+    var svg = item.querySelector(':scope > svg');
+    if (svg && !svg.parentElement.classList.contains('sidebar-icon-wrapper')) {
+      var wrap = document.createElement('span');
+      wrap.className = 'sidebar-icon-wrapper';
+      item.insertBefore(wrap, svg);
+      wrap.appendChild(svg);
+    }
+  });
+});
+</script>
 </body>
 </html>
