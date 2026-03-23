@@ -2600,8 +2600,8 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
     <!-- STEP 2: OTP verification -->
     <div id="auth-step-otp" style="display:none">
       <div style="font-size:13px;font-weight:700;color:#0A1629;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Check Your Email</div>
-      <div id="auth-otp-subtitle" style="font-size:12px;color:#64748B;margin-bottom:20px">Enter the 6-digit code sent to your email</div>
-      <input id="auth-otp" type="tel" maxlength="6" placeholder="000000"
+      <div id="auth-otp-subtitle" style="font-size:12px;color:#64748B;margin-bottom:20px">Enter the code sent to your email</div>
+      <input id="auth-otp" type="tel" maxlength="8" placeholder="00000000"
         style="width:100%;padding:14px;border:1.5px solid #EDF2F7;border-radius:12px;background:#F8FAFC;font-size:22px;font-family:'Inter',sans-serif;outline:none;color:#0A1629;letter-spacing:8px;text-align:center;transition:border 0.2s;margin-bottom:8px"
         onfocus="this.style.borderColor='#b8904d'" onblur="this.style.borderColor='#EDF2F7'"
         onkeydown="if(event.key==='Enter')authVerifyOTP()"/>
@@ -4256,7 +4256,7 @@ async function authSendOTP() {
     var res = await fetch(SB_URL + '/auth/v1/otp', {
       method: 'POST',
       headers: _sbAuthHeaders(),
-      body: JSON.stringify({ email: email, create_user: false })
+      body: JSON.stringify({ email: email, create_user: false, shouldCreateUser: false, options: { emailRedirectTo: null } })
     });
     if (!res.ok) {
       var d = await res.json();
@@ -4277,8 +4277,8 @@ async function authSendOTP() {
 async function authVerifyOTP() {
   _authHideErr('auth-otp-err');
   var token = (document.getElementById('auth-otp').value || '').trim();
-  if (token.length !== 6) {
-    _authShowErr('auth-otp-err', 'Please enter the 6-digit code from your email.');
+  if (token.length < 6) {
+    _authShowErr('auth-otp-err', 'Please enter the code from your email.');
     return;
   }
   _setBtnLoading('auth-verify-btn', true, 'VERIFY & SIGN IN');
