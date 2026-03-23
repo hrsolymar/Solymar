@@ -4392,11 +4392,37 @@ async function openApprovePanel() {
 async function approveUser(id, status) {
   var roleEl = document.getElementById('role-sel-' + id);
   var role = roleEl ? roleEl.value : 'view';
+
+  // 1. Update status in app_users
   await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id, {
     method: 'PATCH',
     headers: Object.assign({}, _sbAuthHeaders(), { 'Prefer': 'return=minimal' }),
     body: JSON.stringify({ status: status, role: role })
   });
+
+  // 2. If approving, auto-register email in Supabase Auth using admin API
+  if (status === 'approved') {
+    // Get the user's email from app_users
+    var res = await fetch(SB_URL + '/rest/v1/app_users?id=eq.' + id + '&select=email', {
+      headers: _sbAuthHeaders()
+    });
+    var data = await res.json();
+    var email = data && data[0] ? data[0].email : null;
+
+    if (email) {
+      // Create user in Supabase Auth — they won't need a password, OTP only
+      await fetch(SB_URL + '/auth/v1/admin/users', {
+        method: 'POST',
+        headers: Object.assign({}, _sbAuthHeaders(), { 'Authorization': 'Bearer ' + SB_KEY }),
+        body: JSON.stringify({
+          email: email,
+          email_confirm: true,
+          password: Math.random().toString(36) + Math.random().toString(36) // random password they'll never use
+        })
+      });
+    }
+  }
+
   openApprovePanel();
 }
 
