@@ -82,8 +82,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* 1. THE SAFE ZONE: Pushes dashboard content down to stop clashing */
 #app {
-  padding-top: 85px !important;
-  transition: padding 0.4s ease;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+  padding-top: 85px;
+  transition: grid-template-columns 0.25s ease, padding 0.4s ease;
 }
 
 /* 2. THE HEADER: Right-aligned & Transparent */
@@ -128,6 +131,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ═══ SIDEBAR ═══ */
 #sidebar{
+  grid-column: 1;
   width:var(--sidebar-w);
   flex-shrink:0;
   background:#0A1629;
@@ -136,6 +140,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   display:flex;flex-direction:column;
   overflow-y:auto;overflow-x:hidden;
   z-index:200;
+  height:100vh;
+  position:sticky;
+  top:0;
+  align-self:start;
   transition:transform 0.25s ease,width 0.25s ease;
 }
 #sidebar-logo{
@@ -216,7 +224,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ═══ MAIN AREA ═══ */
 #main-wrap{
-  flex:1;display:flex;flex-direction:column;overflow:hidden;
+  grid-column: 2;
+  display:flex;flex-direction:column;overflow:hidden;
   min-width:0;
 }
 
@@ -563,11 +572,18 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:768px){
   :root{--sidebar-w:240px}
+  #app{
+    grid-template-columns: 1fr;
+  }
   #sidebar{
     position:fixed;top:0;left:0;bottom:0;
     transform:translateX(-100%);
     z-index:200;
     box-shadow:var(--shadow-lg);
+    grid-column: unset;
+  }
+  #main-wrap{
+    grid-column: 1;
   }
   #hamburger{display:flex}
   #content{padding:14px}
@@ -13624,6 +13640,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const c = document.getElementById('content');
     if (c) c.addEventListener('scroll', () => applyScrollShadow(c.scrollTop), { passive: true });
     window.addEventListener('scroll', () => applyScrollShadow(window.scrollY), { passive: true });
+  });
+})();
+</script>
+
+<script>
+// ═══ SIDEBAR GRID TOGGLE (Desktop) ═══
+(function() {
+  const app = document.getElementById('app');
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger');
+  if (!app || !sidebar || !hamburger) return;
+
+  // Only apply grid-toggle logic on desktop (>768px)
+  hamburger.addEventListener('click', function() {
+    if (window.innerWidth <= 768) return; // Mobile uses the overlay system instead
+    const isCollapsed = sidebar.classList.toggle('desktop-collapsed');
+    if (isCollapsed) {
+      app.style.gridTemplateColumns = '0px 1fr';
+      sidebar.style.width = '0';
+      sidebar.style.overflow = 'hidden';
+    } else {
+      app.style.gridTemplateColumns = 'var(--sidebar-w) 1fr';
+      sidebar.style.width = '';
+      sidebar.style.overflow = '';
+    }
   });
 })();
 </script>
