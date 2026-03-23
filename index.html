@@ -62,6 +62,25 @@
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+
+/* ═══ GLOBAL CURVED BACKGROUND ═══ */
+body::before {
+  content: "";
+  position: fixed;
+  top: -10%;
+  right: -15%;
+  width: 80%;
+  height: 120%;
+  background-color: #e6e6e6;
+  border-radius: 50%;
+  transform: rotate(-10deg);
+  z-index: 0;
+  pointer-events: none;
+}
+#app {
+  position: relative;
+  z-index: 1;
+}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -141,9 +160,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   overflow-y:auto;overflow-x:hidden;
   z-index:200;
   height:100vh;
-  position:sticky;
+  position:fixed;
   top:0;
-  align-self:start;
+  left:0;
   transition:transform 0.25s ease,width 0.25s ease;
 }
 #sidebar-logo{
@@ -562,7 +581,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   background:radial-gradient(circle at 50% 40%, #FFFFFF 0%, #F6F8FA 70%, #EEF2F7 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   transition:opacity 0.6s ease;
+  overflow:hidden;
 }
+#splash::before{
+  content:"";
+  position:absolute;
+  top:-10%;right:-15%;
+  width:80%;height:120%;
+  background-color:#e6e6e6;
+  border-radius:50%;
+  transform:rotate(-10deg);
+  z-index:0;
+  pointer-events:none;
+}
+#splash > *{position:relative;z-index:1;}
 #splash.out{opacity:0;pointer-events:none}
 #splash .s-logo{opacity:0;transform:scale(0.92);animation:slogoIn 0.8s 0.2s ease forwards}
 #splash .s-txt{opacity:0;font-size:11px;color:var(--text-3);letter-spacing:3px;text-transform:uppercase;margin-top:16px;animation:slogoIn 0.6s 0.9s ease forwards}
@@ -572,7 +604,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 @keyframes sbar{0%{width:0}100%{width:100%}}
 
 /* ═══ LOGIN LOADER ═══ */
-#ll{position:fixed;inset:0;z-index:99998;background:var(--bg-white);display:none;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease}
+#ll{position:fixed;inset:0;z-index:99998;background:var(--bg-white);display:none;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease;overflow:hidden;}
+#ll::before{content:"";position:absolute;top:-10%;right:-15%;width:80%;height:120%;background-color:#e6e6e6;border-radius:50%;transform:rotate(-10deg);z-index:0;pointer-events:none;}
+#ll > *{position:relative;z-index:1;}
+#login-loading{overflow:hidden!important;}
+#login-loading::before{content:"";position:absolute;top:-10%;right:-15%;width:80%;height:120%;background-color:#e6e6e6;border-radius:50%;transform:rotate(-10deg);z-index:0;pointer-events:none;}
+#login-loading > *{position:relative;z-index:1;}
 #ll.show{display:flex}
 #ll.out{opacity:0;pointer-events:none}
 #ll .ll-dots{display:flex;gap:8px;margin-top:28px}
