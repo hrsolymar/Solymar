@@ -220,16 +220,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   min-width:0;
 }
 
-/* ═══ TOP BAR ═══ */
+/* ═══ TOP BAR — Premium Glassmorphism ═══ */
 #topbar{
-  height:52px;flex-shrink:0;
-  background:rgba(246,248,250,0.94);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(0,0,0,0.04);
+  height:56px;flex-shrink:0;
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:blur(18px) saturate(180%);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border-bottom:1px solid rgba(0,0,0,0.05);
   display:flex;align-items:center;
-  padding:0 10px;gap:6px;
+  padding:0 16px 0 12px;gap:8px;
   z-index:100;overflow:hidden;
+  position:sticky;top:0;
+  transition:box-shadow 0.3s ease;
 }
 #topbar-title{font-size:15px;font-weight:700;color:#1E293B !important;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--font-serif);letter-spacing:-0.3px}
 .topbar-btn{
@@ -727,37 +729,57 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   flex-shrink: 0;
 }
 
-/* ── PAYROLL BANNER ── */
+/* ── PAYROLL BANNER — Luxury Dark ── */
 #dash-payroll {
   margin: 0;
-  padding: 22px 24px;
-  background: var(--primary);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 24px 28px;
+  background: linear-gradient(110deg, #0f172a 0%, #1e293b 100%);
+  border-bottom: none;
+  border-radius: 0;
   display: flex;
   align-items: center;
   gap: 28px;
   flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+/* Animated shimmer overlay */
+#dash-payroll::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  animation: payroll-shimmer 4s infinite;
+  pointer-events: none;
+}
+@keyframes payroll-shimmer {
+  100% { left: 200%; }
 }
 #dash-payroll-label {
   font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.40);
-  font-weight: 500;
+  font-weight: 600;
   flex-shrink: 0;
 }
 #dash-payroll-amount {
-  font-family: 'Sora', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: #f8fafc;
   line-height: 1;
   flex-shrink: 0;
 }
 #dash-payroll-meta {
   font-size: 11px;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.40);
   letter-spacing: 0.04em;
 }
 
@@ -867,6 +889,30 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 #dexp > div:last-child { border-bottom: none !important; }
 #ddeps > div { padding: 8px 0 !important; border-bottom: 1px solid var(--border-l) !important; }
 #ddeps > div:last-child { border-bottom: none !important; }
+
+/* ── ELITE ADD EMPLOYEE BUTTON ── */
+.btn-add-employee {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  padding: 9px 18px !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.4px !important;
+  box-shadow: 0 4px 14px rgba(15,23,42,0.18) !important;
+  transition: all 0.28s cubic-bezier(0.4,0,0.2,1) !important;
+  border: none !important;
+}
+.btn-add-employee:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(15,23,42,0.28) !important;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+}
+
+/* ── TOPBAR SCROLL SHADOW ── */
+#topbar.scrolled-nav {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
 
 </style>
 </head>
@@ -1015,7 +1061,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
       <span id="role-badge" style="display:none;font-size:10px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:3px 8px;border-radius:4px;letter-spacing:0.3px"></span>
       <button id="btn-import-csv" class="topbar-btn" onclick="triggerImportCSV()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
       <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVImport(this)"/>
-      <button id="btn-add" class="topbar-btn primary" style="white-space:nowrap;flex-shrink:0;font-size:11px;padding:5px 10px" onclick="openAdd()" style="display:none">
+      <button id="btn-add" class="topbar-btn primary btn-add-employee" style="white-space:nowrap;flex-shrink:0" onclick="openAdd()" style="display:none">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add Employee
       </button>
@@ -2445,8 +2491,8 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
     <div style="margin-bottom:18px">
       <div id="l-pass-lbl" style="font-size:8px;font-weight:700;color:#5a5040;text-transform:uppercase;letter-spacing:3px;margin-bottom:6px">PASSWORD</div>
       <div style="position:relative">
-        <input id="l-pass" type="password" placeholder="Enter password..." onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding:16px 42px 16px 16px;margin-bottom:8px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:all 0.3s ease;color:#1A202C"/>
-        <button onclick="var i=document.getElementById('l-pass');var b=document.getElementById('l-eye');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'':''" id="l-eye" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#5a5040;padding:0;line-height:1;font-size:16px"></button>
+        <input id="l-pass" type="password" placeholder="Enter password..." onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding:16px 42px 16px 16px;border:1px solid #EDF2F7;border-radius:12px;background:#F8FAFC;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:all 0.3s ease;color:#1A202C"/>
+        <button onclick="var i=document.getElementById('l-pass');var b=document.getElementById('l-eye');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'':''" id="l-eye" style="position:absolute;right:12px;top:calc(50% - 4px);transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#5a5040;padding:0;line-height:1;font-size:16px;z-index:1"></button>
       </div>
       <div id="l-err" style="color:var(--red);font-size:10px;margin-top:5px;display:none;font-family:'Montserrat',sans-serif;letter-spacing:1px">Incorrect password</div>
     </div>
@@ -13524,5 +13570,63 @@ async function publishToGitHub(){
 }
 
 </script>
+<script>
+// ═══ PAYROLL AMOUNT COUNTER ANIMATION ═══
+function animatePayrollValue(el, start, end, duration) {
+  if (!el) return;
+  let startTs = null;
+  const step = (ts) => {
+    if (!startTs) startTs = ts;
+    const progress = Math.min((ts - startTs) / duration, 1);
+    // Ease out cubic
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const val = Math.floor(ease * (end - start) + start);
+    el.innerHTML = 'BD ' + val.toLocaleString();
+    if (progress < 1) window.requestAnimationFrame(step);
+    else el.innerHTML = 'BD ' + end.toLocaleString();
+  };
+  window.requestAnimationFrame(step);
+}
+
+// Watch for payroll banner becoming visible and animate
+const _payrollObserver = new MutationObserver(() => {
+  const el = document.getElementById('dash-payroll');
+  const amountEl = document.getElementById('dash-payroll-amount');
+  if (el && amountEl && el.style.display !== 'none') {
+    const rawText = amountEl.textContent.replace(/[^0-9.]/g, '');
+    const target = parseFloat(rawText);
+    if (!isNaN(target) && target > 0 && !amountEl._animated) {
+      amountEl._animated = true;
+      animatePayrollValue(amountEl, 0, Math.round(target), 1400);
+    }
+  }
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const payrollWrap = document.getElementById('dash-payroll');
+  if (payrollWrap) {
+    _payrollObserver.observe(payrollWrap, { attributes: true, attributeFilter: ['style'] });
+  }
+});
+
+// ═══ TOPBAR SCROLL SHADOW EFFECT ═══
+(function() {
+  const contentEl = document.getElementById('content');
+  function applyScrollShadow(scrollTop) {
+    const nav = document.getElementById('topbar');
+    if (!nav) return;
+    if (scrollTop > 8) {
+      nav.classList.add('scrolled-nav');
+    } else {
+      nav.classList.remove('scrolled-nav');
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('content');
+    if (c) c.addEventListener('scroll', () => applyScrollShadow(c.scrollTop), { passive: true });
+    window.addEventListener('scroll', () => applyScrollShadow(window.scrollY), { passive: true });
+  });
+})();
+</script>
+
 </body>
 </html>
