@@ -2445,7 +2445,7 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 </div>
 <div id="toast" style="display:none"></div>
 <!-- ADMIN USER APPROVAL PANEL -->
-<div id="approve-ov" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,41,0.55);align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeApprovePanel()">
+<div id="approve-ov" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,41,0.55);align-items:center;justify-content:center;padding:16px;touch-action:manipulation" onclick="if(event.target===this)closeApprovePanel()">
   <div onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(10,22,41,0.18)">
 
     <!-- Header -->
@@ -4443,12 +4443,12 @@ function renderAUsers() {
       var sel = buildASelect(u.id, u.role);
       var btnA = document.createElement('button');
       btnA.textContent = '✅ Approve';
-      btnA.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
-      btnA.onclick = function() { approveUser(u.id, 'approved'); };
+      btnA.style.cssText = 'flex:1;min-width:80px;padding:12px 8px;background:#16A34A;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent';
+      (function(uid){ btnA.addEventListener('click', function(e){ e.stopPropagation(); approveUser(uid, 'approved'); }); })(u.id);
       var btnR = document.createElement('button');
       btnR.textContent = '❌ Reject';
-      btnR.style.cssText = 'flex:1;min-width:80px;padding:8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer';
-      btnR.onclick = function() { approveUser(u.id, 'rejected'); };
+      btnR.style.cssText = 'flex:1;min-width:80px;padding:12px 8px;background:#EF4444;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent';
+      (function(uid){ btnR.addEventListener('click', function(e){ e.stopPropagation(); approveUser(uid, 'rejected'); }); })(u.id);
       row.appendChild(sel); row.appendChild(btnA); row.appendChild(btnR);
 
     } else if (u.status === 'approved') {
