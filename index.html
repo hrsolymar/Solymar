@@ -2659,6 +2659,9 @@ table.prs-tbl tfoot td.fix{text-align:left;padding-left:10px;font-family:inherit
     <select id="prs-status-filter" onchange="renderPayrollSummary()"><option value="">All</option><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select>
     <div style="flex:1"></div>
     <button class="btn bgh" onclick="exportPayrollSumCSV()" style="font-size:11.5px;padding:6px 12px">&#11015; Export CSV</button>
+    <button onclick="exportWPSFile()" style="height:32px;padding:0 14px;background:#0A1629;border:1px solid #B8904D;border-radius:8px;font-size:11.5px;font-weight:700;color:#B8904D;cursor:pointer;display:flex;align-items:center;gap:6px;" title="Generate WPS-compliant salary file (BHD, 3dp, GOSI-deducted net)">
+      &#128196; Export WPS File
+    </button>
     <button class="btn bg" onclick="confirmPayrollSum()" style="font-size:11.5px;padding:6px 12px">&#128274; Confirm &amp; Lock</button>
   </div>
   <!-- Hidden select kept for JS compat -->
@@ -10123,6 +10126,97 @@ function openPrsSlip(empId,ym){
 function closePrsSlip(){var m=document.getElementById('prs-slip-modal-bg');if(m)m.style.display='none';}
 
 /* ── Export & Confirm ── */
+
+/* ═══════════════════════════════════════════════
+   WPS SALARY FILE EXPORT
+   Bahrain Wage Protection System v2 compliant
+   - Fixed = Basic + Housing + Transport + Other Allow
+   - Social Allowance = SIO/GOSI deduction (Bahraini 8%, Expat 1%)
+   - Variable = OT + Misc + Other Earnings
+   - Total = Fixed + Social + Variable
+   - All amounts: BHD, 3 decimal places
+   - Format: CSV (Comma Delimited)
+═══════════════════════════════════════════════ */
+function exportWPSFile(){
+  var ym=(document.getElementById('prs-period')||{value:'2026-03'}).value||'2026-03';
+  var parts=ym.split('-');
+  var salMonth=parseInt(parts[1],10);
+  var salYear=parseInt(parts[0],10);
+
+  var emps=(_activeEMP()||[]).filter(function(e){
+    if(e.in_payroll===false) return false;
+    if((e.total||0)===0 && e.payroll_company==='Others' && e.in_payroll!==true) return false;
+    return true;
+  }).slice().sort(function(a,b){
+    return (a.dept||'').localeCompare(b.dept||'')||a.name.localeCompare(b.name);
+  });
+
+  if(!emps.length){ alert('No employees found for this period.'); return; }
+
+  var missing=emps.filter(function(e){ return !(e.iban||'').trim(); });
+  if(missing.length){
+    var names=missing.slice(0,5).map(function(e){ return e.name; }).join(', ');
+    var msg='Warning: '+missing.length+' employee(s) have no IBAN on file ('+names+(missing.length>5?'...':'')+').\nThey will be excluded.\n\nContinue?';
+    if(!confirm(msg)) return;
+  }
+
+  var header=['CPR/GCC ID','Worker Name','IBAN/Wallet Number','Currency','Fixed Salary','Social Allowance','Variable Salary BHD','Total Amount BHD','Salary Month','Salary Year'];
+  var rows=[header];
+
+  emps.forEach(function(emp){
+    var iban=(emp.iban||'').trim();
+    if(!iban) return;
+
+    var c=_calcEmp(emp,ym);
+
+    /* Fixed = net basic + leave paid + housing + transport + allowances */
+    var fixedSalary=+(c.netBas+c.slPaid+c.lvPaid+c.hous+c.trans+c.allow).toFixed(3);
+
+    /* Social Allowance = GOSI deduction (8% Bahraini / 1% expat) */
+    var socialAllowance=+(c.gosiNet).toFixed(3);
+
+    /* Variable = OT + Misc + Other Earnings */
+    var variableSalary=+(c.OT+c.misc+(c.oeAmt||0)).toFixed(3);
+
+    /* Total must equal Fixed + Social + Variable exactly */
+    var totalAmount=+(fixedSalary+socialAllowance+variableSalary).toFixed(3);
+
+    var cprId=(emp.cpr||emp.id_number||emp.gcc_id||'').toString().trim();
+    rows.push([
+      cprId,
+      emp.name||'',
+      iban,
+      'BHD',
+      fixedSalary.toFixed(3),
+      socialAllowance.toFixed(3),
+      variableSalary.toFixed(3),
+      totalAmount.toFixed(3),
+      String(salMonth).padStart(2,'0'),
+      String(salYear)
+    ]);
+  });
+
+  if(rows.length<=1){ alert('No employees with IBAN found. Please update IBANs in the Directory.'); return; }
+
+  var csv=rows.map(function(r){
+    return r.map(function(v){
+      var s=String(v||'');
+      if(s.indexOf(',')>=0||s.indexOf('"')>=0) s='"'+s.replace(/"/g,'""')+'"';
+      return s;
+    }).join(',');
+  }).join('\r\n');
+
+  var bom='\uFEFF';
+  var blob=new Blob([bom+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  var fname='WPS_SalaryFile_'+(_company||'Solymar').replace(/\s+/g,'_')+'_'+ym+'.csv';
+  a.download=fname;
+  a.click();
+  if(typeof toast==='function') toast('WPS file exported: '+fname+' ('+(rows.length-1)+' employees)','s');
+}
+
+
 function exportPayrollSumCSV(){
   var ym=(document.getElementById('prs-period')||{value:'2026-03'}).value||'2026-03';
   var emps=(_activeEMP()||[]).slice().sort(function(a,b){return (a.dept||'').localeCompare(b.dept||'')||a.name.localeCompare(b.name);});
