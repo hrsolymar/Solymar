@@ -222,23 +222,22 @@ body::before {
 }
 .nav-item{
   display:flex;align-items:center;gap:10px;
-  padding:13px 18px;
+  padding:14px 20px;
   cursor:pointer;
   font-size:13px;font-weight:500;color:rgba(255,255,255,0.5) !important;
   border-radius:12px;
-  transition:all 0.25s ease;
+  transition:all 0.3s ease;
   border-left:3px solid transparent;
   user-select:none;
-  margin:3px 12px;
+  margin:4px 15px;
 }
 .nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85) !important;border-radius:12px}
 .nav-item.active{
-  background:rgba(184,144,77,0.10) !important;
+  background:rgba(184,144,77,0.06) !important;
   color:var(--accent) !important;
   border-left:3px solid var(--accent) !important;
   border-radius:0 12px 12px 0 !important;
   font-weight:700;
-  box-shadow:inset 3px 0 12px rgba(184,144,77,0.12);
 }
 .nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.4}
 .nav-item.active svg{opacity:0.9}
@@ -258,9 +257,9 @@ body::before {
 }
 .nav-sub {
   display:none;
-  margin:2px 12px 6px 28px;
-  border-left:1px solid rgba(184,144,77,0.18);
-  padding-left:8px;
+  margin:2px 15px 4px 15px;
+  border-left:1px solid rgba(255,255,255,0.08);
+  padding-left:12px;
   overflow:hidden;
 }
 .nav-group.open .nav-sub {
@@ -270,10 +269,10 @@ body::before {
   display:flex;
   align-items:center;
   gap:8px;
-  padding:9px 12px 9px 16px;
+  padding:9px 12px;
   font-size:12px;
   font-weight:500;
-  color:rgba(255,255,255,0.42);
+  color:rgba(255,255,255,0.4);
   cursor:pointer;
   border-radius:8px;
   transition:all 0.2s ease;
@@ -735,39 +734,14 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
   .ta-desktop-table{display:none}
   .ta-mobile-cards{display:block}
 }
-.ta-card{
-  background:rgba(255,255,255,0.75) !important;
-  backdrop-filter:blur(10px) saturate(160%);
-  -webkit-backdrop-filter:blur(10px) saturate(160%);
-  border:1px solid rgba(184,144,77,0.12) !important;
-  border-radius:16px !important;
-  box-shadow:0 4px 20px rgba(10,22,41,0.05),0 1px 3px rgba(0,0,0,0.02) !important;
-  padding:16px !important;
-  margin-bottom:10px;cursor:pointer;
-  transition:all 0.25s ease;
-  position:relative;
-  overflow:hidden;
-}
-/* Gold gradient top border to match payroll luxury card */
-.ta-card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,#B8904D,rgba(184,144,77,0.3),transparent);
-  border-radius:16px 16px 0 0;
-}
-.ta-card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 32px rgba(10,22,41,0.09) !important;
-  border-color:rgba(184,144,77,0.22) !important;
-}
+.ta-card{background:var(--card-bg) !important;border:1px solid rgba(0,0,0,0.03) !important;border-radius:var(--radius) !important;box-shadow:var(--shadow-premium) !important;padding:24px !important;margin-bottom:10px;cursor:pointer;transition:transform 0.3s ease}
+.ta-card:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(10,22,41,0.07) !important;}
 .ta-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ta-card-avatar{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,rgba(184,144,77,0.15),rgba(184,144,77,0.08));border:1.5px solid rgba(184,144,77,0.25);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#B8904D;flex-shrink:0;box-shadow:0 2px 8px rgba(184,144,77,0.12)}
+.ta-card-avatar{width:40px;height:40px;border-radius:50%;background:#c9a75420;border:2px solid #c9a75440;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#c9a754;flex-shrink:0}
 .ta-card-name{font-weight:700;font-size:13px;color:#1E293B}
 .ta-card-sub{font-size:11px;color:#64748B;margin-top:1px;font-weight:400;letter-spacing:0.2px}
 .ta-card-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.ta-card-stat{background:rgba(184,144,77,0.04);border-radius:8px;padding:7px 4px;text-align:center;border:1px solid rgba(184,144,77,0.08)}
+.ta-card-stat{background:rgba(15,23,42,0.03);border-radius:8px;padding:7px 4px;text-align:center;border:1px solid rgba(15,23,42,0.05)}
 .ta-card-stat-val{font-size:13px;font-weight:700;color:var(--text)}
 .ta-card-stat-lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;margin-top:1px}
 .ta-card-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
@@ -1089,20 +1063,12 @@ body.sidebar-open #sidebar{transform:translateX(0)!important}
 /* ═══ GILDED MINIMALIST PREMIUM LAYER ═══ */
 
 /* Section titles — uppercase champagne tracking */
-.stitle,.section-title{
-  font-size:9px;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:rgba(184,144,77,0.6);
-  font-weight:700;
-}
-.nav-section-label{
-  padding:18px 0 5px 20px !important;
+.stitle,.section-title,.nav-section-label{
   font-size:9px !important;
-  font-weight:800 !important;
-  color:rgba(255,255,255,0.45) !important;
+  letter-spacing:3px !important;
   text-transform:uppercase !important;
-  letter-spacing:3.5px !important;
+  color:rgba(184,144,77,0.6) !important;
+  font-weight:700 !important;
 }
 
 /* KPI values — editorial numerics */
@@ -1314,14 +1280,10 @@ table.prs-tbl thead th{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span class="ni-label">Employees</span>
     </div>
-    <!-- ── OPERATIONS section ── -->
-    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:10px 0 2px"></div>
-    <div class="nav-section-label">Operations</div>
-
     <!-- Time Management group -->
     <div class="nav-group open" id="ng-time">
       <div class="nav-item toggle-btn" onclick="toggleNavGroup('ng-time')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="ni-label">Time Management</span>
         <span class="ni-arrow">▾</span>
       </div>
@@ -1343,15 +1305,10 @@ table.prs-tbl thead th{
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>Reports</span>
         </div>
-        <div class="nav-sub-item" onclick="showPg('ta');closeSidebar()" data-pg="ta">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span>Time &amp; Attendance</span>
-        </div>
       </div>
     </div>
 
-    <!-- ── PAYROLL section ── -->
-    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:10px 0 2px"></div>
+    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:8px 0 4px"></div>
     <div class="nav-section-label">Payroll</div>
 
     <!-- Payroll group -->
@@ -1362,6 +1319,10 @@ table.prs-tbl thead th{
         <span class="ni-arrow">&#9662;</span>
       </div>
       <div class="nav-sub">
+        <div class="nav-sub-item" onclick="showPg('ta');closeSidebar()" data-pg="ta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Time &amp; Attendance</span>
+        </div>
         <div class="nav-sub-item" onclick="showPg('payslip');closeSidebar()" data-pg="payslip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
           <span>Payslip Generator</span>
@@ -1374,6 +1335,16 @@ table.prs-tbl thead th{
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           <span>Duty Roster</span>
         </div>
+      </div>
+    </div>
+
+    <div class="nav-group" id="ng-tools">
+      <div class="nav-item toggle-btn" onclick="toggleNavGroup('ng-tools')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span class="ni-label">Tools</span>
+        <span class="ni-arrow">&#9662;</span>
+      </div>
+      <div class="nav-sub">
         <div class="nav-sub-item" onclick="showPg('fs');closeSidebar()" data-pg="fs">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           <span>Settlement</span>
@@ -1389,8 +1360,7 @@ table.prs-tbl thead th{
       </div>
     </div>
 
-    <!-- ── ADMIN section ── -->
-    <div style="border-top:1px solid rgba(255,255,255,0.06);margin:10px 0 2px"></div>
+    <div style="bo rgba(255,255,255,0.06);margin:8px 0 4px"></div>
     <div class="nav-section-label">Admin</div>
     <div class="nav-item" onclick="showPg('discipline');closeSidebar()" data-pg="discipline">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -1434,9 +1404,12 @@ table.prs-tbl thead th{
 
     <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
       <span id="role-badge" style="display:none;font-size:10px;font-weight:600;background:var(--primary-light);color:var(--primary);padding:3px 8px;border-radius:4px;letter-spacing:0.3px"></span>
-      <!-- Import/Add Employee moved to view toolbar — no duplicates in topbar -->
+      <button id="btn-import-csv" class="topbar-btn" onclick="triggerImportCSV()" style="display:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
       <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVImport(this)"/>
-      <button id="btn-add" style="display:none" aria-hidden="true"></button>
+      <button id="btn-add" class="topbar-btn primary btn-add-employee" style="white-space:nowrap;flex-shrink:0" onclick="openAdd()" style="display:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Employee
+      </button>
 
     </div>
   </header>
@@ -5441,7 +5414,7 @@ function _loginOK(role) {
   var b = document.getElementById('role-badge');
   if (b) { b.innerHTML = icons[role]; b.style.color = colors[role]; b.style.display = 'inline-block'; }
   var ab = document.getElementById('btn-add');
-  if (ab) ab.style.display = 'none'; // Handled by view toolbar btn-add-dir
+  if (ab) ab.style.display = canEdit() ? 'inline-flex' : 'none';
   var aw = document.getElementById('menu-approve-wrap');
   if (aw) aw.style.display = role === 'admin' ? 'block' : 'none';
   renderHBadges();
@@ -5928,20 +5901,17 @@ function handleEmpImport(input){
     reader.onload=function(e){_parseEmpCSV(e.target.result);};
     reader.readAsText(file);
   } else if(ext==='xlsx'||ext==='xls'){
-    // Attempt SheetJS if available, else fallback message
     if(typeof XLSX!=='undefined'){
       var reader=new FileReader();
       reader.onload=function(e){
         try{
           var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
           var ws=wb.Sheets[wb.SheetNames[0]];
-          var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
-          _applyImportedRows(rows);
+          _parseEmpXLSX(ws);
         }catch(err){alert('Excel read error: '+err.message);}
       };
       reader.readAsArrayBuffer(file);
     } else {
-      // Dynamically load SheetJS then retry
       var script=document.createElement('script');
       script.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
       script.onload=function(){handleEmpImport(input);};
@@ -5951,6 +5921,62 @@ function handleEmpImport(input){
   } else {
     alert('Please upload a .csv, .xlsx or .xls file.');
   }
+}
+
+// Smart XLSX parser — handles Solymar multi-row title format
+// Scans every row to find real headers, skips section/title rows
+function _parseEmpXLSX(ws){
+  // Convert sheet to raw array of arrays (no header inference)
+  var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  if(!raw||!raw.length){alert('Excel file appears empty.');return;}
+
+  // Find the header row: first row where col[0] looks like 'Emp' or 'emp' or 'Code' or '#'
+  // OR where we see at least 4 non-empty cells AND one cell contains 'Name'
+  var headerRowIdx=-1;
+  for(var i=0;i<Math.min(raw.length,10);i++){
+    var r=raw[i];
+    var nonEmpty=r.filter(function(c){return String(c).trim()!=='';});
+    var joined=nonEmpty.join(' ').toLowerCase();
+    if(nonEmpty.length>=3 && (
+      joined.indexOf('name')!==-1 ||
+      joined.indexOf('emp')!==-1 ||
+      joined.indexOf('code')!==-1
+    )){
+      headerRowIdx=i;
+      break;
+    }
+  }
+  if(headerRowIdx===-1){alert('Could not find column headers. Ensure the file has a header row with columns like Full Name, Emp. Code, etc.');return;}
+
+  // Normalise header names — strip newlines, special chars, lowercase, spaces→underscore
+  var headers=raw[headerRowIdx].map(function(h){
+    return String(h).replace(/[\r\n]+/g,' ').replace(/[←✓▶]/g,'').replace(/\(BD\)/gi,'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase().replace(/_+$/,'');
+  });
+
+  // Build row objects from data rows below the header
+  var rows=[];
+  for(var j=headerRowIdx+1;j<raw.length;j++){
+    var dataRow=raw[j];
+    // Skip completely empty rows
+    var hasData=dataRow.some(function(c){return String(c).trim()!=='';});
+    if(!hasData)continue;
+    // Skip department section header rows (e.g. "▶ FOOD & BEVERAGES")
+    // Heuristic: if first non-empty cell is not numeric and most cells are empty
+    var firstVal=String(dataRow[0]||'').trim();
+    var nonEmptyCells=dataRow.filter(function(c){return String(c).trim()!=='';}).length;
+    if(nonEmptyCells<=2 && !/^\d+$/.test(firstVal))continue;
+    // Also skip if first col is empty and second col might be a section header
+    if(firstVal==='' && nonEmptyCells<=2)continue;
+    var obj={};
+    headers.forEach(function(h,idx){
+      obj[h]=dataRow[idx]!==undefined?dataRow[idx]:'';
+    });
+    rows.push(obj);
+  }
+
+  if(!rows.length){alert('No employee rows found in this file.');return;}
+  toast('Read '+rows.length+' rows from Excel — processing…','s');
+  _applyImportedRows(rows);
 }
 
 function _parseEmpCSV(text){
@@ -5978,25 +6004,25 @@ function _parseEmpCSV(text){
 function _applyImportedRows(rows){
   // Column name aliases — map common header variants to our field names
   var MAP={
-    name:['name','full_name','employee_name','emp_name'],
+    name:['name','full_name','employee_name','emp_name','fullname'],
     first_name:['first_name','first','firstname'],
     last_name:['last_name','last','lastname','surname'],
-    emp_code:['emp_code','employee_code','employee_id','emp_id','code','staff_id','id'],
-    cpr:['cpr','cpr_no','national_id','id_number'],
+    emp_code:['emp_code','employee_code','employee_id','emp_id','code','staff_id','id','emp_code','empcode','emp'],
+    cpr:['cpr','cpr_no','national_id','id_number','cpr__id_no','cprid_no','cpr_id_no','id_no','cpridno'],
     pp:['pp','passport','passport_no','passport_number'],
     dept:['dept','department'],
-    title:['title','designation','job_title','position'],
+    title:['title','designation','job_title','position','jobtitle'],
     nationality:['nationality','nat'],
     gender:['gender','sex'],
-    dob:['dob','date_of_birth','birth_date'],
+    dob:['dob','date_of_birth','birth_date','dateofbirth'],
     wp_expiry:['wp_expiry','work_permit_expiry','permit_expiry','wp_exp'],
     pp_expiry:['pp_expiry','passport_expiry','passport_exp'],
-    status:['status','permit_status'],
-    basic:['basic','basic_salary','basic_sal'],
-    housing:['housing','housing_allowance','housing_allow'],
-    transport:['transport','transport_allowance','transport_allow'],
-    phone_allow:['phone_allow','phone','telephone','phone_allowance'],
-    allowances:['allowances','other_allowances','other_allow'],
+    status:['status','permit_status','visa__residency_status__auto','visa_residency_status','visa__residency_status_auto'],
+    basic:['basic','basic_salary','basic_sal','basicsalary'],
+    housing:['housing','housing_allowance','housing_allow','housingallow'],
+    transport:['transport','transport_allowance','transport_allow','transportallow'],
+    phone_allow:['phone_allow','phone','telephone','phone_allowance','phoneallow'],
+    allowances:['allowances','other_allowances','other_allow','allowances__auto','allowances_auto'],
     gosi_emp:['gosi_emp','gosi_employee','gosi'],
     ded_other:['ded_other','other_deductions','other_ded','deductions'],
     bank_name:['bank_name','bank'],
@@ -6681,7 +6707,7 @@ function showPg(id){
   var tb=document.getElementById('topbar-title');
   if(tb)tb.textContent=titles[id]||'Solymar HR';
   var ab=document.getElementById('btn-add');
-  if(ab)ab.style.display='none'; // Always hidden — Add Employee is in view toolbar
+  if(ab)ab.style.display=(id==='dir'&&canEdit())?'flex':'none';
   var ab2=document.getElementById('btn-add-dir');
   if(ab2)ab2.style.display=(id==='dir'&&canEdit())?'flex':'none';
   var ib=document.getElementById('btn-import-csv');
@@ -8323,7 +8349,7 @@ function lvPrint(){
     // Net row
     sRows+='<tr style="background:#fafafa;"><td style="padding:6px 14px;font-size:11px;font-weight:700;color:#333;">Net</td><td style="padding:6px 14px;font-size:12px;font-weight:800;text-align:right;color:'+(v.net>=0?'#333':'#cc0000')+';">BD '+v.net.toFixed(3)+'</td></tr>';
   });
-  if(sRows) sRows+='<tr style="background:rgba(184,144,77,0.07);"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#333;border-top:2px solid #bbb;">Total Salary Payment</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#333;border-top:2px solid #bbb;">BD '+fv(d.totSal)+'</td></tr>';
+  if(sRows) sRows+='<tr style="background:#f0f0f0;"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#333;border-top:2px solid #bbb;">Total Salary Payment</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#333;border-top:2px solid #bbb;">BD '+fv(d.totSal)+'</td></tr>';
 
   var body=''
     +'<div id="pbar" style="position:fixed;top:0;left:0;right:0;background:#2d1f0a;padding:10px 16px;display:flex;gap:8px;align-items:center;z-index:9999;print-display:none">'
@@ -8806,8 +8832,8 @@ function psPrint(){
   var empName=e?e.name:(selEl&&selEl.options[selEl.selectedIndex]?selEl.options[selEl.selectedIndex].text:'Employee');
   function tr(lbl,val,col){
     if(!val)return '';
-    return '<tr><td style="padding:6px 16px;font-size:11px;color:#555;border-bottom:1px solid rgba(184,144,77,0.08)">'+lbl+'</td>'
-      +'<td style="padding:6px 16px;font-size:11px;font-weight:700;text-align:right;border-bottom:1px solid rgba(184,144,77,0.08);color:'+(col||'#222')+'">BD '+val.toFixed(3)+'</td></tr>';
+    return '<tr><td style="padding:6px 16px;font-size:11px;color:#555;border-bottom:1px solid #f0f0f0">'+lbl+'</td>'
+      +'<td style="padding:6px 16px;font-size:11px;font-weight:700;text-align:right;border-bottom:1px solid #f0f0f0;color:'+(col||'#222')+'">BD '+val.toFixed(3)+'</td></tr>';
   }
   var body='<div style="max-width:600px;margin:60px auto 20px;font-family:Arial,sans-serif;background:#fff;color:#000">'
     +'<div style="background:#0a1629;color:#fff;padding:18px 20px;display:flex;justify-content:space-between;align-items:center">'
@@ -9503,7 +9529,7 @@ function printLvSettle(){
       if(v.d>0) sRows+='<tr><td style="'+tdL+'padding-left:22px;">Other Deductions</td><td style="'+tdR+'color:#cc0000;">- BD '+v.d.toFixed(3)+'</td></tr>';
       sRows+='<tr style="background:#fafafa;"><td style="padding:6px 14px;font-size:11px;font-weight:700;color:#333;">Net</td><td style="padding:6px 14px;font-size:12px;font-weight:800;text-align:right;color:'+(v.net>=0?'#333':'#cc0000')+';">BD '+v.net.toFixed(3)+'</td></tr>';
     });
-    if(sRows) sRows+='<tr style="background:rgba(184,144,77,0.07);"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#333;border-top:2px solid #bbb;">Total Salary Payment</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#333;border-top:2px solid #bbb;">BD '+fv(totSal)+'</td></tr>';
+    if(sRows) sRows+='<tr style="background:#f0f0f0;"><td style="padding:8px 14px;font-size:12px;font-weight:700;color:#333;border-top:2px solid #bbb;">Total Salary Payment</td><td style="padding:8px 14px;font-size:13px;font-weight:800;text-align:right;color:#333;border-top:2px solid #bbb;">BD '+fv(totSal)+'</td></tr>';
   }
 
   var grandTotalAmt = rec.grandTotal || (totEnt+totSal);
