@@ -6048,9 +6048,10 @@ function _applyImportedRows(rows){
 
   var imported=0;var updated=0;
   rows.forEach(function(row){
-    var cpr=getVal(row,'cpr');
-    var name=getVal(row,'name')||(getVal(row,'first_name')+' '+getVal(row,'last_name')).trim();
-    if(!cpr&&!name)return;
+    var cpr=String(getVal(row,'cpr')||'').trim();
+    var name=(getVal(row,'name')||(getVal(row,'first_name')+' '+getVal(row,'last_name')).trim()||'').trim();
+    var rowEmpCode=String(getVal(row,'emp_code')||'').trim();
+    if(!cpr&&!name&&!rowEmpCode)return; // skip truly empty rows
     var basic=parseFloat(getVal(row,'basic'))||0;
     var housing=parseFloat(getVal(row,'housing'))||0;
     var transport=parseFloat(getVal(row,'transport'))||0;
@@ -6059,40 +6060,49 @@ function _applyImportedRows(rows){
     var gosi_emp=parseFloat(getVal(row,'gosi_emp'))||0;
     var ded_other=parseFloat(getVal(row,'ded_other'))||0;
     var total=(basic+housing+transport+phone_allow+allowances)-(gosi_emp+ded_other);
-    var existing=cpr?EMP.find(function(e){return e.cpr===cpr;}):null;
+    var empCode=String(getVal(row,'emp_code')||'').trim();
+    // Match existing by emp_code first (most reliable), then CPR, then name
+    var existing=empCode?EMP.find(function(e){return String(e.emp_code||'').trim()===empCode;}):null;
+    if(!existing&&cpr&&cpr!=='0')existing=EMP.find(function(e){return e.cpr&&String(e.cpr).trim()===String(cpr).trim();});
     if(!existing&&name)existing=EMP.find(function(e){return e.name&&e.name.toLowerCase()===name.toLowerCase();});
     if(existing){
-      // Update existing
+      // Update existing — overwrite all fields from file
       existing.name=name||existing.name;
-      existing.emp_code=getVal(row,'emp_code')||existing.emp_code;
+      existing.emp_code=empCode||existing.emp_code;
       existing.dept=getVal(row,'dept')||existing.dept;
       existing.title=getVal(row,'title')||existing.title;
       existing.nationality=getVal(row,'nationality')||existing.nationality;
       existing.gender=getVal(row,'gender')||existing.gender;
       existing.dob=getVal(row,'dob')||existing.dob;
+      existing.cpr=cpr||existing.cpr;
       existing.wp_expiry=getVal(row,'wp_expiry')||existing.wp_expiry;
       existing.pp_expiry=getVal(row,'pp_expiry')||existing.pp_expiry;
       existing.status=getVal(row,'status')||existing.status;
-      existing.in_out=getVal(row,'in_out')||existing.in_out;
+      existing.in_out=getVal(row,'in_out')||existing.in_out||'IN';
       existing.bank_name=getVal(row,'bank_name')||existing.bank_name;
       existing.bank_account=getVal(row,'bank_account')||existing.bank_account;
       existing.bank_iban=getVal(row,'bank_iban')||existing.bank_iban;
       existing.email=getVal(row,'email')||existing.email;
-      if(basic)existing.basic=basic;
-      if(housing)existing.housing=housing;
-      if(transport)existing.transport=transport;
-      if(phone_allow)existing.phone_allow=phone_allow;
-      if(allowances)existing.allowances=allowances;
-      if(gosi_emp)existing.gosi_emp=gosi_emp;
-      if(ded_other)existing.ded_other=ded_other;
-      if(basic||housing||transport||phone_allow||allowances)existing.total=total;
+      // Always update salary — use file value (even if 0 means zero-salary)
+      existing.basic=basic;
+      existing.housing=housing;
+      existing.transport=transport;
+      existing.phone_allow=phone_allow;
+      existing.allowances=allowances;
+      existing.gosi_emp=gosi_emp;
+      existing.ded_other=ded_other;
+      existing.total=total;
+      // Ensure employee is marked as active payroll
+      existing.in_payroll=true;
+      existing.company='Solymar Hotel';
+      existing.payroll_company='Solymar Hotel';
       updated++;
     } else {
       // Create new
       var nat=getVal(row,'nationality')||'IND';
       var newEmp={
         id:'imp'+Date.now()+Math.random().toString(36).slice(2,6),
-        emp_code:getVal(row,'emp_code')||'NEW',
+        emp_code:empCode||'NEW',
         name:name,
         first_name:getVal(row,'first_name')||name.split(' ')[0]||'',
         last_name:getVal(row,'last_name')||name.split(' ').slice(1).join(' ')||'',
