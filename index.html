@@ -5966,59 +5966,58 @@ function handleEmpImport(input){
 // Smart XLSX parser — handles Solymar multi-row title format
 // Scans every row to find real headers, skips section/title rows
 function _parseEmpXLSX(ws){
-  // Convert sheet to raw array of arrays (no header inference)
-  var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  // Get ALL rows as raw arrays — no header inference
+  var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
   if(!raw||!raw.length){alert('Excel file appears empty.');return;}
 
-  // Find the header row: first row where col[0] looks like 'Emp' or 'emp' or 'Code' or '#'
-  // OR where we see at least 4 non-empty cells AND one cell contains 'Name'
+  // ── Step 1: Find the real header row ──
+  // Look for a row that has 'name' or 'emp' or 'code' in at least 3 non-empty cells
   var headerRowIdx=-1;
   for(var i=0;i<Math.min(raw.length,10);i++){
     var r=raw[i];
     var nonEmpty=r.filter(function(c){return String(c).trim()!=='';});
     var joined=nonEmpty.join(' ').toLowerCase();
-    if(nonEmpty.length>=3 && (
-      joined.indexOf('name')!==-1 ||
-      joined.indexOf('emp')!==-1 ||
-      joined.indexOf('code')!==-1
-    )){
-      headerRowIdx=i;
-      break;
+    if(nonEmpty.length>=3&&(joined.indexOf('name')!==-1||joined.indexOf('emp')!==-1||joined.indexOf('code')!==-1)){
+      headerRowIdx=i;break;
     }
   }
-  if(headerRowIdx===-1){alert('Could not find column headers. Ensure the file has a header row with columns like Full Name, Emp. Code, etc.');return;}
+  if(headerRowIdx===-1){alert('Could not find column headers. Ensure the file has columns like Full Name, Emp. Code, etc.');return;}
 
-  // Normalise header names — strip newlines, special chars, lowercase, spaces→underscore
+  // ── Step 2: Normalise headers ──
   var headers=raw[headerRowIdx].map(function(h){
     return String(h).replace(/[\r\n]+/g,' ').replace(/[←✓▶]/g,'').replace(/\(BD\)/gi,'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase().replace(/_+$/,'');
   });
+  var empCodeColIdx=headers.indexOf('emp_code');
+  if(empCodeColIdx===-1)empCodeColIdx=0; // fallback to first column
 
-  // Build row objects from data rows below the header
+  // ── Step 3: Build row objects, skip ALL non-employee rows ──
   var rows=[];
   for(var j=headerRowIdx+1;j<raw.length;j++){
     var dataRow=raw[j];
-    // Skip completely empty rows
-    var hasData=dataRow.some(function(c){return String(c).trim()!=='';});
-    if(!hasData)continue;
-    // Skip department section header rows (e.g. "▶ FOOD & BEVERAGES")
-    // Heuristic: if first non-empty cell is not numeric and most cells are empty
-    var firstVal=String(dataRow[0]||'').trim();
-    var nonEmptyCells=dataRow.filter(function(c){return String(c).trim()!=='';}).length;
-    if(nonEmptyCells<=2 && !/^\d+$/.test(firstVal))continue;
-    // Also skip if first col is empty and second col might be a section header
-    if(firstVal==='' && nonEmptyCells<=2)continue;
+    var rawCode=String(dataRow[empCodeColIdx]||'').trim();
+
+    // CRITICAL: only accept rows where the emp_code column is purely numeric
+    // This filters out: section headers (▶ FOOD & BEVERAGES), total rows, empty rows
+    if(!/^\d+$/.test(rawCode))continue;
+
+    // Pad emp_code back to original format if it was a leading-zero code
+    // Excel stores 016 as number 16 — restore the leading zero based on typical Solymar format
+    var empCodePadded=rawCode;
+    if(rawCode.length<3)empCodePadded=rawCode.padStart(3,'0');
+
     var obj={};
     headers.forEach(function(h,idx){
-      obj[h]=dataRow[idx]!==undefined?dataRow[idx]:'';
+      obj[h]=dataRow[idx]!==undefined&&dataRow[idx]!==null?String(dataRow[idx]).trim():'';
     });
+    // Always store the padded code
+    obj['emp_code']=empCodePadded;
     rows.push(obj);
   }
 
-  if(!rows.length){alert('No employee rows found in this file.');return;}
-  toast('Read '+rows.length+' rows from Excel — processing…','s');
+  if(!rows.length){alert('No employee rows found. Check that employee codes are numeric.');return;}
+  toast('Read '+rows.length+' employees from Excel\u2026','s');
   _applyImportedRows(rows);
 }
-
 function _parseEmpCSV(text){
   var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
   if(lines.length<2){alert('CSV has no data rows.');return;}
@@ -6102,15 +6101,21 @@ function _applyImportedRows(rows){
     // Recalculate total from components — don't trust the auto-calc column from Excel
     var total=basic+housing+transport+phone_allow+allowances;
     var empCode=String(getVal(row,'emp_code')||'').trim();
-    // Normalise emp_code for matching: strip leading zeros for numeric comparison
-    var empCodeNum=empCode.replace(/^0+/,'');
-    // Match existing by emp_code first, then CPR, then name
+    // Match by emp_code (compare stripped leading zeros on both sides)
+    var empCodeStripped=empCode.replace(/^0+/,'')||empCode;
     var existing=empCode?EMP.find(function(e){
       var ec=String(e.emp_code||'').trim();
-      return ec===empCode||ec===empCodeNum||ec.replace(/^0+/,'')===(empCodeNum);
+      var ecStripped=ec.replace(/^0+/,'')||ec;
+      return ec===empCode||ecStripped===empCodeStripped;
     }):null;
-    if(!existing&&cpr&&cpr!=='0')existing=EMP.find(function(e){return e.cpr&&String(e.cpr).trim()===String(cpr).trim();});
-    if(!existing&&name)existing=EMP.find(function(e){return e.name&&e.name.toLowerCase()===name.toLowerCase();});
+    // Fallback: match by CPR
+    if(!existing&&cpr&&cpr!=='0'&&cpr!=='')existing=EMP.find(function(e){
+      return e.cpr&&String(e.cpr).trim()===String(cpr).trim();
+    });
+    // Fallback: match by full name
+    if(!existing&&name)existing=EMP.find(function(e){
+      return e.name&&e.name.toLowerCase()===name.toLowerCase();
+    });
     if(existing){
       // Update existing — overwrite all fields from file
       existing.name=name||existing.name;
