@@ -5949,20 +5949,30 @@ function handleEmpImport(input){
     reader.onload=function(e){_parseEmpCSV(e.target.result);};
     reader.readAsText(file);
   } else if(ext==='xlsx'||ext==='xls'){
-    if(typeof XLSX!=='undefined'){
+    var _doImport=function(){
       var reader=new FileReader();
       reader.onload=function(e){
         try{
           var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-          var ws=wb.Sheets[wb.SheetNames[0]];
+          // ── Smart sheet selection: prefer Employee Directory, fallback to first sheet ──
+          var sheetName=wb.SheetNames[0];
+          var PREF=['Employee Directory','Payroll Register','Employees','Staff'];
+          for(var p=0;p<PREF.length;p++){
+            if(wb.SheetNames.indexOf(PREF[p])!==-1){sheetName=PREF[p];break;}
+          }
+          toast('\u{1F4C4} Reading sheet: '+sheetName+'…','s');
+          var ws=wb.Sheets[sheetName];
           _parseEmpXLSX(ws);
         }catch(err){alert('Excel read error: '+err.message);}
       };
       reader.readAsArrayBuffer(file);
+    };
+    if(typeof XLSX!=='undefined'){
+      _doImport();
     } else {
       var script=document.createElement('script');
       script.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-      script.onload=function(){handleEmpImport(input);};
+      script.onload=_doImport;
       script.onerror=function(){alert('Could not load Excel library. Please convert your file to CSV and try again.');};
       document.head.appendChild(script);
     }
@@ -5974,56 +5984,101 @@ function handleEmpImport(input){
 // Smart XLSX parser — handles Solymar multi-row title format
 // Scans every row to find real headers, skips section/title rows
 function _parseEmpXLSX(ws){
-  // Get ALL rows as raw arrays — no header inference
+  // Get ALL rows as raw arrays
   var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
   if(!raw||!raw.length){alert('Excel file appears empty.');return;}
 
-  // ── Step 1: Find the real header row ──
-  // Look for a row that has 'name' or 'emp' or 'code' in at least 3 non-empty cells
+  // ── Detect which sheet format this is ──
+  // Check first few rows for sheet identity
+  var sheetTitle=raw[0]?String(raw[0][0]||''):'';
+  var isPayroll=sheetTitle.indexOf('PAYROLL')!==-1;
+  var isEmployeeDir=sheetTitle.indexOf('EMPLOYEE DIRECTORY')!==-1||sheetTitle.indexOf('EMPLOYEE DIR')!==-1;
+
+  // ── Find header row (scan up to row 10) ──
   var headerRowIdx=-1;
   for(var i=0;i<Math.min(raw.length,10);i++){
     var r=raw[i];
-    var nonEmpty=r.filter(function(c){return String(c).trim()!=='';});
-    var joined=nonEmpty.join(' ').toLowerCase();
-    if(nonEmpty.length>=3&&(joined.indexOf('name')!==-1||joined.indexOf('emp')!==-1||joined.indexOf('code')!==-1)){
+    var joined=r.map(function(c){return String(c||'');}).join(' ').toLowerCase();
+    if((joined.indexOf('emp')!==-1||joined.indexOf('code')!==-1)&&joined.indexOf('name')!==-1){
       headerRowIdx=i;break;
     }
   }
-  if(headerRowIdx===-1){alert('Could not find column headers. Ensure the file has columns like Full Name, Emp. Code, etc.');return;}
+  if(headerRowIdx===-1){alert('Could not find headers. Make sure the file has Emp. Code and Full Name columns.');return;}
 
-  // ── Step 2: Normalise headers ──
-  var headers=raw[headerRowIdx].map(function(h){
-    return String(h).replace(/[\r\n]+/g,' ').replace(/[←✓▶]/g,'').replace(/\(BD\)/gi,'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase().replace(/_+$/,'');
+  // ── Map columns by scanning header row ──
+  // This locks onto YOUR exact Solymar Excel format regardless of column order
+  var hRow=raw[headerRowIdx];
+  var colMap={};
+  hRow.forEach(function(h,idx){
+    var norm=String(h||'').replace(/[\r\n]+/g,' ').toLowerCase().trim();
+    if(norm.indexOf('emp')!==-1&&norm.indexOf('code')!==-1) colMap.emp_code=idx;
+    else if(norm.indexOf('full name')!==-1||norm==='name')   colMap.name=idx;
+    else if(norm.indexOf('department')!==-1)                  colMap.dept=idx;
+    else if(norm.indexOf('job title')!==-1||norm.indexOf('designation')!==-1) colMap.title=idx;
+    else if(norm.indexOf('nationality')!==-1)                 colMap.nationality=idx;
+    else if(norm.indexOf('date of birth')!==-1||norm.indexOf('dob')!==-1) colMap.dob=idx;
+    else if(norm.indexOf('cpr')!==-1||norm.indexOf('id no')!==-1) colMap.cpr=idx;
+    else if(norm.indexOf('basic')!==-1)                       colMap.basic=idx;
+    else if(norm.indexOf('housing')!==-1)                     colMap.housing=idx;
+    else if(norm.indexOf('transport')!==-1)                   colMap.transport=idx;
+    else if(norm.indexOf('phone')!==-1)                       colMap.phone_allow=idx;
+    else if(norm.indexOf('total salary')!==-1||norm.indexOf('gross salary')!==-1) colMap.total=idx;
+    else if(norm.indexOf('allowances')!==-1)                  colMap.allowances=idx;
+    else if(norm.indexOf('visa')!==-1||norm.indexOf('residency')!==-1) colMap.visa_status=idx;
+    else if(norm.indexOf('absence')!==-1)                     colMap.absence_deduct=idx;
+    else if(norm.indexOf('lateness')!==-1)                    colMap.lateness_deduct=idx;
+    else if(norm.indexOf('other deduct')!==-1)                colMap.other_deduct=idx;
+    else if(norm.indexOf('net salary')!==-1)                  colMap.net_salary=idx;
   });
-  var empCodeColIdx=headers.indexOf('emp_code');
-  if(empCodeColIdx===-1)empCodeColIdx=0; // fallback to first column
 
-  // ── Step 3: Build row objects, skip ALL non-employee rows ──
+  var codeCol=colMap.emp_code!==undefined?colMap.emp_code:0;
+
+  // ── Parse employee rows — skip headers, section titles, empty rows ──
   var rows=[];
   for(var j=headerRowIdx+1;j<raw.length;j++){
-    var dataRow=raw[j];
-    var rawCode=String(dataRow[empCodeColIdx]||'').trim();
+    var row=raw[j];
+    var rawCode=String(row[codeCol]||'').trim();
+    // Only accept purely numeric emp codes — skips section headers like "▶ FOOD & BEVERAGES"
+    if(!/^\d+$/.test(rawCode)) continue;
 
-    // CRITICAL: only accept rows where the emp_code column is purely numeric
-    // This filters out: section headers (▶ FOOD & BEVERAGES), total rows, empty rows
-    if(!/^\d+$/.test(rawCode))continue;
+    // Restore leading zeros (Excel drops them: 016 → 16)
+    if(rawCode.length<3) rawCode=rawCode.padStart(3,'0');
 
-    // Pad emp_code back to original format if it was a leading-zero code
-    // Excel stores 016 as number 16 — restore the leading zero based on typical Solymar format
-    var empCodePadded=rawCode;
-    if(rawCode.length<3)empCodePadded=rawCode.padStart(3,'0');
+    function _cell(col){ return col!==undefined&&row[col]!==undefined&&row[col]!==null?String(row[col]).trim():''; }
+    function _num(col){ var v=parseFloat(_cell(col)); return isNaN(v)?0:v; }
 
-    var obj={};
-    headers.forEach(function(h,idx){
-      obj[h]=dataRow[idx]!==undefined&&dataRow[idx]!==null?String(dataRow[idx]).trim():'';
+    var basic=_num(colMap.basic);
+    var housing=_num(colMap.housing);
+    var transport=_num(colMap.transport);
+    var phone=_num(colMap.phone_allow);
+    var allowances=_num(colMap.allowances);
+    var total=_num(colMap.total)||basic+housing+transport+phone+allowances;
+
+    rows.push({
+      emp_code:  rawCode,
+      name:      _cell(colMap.name),
+      dept:      _cell(colMap.dept),
+      title:     _cell(colMap.title),
+      nationality: _cell(colMap.nationality),
+      dob:       _cell(colMap.dob).slice(0,10),
+      cpr:       _cell(colMap.cpr),
+      basic:     basic,
+      housing:   housing,
+      transport: transport,
+      phone_allow: phone,
+      allowances: allowances,
+      total:     total,
+      visa_status: _cell(colMap.visa_status),
+      // Payroll-specific fields (populated if uploading Payroll Register sheet)
+      absence_deduct:  _num(colMap.absence_deduct),
+      lateness_deduct: _num(colMap.lateness_deduct),
+      other_deduct:    _num(colMap.other_deduct),
+      net_salary:      _num(colMap.net_salary),
     });
-    // Always store the padded code
-    obj['emp_code']=empCodePadded;
-    rows.push(obj);
   }
 
-  if(!rows.length){alert('No employee rows found. Check that employee codes are numeric.');return;}
-  toast('Read '+rows.length+' employees from Excel\u2026','s');
+  if(!rows.length){alert('No employee rows found. Make sure employee codes are numeric.');return;}
+  toast('\u2705 Read '+rows.length+' employees from Excel — applying…','s');
   _applyImportedRows(rows);
 }
 function _parseEmpCSV(text){
@@ -6132,26 +6187,30 @@ function _applyImportedRows(rows){
       existing.title=getVal(row,'title')||existing.title;
       existing.nationality=getVal(row,'nationality')||existing.nationality;
       existing.gender=getVal(row,'gender')||existing.gender;
-      existing.dob=getVal(row,'dob')||existing.dob;
+      existing.dob=(getVal(row,'dob')||'').slice(0,10)||existing.dob;
       existing.cpr=cpr||existing.cpr;
       existing.wp_expiry=getVal(row,'wp_expiry')||existing.wp_expiry;
       existing.pp_expiry=getVal(row,'pp_expiry')||existing.pp_expiry;
-      existing.status=getVal(row,'status')||existing.status;
       existing.in_out=getVal(row,'in_out')||existing.in_out||'IN';
-      existing.bank_name=getVal(row,'bank_name')||existing.bank_name;
-      existing.bank_account=getVal(row,'bank_account')||existing.bank_account;
-      existing.bank_iban=getVal(row,'bank_iban')||existing.bank_iban;
       existing.email=getVal(row,'email')||existing.email;
-      // Always update salary — use file value (even if 0 means zero-salary)
+      // Visa status from Excel (Valid CPR ✓ / No Residency etc)
+      var visaRaw=getVal(row,'visa_status')||'';
+      if(visaRaw) existing.visa_status=visaRaw;
+      if(visaRaw.indexOf('Valid')!==-1||visaRaw.indexOf('✓')!==-1) existing.status='RENEWED';
+      else if(visaRaw.indexOf('No Residency')!==-1||visaRaw.indexOf('Pending')!==-1) existing.status='PENDING';
+      else if(visaRaw.indexOf('No Visa')!==-1||visaRaw.indexOf('Still No')!==-1) existing.status='NO_VISA';
+      // Salary — always trust the file
       existing.basic=basic;
       existing.housing=housing;
       existing.transport=transport;
       existing.phone_allow=phone_allow;
       existing.allowances=allowances;
-      existing.gosi_emp=gosi_emp;
-      existing.ded_other=ded_other;
       existing.total=total;
-      // Ensure employee is marked as active payroll
+      // Payroll deductions from Payroll Register sheet
+      if(parseFloat(getVal(row,'absence_deduct'))) existing.absence_deduct=parseFloat(getVal(row,'absence_deduct'))||0;
+      if(parseFloat(getVal(row,'lateness_deduct'))) existing.lateness_deduct=parseFloat(getVal(row,'lateness_deduct'))||0;
+      if(parseFloat(getVal(row,'other_deduct'))) existing.other_deduct=parseFloat(getVal(row,'other_deduct'))||0;
+      if(parseFloat(getVal(row,'net_salary'))) existing.net_salary=parseFloat(getVal(row,'net_salary'))||total;
       existing.in_payroll=true;
       existing.company='Solymar Hotel';
       existing.payroll_company='Solymar Hotel';
@@ -6159,6 +6218,10 @@ function _applyImportedRows(rows){
     } else {
       // Create new
       var nat=getVal(row,'nationality')||'IND';
+      var _visaRaw=getVal(row,'visa_status')||'';
+      var _status='RENEWED';
+      if(_visaRaw.indexOf('No Residency')!==-1||_visaRaw.indexOf('Pending')!==-1) _status='PENDING';
+      else if(_visaRaw.indexOf('No Visa')!==-1||_visaRaw.indexOf('Still No')!==-1) _status='NO_VISA';
       var newEmp={
         id:'imp'+Date.now()+Math.random().toString(36).slice(2,6),
         emp_code:empCode||'NEW',
@@ -6169,9 +6232,11 @@ function _applyImportedRows(rows){
         dept:getVal(row,'dept')||'General',
         title:getVal(row,'title')||'',
         nationality:nat,gender:getVal(row,'gender')||'M',
-        dob:getVal(row,'dob'),in_out:getVal(row,'in_out')||'IN',
+        dob:(getVal(row,'dob')||'').slice(0,10),
+        in_out:getVal(row,'in_out')||'IN',
         wp_expiry:getVal(row,'wp_expiry'),pp_expiry:getVal(row,'pp_expiry'),
-        status:getVal(row,'status')||'RENEWED',
+        status:getVal(row,'status')||_status,
+        visa_status:_visaRaw,
         bank_name:getVal(row,'bank_name'),bank_account:getVal(row,'bank_account'),bank_iban:getVal(row,'bank_iban'),
         email:getVal(row,'email'),
         basic:basic,housing:housing,transport:transport,phone_allow:phone_allow,
