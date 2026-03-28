@@ -6218,18 +6218,39 @@ function clearAllEmployees(){
   if(!confirm('Remove ALL '+count+' employees from the system?\n\nThis will also delete them from the database.\nThis cannot be undone.')){return;}
   EMP=[];
   save();
-  // Delete all from Supabase
-  if(typeof sbSaveAllEmployees==='function'){
-    // Delete via filter — delete all rows
-    fetch(SB_URL+'/rest/v1/employees?id=neq.NONE',{method:'DELETE',headers:_sbHeaders()})
-      .then(function(){console.log('[HR] All employees deleted from Supabase');})
-      .catch(function(e){console.warn('[HR] Supabase delete failed:',e);});
-  }
+  // Clear localStorage fully
+  try{localStorage.removeItem('solymar_hr_v10');}catch(e){}
+  try{localStorage.removeItem('solymar_employees');}catch(e){}
+  // Delete ALL from Supabase using select=id filter trick
+  fetch(SB_URL+'/rest/v1/employees?select=id',{headers:_sbHeaders()})
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      if(!rows||!rows.length){
+        console.log('[HR] Supabase already empty');
+        return;
+      }
+      // Delete each row by id to avoid RLS issues with bulk delete
+      var ids=rows.map(function(r){return r.id;});
+      // Use in filter for bulk delete
+      var inFilter=ids.map(function(id){return encodeURIComponent(id);}).join(',');
+      return fetch(SB_URL+'/rest/v1/employees?id=in.('+ids.join(',')+')',{
+        method:'DELETE',
+        headers:_sbHeaders()
+      });
+    })
+    .then(function(){
+      console.log('[HR] All employees deleted from Supabase');
+      toast('All '+count+' employees removed from system and database','w');
+    })
+    .catch(function(e){
+      console.warn('[HR] Supabase delete failed:',e);
+      toast('Cleared locally — database delete failed: '+e.message,'w');
+    });
   renderHBadges();
   if(curPg==='dash')renderDash();
   if(curPg==='dir')renderDir();
   if(curPg==='alerts')renderAlerts();
-  toast('All '+count+' employees removed','w');
+  toast('Clearing '+count+' employees…','w');
 }
 
 
@@ -6536,10 +6557,11 @@ function load(){
   // ALWAYS load from Supabase — this is the source of truth
   // It will overwrite whatever localStorage had
   sbLoadEmployees().then(function(loaded){
+    // loaded=true means Supabase responded (even if 0 employees — that's a valid cleared state)
+    // loaded=false means Supabase request actually failed (network error etc)
     if(loaded){
       console.log('[HR] Loaded '+EMP.length+' employees from Supabase');
-      _runCompanyFix(true, MIGRATION_KEY);
-      // Save fresh Supabase data back to localStorage cache
+      // Save fresh Supabase data to localStorage cache
       try{localStorage.setItem(SK,JSON.stringify(EMP));}catch(e){}
       // Re-render everything with correct data
       if(typeof renderHBadges==='function') renderHBadges();
@@ -6548,11 +6570,8 @@ function load(){
       if(typeof renderAlerts==='function') renderAlerts();
       if(typeof psInitEmpList==='function') psInitEmpList();
     } else {
-      console.warn('[HR] Supabase load failed or empty — using local cache');
-      // If Supabase has nothing, use seed data
-      if(!EMP.length){
-        try{var sd=document.getElementById('seed-data');if(sd){var s=JSON.parse(sd.textContent||sd.innerText);if(s&&s.length>0){EMP=JSON.parse(JSON.stringify(s));_runCompanyFix(false,MIGRATION_KEY);_runSalaryMigration();sbSaveAllEmployees();}}}catch(e){}
-      }
+      // Supabase request failed (not empty — actually failed) — keep whatever localStorage had
+      console.warn('[HR] Supabase request failed — using local cache only');
     }
   }).catch(function(err){
     console.warn('[HR] Supabase load error:',err);
@@ -6661,19 +6680,20 @@ async function _clearAllEmployeeData() {
 async function sbLoadEmployees(){
   if(!SB_KEY) return false;
   try{
-    // Load ALL employees from Supabase (all companies)
     var res=await fetch(SB_URL+'/rest/v1/employees?select=*&order=name.asc',{headers:_sbHeaders()});
-    if(!res.ok) return false;
+    if(!res.ok) return false; // actual HTTP error = failure
     var data=await res.json();
+    // Always trust Supabase response — even 0 rows means "intentionally empty"
     if(data&&data.length>0){
-      // Ensure all employees have a company field
       data.forEach(function(e){if(!e.company)e.company='Solymar Hotel';if(!e.payroll_company)e.payroll_company=e.company;});
       EMP=data;
       _runSalaryMigration();
-      try{localStorage.setItem(SK,JSON.stringify(EMP));}catch(e){}
-      return true;
+    } else {
+      // Supabase returned 0 rows — user cleared the database, respect that
+      EMP=[];
+      console.log('[HR] Supabase has 0 employees — database was intentionally cleared');
     }
-    return false;
+    return true; // true = Supabase responded successfully (regardless of row count)
   }catch(e){console.warn('Supabase load employees failed:',e);return false;}
 }
 
