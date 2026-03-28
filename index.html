@@ -5936,6 +5936,11 @@ function triggerEmpImport(){
   inp.value='';inp.click();
 }
 
+function dbImportRead(input){
+  // This is the Import Data page uploader — delegate to the same handler
+  handleEmpImport(input);
+}
+
 function handleEmpImport(input){
   var file=input.files[0];if(!file)return;
   var ext=file.name.split('.').pop().toLowerCase();
@@ -6187,9 +6192,19 @@ function _applyImportedRows(rows){
   if(typeof renderAlerts==='function'&&curPg==='alerts')renderAlerts();
   if(typeof psInitEmpList==='function')psInitEmpList();
   if(typeof renderRoster==='function')renderRoster();
-  toast('Import complete — '+imported+' added, '+updated+' updated','s');
-  // Push to Supabase
-  if(typeof sbSaveAllEmployees==='function')sbSaveAllEmployees();
+  toast('Import complete — '+imported+' added, '+updated+' updated + syncing to database…','s');
+  // Push to Supabase — clears old records first then upserts all
+  if(typeof sbSaveAllEmployees==='function'){
+    // First delete all existing records, then re-insert clean
+    fetch(SB_URL+'/rest/v1/employees?id=neq.____NONE____',{method:'DELETE',headers:_sbHeaders()})
+      .then(function(){
+        return sbSaveAllEmployees();
+      })
+      .catch(function(){
+        // If delete fails (e.g. RLS), just upsert
+        return sbSaveAllEmployees();
+      });
+  }
 }
 
 
@@ -6675,10 +6690,34 @@ async function sbSaveEmployee(emp){
 
 async function sbSaveAllEmployees(){
   if(!SB_KEY||!EMP.length) return;
-  try{
-    var cleaned=EMP.map(_cleanEmp);
-    await fetch(SB_URL+'/rest/v1/employees',{method:'POST',headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),body:JSON.stringify(cleaned)});
-  }catch(e){console.warn('sbSaveAll failed:',e);}
+  var cleaned=EMP.map(_cleanEmp);
+  var CHUNK=20; // Send in batches to avoid Supabase limits
+  var errors=[];
+  for(var i=0;i<cleaned.length;i+=CHUNK){
+    var batch=cleaned.slice(i,i+CHUNK);
+    try{
+      var res=await fetch(SB_URL+'/rest/v1/employees',{
+        method:'POST',
+        headers:Object.assign({},_sbHeaders(),{'Prefer':'resolution=merge-duplicates,return=representation'}),
+        body:JSON.stringify(batch)
+      });
+      if(!res.ok){
+        var errText=await res.text();
+        console.warn('[HR] sbSaveAllEmployees batch '+(i/CHUNK+1)+' failed:',errText);
+        errors.push(errText);
+      }
+    }catch(e){
+      console.warn('[HR] sbSaveAllEmployees batch error:',e);
+      errors.push(e.message);
+    }
+  }
+  if(errors.length===0){
+    console.log('[HR] All '+cleaned.length+' employees saved to Supabase OK');
+    if(typeof toast==='function') toast('✅ '+cleaned.length+' employees synced to database','s');
+  } else {
+    console.warn('[HR] Supabase sync had errors:',errors);
+    if(typeof toast==='function') toast('⚠️ Some employees failed to sync — check console','w');
+  }
 }
 
 async function sbDeleteEmployee(id){
