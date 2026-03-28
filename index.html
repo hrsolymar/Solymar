@@ -6051,8 +6051,9 @@ function _parseEmpXLSX(ws){
     var housing=_num(colMap.housing);
     var transport=_num(colMap.transport);
     var phone=_num(colMap.phone_allow);
-    var allowances=_num(colMap.allowances);
-    var total=_num(colMap.total)||basic+housing+transport+phone+allowances;
+    // NOTE: 'allowances' column in Excel is an AUTO-SUM of housing+transport+phone — do NOT add it again.
+    // Total is read from the dedicated Total Salary column, or computed from base components only.
+    var total=_num(colMap.total)||basic+housing+transport+phone;
 
     rows.push({
       emp_code:  rawCode,
@@ -6066,7 +6067,7 @@ function _parseEmpXLSX(ws){
       housing:   housing,
       transport: transport,
       phone_allow: phone,
-      allowances: allowances,
+      allowances: housing+transport+phone,
       total:     total,
       visa_status: _cell(colMap.visa_status),
       // Payroll-specific fields (populated if uploading Payroll Register sheet)
@@ -6158,11 +6159,12 @@ function _applyImportedRows(rows){
     var housing=parseFloat(getVal(row,'housing'))||0;
     var transport=parseFloat(getVal(row,'transport'))||0;
     var phone_allow=parseFloat(getVal(row,'phone_allow'))||0;
-    var allowances=parseFloat(getVal(row,'allowances'))||0;
     var gosi_emp=parseFloat(getVal(row,'gosi_emp'))||0;
     var ded_other=parseFloat(getVal(row,'ded_other'))||0;
-    // Recalculate total from components — don't trust the auto-calc column from Excel
-    var total=basic+housing+transport+phone_allow+allowances;
+    // NOTE: The 'allowances' column in Excel is an AUTO-SUM of housing+transport+phone.
+    // Adding it on top of those components causes double-counting. Total is basic + components only.
+    var allowances=housing+transport+phone_allow;
+    var total=basic+allowances;
     var empCode=String(getVal(row,'emp_code')||'').trim();
     // Match by emp_code (compare stripped leading zeros on both sides)
     var empCodeStripped=empCode.replace(/^0+/,'')||empCode;
