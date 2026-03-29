@@ -1276,9 +1276,15 @@ table.prs-tbl thead th{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span class="ni-label">Dashboard</span>
     </div>
-    <div class="nav-item" onclick="showPg('dir');closeSidebar()" data-pg="dir">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span class="ni-label">Employees</span>
+    <div class="nav-group open" id="ng-employees">
+      <div class="nav-item toggle-btn" onclick="showPg('dir');closeSidebar();toggleNavGroup('ng-employees')" data-pg="dir">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span class="ni-label">Employees</span>
+        <span class="ni-arrow">&#9662;</span>
+      </div>
+      <div class="nav-sub" id="sidebar-dept-list">
+        <!-- Department sub-items populated by updateSidebarDepartments() -->
+      </div>
     </div>
     <!-- Time Management group -->
     <div class="nav-group open" id="ng-time">
@@ -6415,6 +6421,44 @@ function toggleNavGroup(id){
   g.classList.toggle('open');
 }
 
+// ── SIDEBAR DEPARTMENT LIST ──────────────────────────────────────────────────
+function updateSidebarDepartments(){
+  var container=document.getElementById('sidebar-dept-list');
+  if(!container)return;
+  var source=typeof _activeEMP==='function'?_activeEMP():EMP;
+  if(!source||!source.length){container.innerHTML='';return;}
+  var depts=[...new Set(source.map(function(e){return e.dept;}).filter(Boolean))].sort();
+  container.innerHTML=depts.map(function(dept){
+    return '<div class="nav-sub-item" onclick="filterEmployeesByDept(\''+dept.replace(/'/g,"\\'")+'\')">'
+      +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;opacity:0.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
+      +'<span>'+dept+'</span>'
+      +'</div>';
+  }).join('');
+}
+
+function filterEmployeesByDept(dept){
+  showPg('dir');
+  closeSidebar();
+  // Collapse all dept groups then open just the target one
+  setTimeout(function(){
+    document.querySelectorAll('.emp-dept-group').forEach(function(g){
+      var d=g.getAttribute('data-dept');
+      var isTarget=(d===dept);
+      g.classList.toggle('open',isTarget);
+      var hdr=g.querySelector('.emp-dept-hdr');
+      if(hdr)hdr.classList.toggle('open',isTarget);
+      var ico=hdr&&hdr.querySelector('span:first-child');
+      if(ico)ico.textContent=isTarget?'📂':'📁';
+      if(typeof _dirOpenDepts!=='undefined')_dirOpenDepts[d]=isTarget;
+    });
+    // Highlight active sidebar sub-item
+    document.querySelectorAll('#sidebar-dept-list .nav-sub-item').forEach(function(el){
+      el.classList.toggle('active',el.querySelector('span:last-child').textContent.trim()===dept);
+    });
+  },80);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function openMenu(){
   document.getElementById('menu-ov').style.display='flex';
   updateMenuLangBtns();
@@ -6619,6 +6663,7 @@ function switchCompany(c){
   else if(curPg==='payroll-summary')renderPayrollSummary();
   else if(curPg==='roster'){rstBuildTree();rstBuildTable();}
   else if(typeof renderDash==='function')renderDash();
+  if(typeof updateSidebarDepartments==='function') updateSidebarDepartments();
 }
 function _updateCompanyUI(){
   var switcher=document.getElementById('company-switcher');
@@ -6679,6 +6724,7 @@ function load(){
       if(typeof renderDir==='function') renderDir();
       if(typeof renderAlerts==='function') renderAlerts();
       if(typeof psInitEmpList==='function') psInitEmpList();
+      if(typeof updateSidebarDepartments==='function') updateSidebarDepartments();
     } else {
       // Supabase request failed (not empty — actually failed) — keep whatever localStorage had
       console.warn('[HR] Supabase request failed — using local cache only');
