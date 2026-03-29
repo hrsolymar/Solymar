@@ -3093,6 +3093,7 @@ table.rst tbody tr:hover{background:#F0F7F0}
     <div class="ftabs">
       <button class="ftab on" onclick="fTab('p')">👤 Personal</button>
       <button class="ftab" onclick="fTab('emp')">🏢 Employment</button>
+      <button class="ftab" onclick="fTab('addr')">🏠 Address</button>
       <button class="ftab" onclick="fTab('sal')">💰 Salary</button>
       <button class="ftab" onclick="fTab('bank')">🏦 Bank</button>
       <button class="ftab" onclick="fTab('wp')">📋 Permit</button>
@@ -3175,6 +3176,48 @@ table.rst tbody tr:hover{background:#F0F7F0}
         </div>
         <div class="fl" style="grid-column:1/-1"><label>Alert / Offence</label><input id="f-offense" placeholder="Leave blank if none"/></div>
         <div class="fl" style="grid-column:1/-1"><label>Offence Description</label><input id="f-odesc" placeholder="Details..."/></div>
+      </div>
+    </div>
+
+    <!-- ADDRESS TAB -->
+    <div id="ft-addr" style="display:none">
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#1D4ED8">
+        🏠 Residential address for this employee.
+      </div>
+      <div class="fgrid">
+        <div class="fl"><label>Block</label><input id="f-addr-block" placeholder="Block number"/></div>
+        <div class="fl"><label>Street</label><input id="f-addr-street" placeholder="Street name/number"/></div>
+        <div class="fl"><label>Building / Villa</label><input id="f-addr-building" placeholder="Building or villa number"/></div>
+        <div class="fl"><label>Flat / Room</label><input id="f-addr-flat" placeholder="Flat or room number"/></div>
+        <div class="fl" style="grid-column:1/-1"><label>Area / Neighbourhood</label><input id="f-addr-area" placeholder="e.g. Manama, Juffair, Adliya"/></div>
+        <div class="fl" style="grid-column:1/-1"><label>Governorate</label>
+          <select id="f-addr-gov">
+            <option value="">— Select —</option>
+            <option value="Capital">Capital</option>
+            <option value="Muharraq">Muharraq</option>
+            <option value="Northern">Northern</option>
+            <option value="Southern">Southern</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #EDF2F7">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#64748B;margin-bottom:10px">⚙️ Payroll Settings</div>
+        <div class="fgrid">
+          <div class="fl" style="grid-column:1/-1">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none">
+              <div style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0">
+                <input type="checkbox" id="f-apply-gosi" checked style="opacity:0;width:0;height:0;position:absolute" onchange="document.getElementById('f-gosi-label').textContent=this.checked?'Applies GOSI deduction on salary':'GOSI deduction excluded for this employee'"/>
+                <span id="f-gosi-slider" style="position:absolute;inset:0;background:#16A34A;border-radius:24px;transition:0.3s;cursor:pointer" onclick="var cb=document.getElementById('f-apply-gosi');cb.checked=!cb.checked;cb.dispatchEvent(new Event('change'));this.style.background=cb.checked?'#16A34A':'#CBD5E1';document.getElementById('f-gosi-knob').style.transform=cb.checked?'translateX(20px)':'translateX(0)'"></span>
+                <span id="f-gosi-knob" style="position:absolute;left:2px;top:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);pointer-events:none;transform:translateX(20px)"></span>
+              </div>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#1E293B">Apply GOSI Deduction</div>
+                <div id="f-gosi-label" style="font-size:10px;color:#64748B;margin-top:1px">Applies GOSI deduction on salary</div>
+              </div>
+            </label>
+          </div>
+          <div class="fl"><label>Absence Deduction Rate (BD / day)</label><input id="f-absent-rate" type="number" step="0.001" min="0" placeholder="0.000"/></div>
+        </div>
       </div>
     </div>
 
@@ -5841,8 +5884,8 @@ function initFormDD(){
 function closeForm(){document.getElementById('form-ov').style.display='none';}
 function closeFormOuter(e){if(e.target===document.getElementById('form-ov'))closeForm();}
 function fTab(id){
-  ['p','emp','sal','bank','wp','d'].forEach(function(t){var el=document.getElementById('ft-'+t);if(el)el.style.display=t===id?'block':'none';});
-  document.querySelectorAll('.ftab').forEach(function(b,i){b.classList.toggle('on',['p','emp','sal','bank','wp','d'][i]===id);});
+  ['p','emp','addr','sal','bank','wp','d'].forEach(function(t){var el=document.getElementById('ft-'+t);if(el)el.style.display=t===id?'block':'none';});
+  document.querySelectorAll('.ftab').forEach(function(b,i){b.classList.toggle('on',['p','emp','addr','sal','bank','wp','d'][i]===id);});
 }
 
 function addDep(){
@@ -7508,7 +7551,16 @@ function _renderEmpDetail(e){
 
   // ── ADDRESS TAB ──
   html+='<div class="emp-det-tabcontent" data-tabcontent="address">';
-  html+='<div class="emp-det-section"><div class="emp-det-section-title">Location & Address</div>';
+  html+='<div class="emp-det-section"><div class="emp-det-section-title">Residential Address</div>';
+  html+='<div class="emp-det-grid">';
+  html+=_fld('Block',e.addr_block||'');
+  html+=_fld('Street',e.addr_street||'');
+  html+=_fld('Building / Villa',e.addr_building||'');
+  html+=_fld('Flat / Room',e.addr_flat||'');
+  html+=_fld('Area / Neighbourhood',e.addr_area||'',{full:true});
+  html+=_fld('Governorate',e.addr_gov||'',{full:true});
+  html+='</div></div>';
+  html+='<div class="emp-det-section"><div class="emp-det-section-title">Work Assignment</div>';
   html+='<div class="emp-det-grid">';
   html+=_fld('Location',e.location||'Solymar Hotel',{full:true});
   html+=_fld('Cost Centre',e.cost_centre||e.dept||'',{full:true});
@@ -7581,6 +7633,26 @@ function _renderEmpDetail(e){
     html+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:#64748B">Total Earnings</span><span data-tot="earn" style="font-weight:700;color:#15803D;font-family:monospace">BD '+earn.toFixed(3)+'</span></div>';
     html+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span style="color:#64748B">Total Deductions</span><span data-tot="ded" style="font-weight:700;color:#DC2626;font-family:monospace">BD '+ded.toFixed(3)+'</span></div>';
     html+='<div style="display:flex;justify-content:space-between;font-size:13px;border-top:1px solid rgba(184,144,77,0.3);padding-top:8px"><span style="font-weight:700;color:#B8904D">Net Salary</span><span id="det-sal-net-'+e.id+'" style="font-weight:800;color:#B8904D;font-family:monospace">BD '+net.toFixed(3)+'</span></div>';
+    html+='</div>';
+    // ── PAYROLL SETTINGS sub-section ──
+    html+='<div style="margin-top:16px;border-top:1px solid #EDF2F7;padding-top:14px">';
+    html+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#64748B;margin-bottom:10px">⚙️ Payroll Settings</div>';
+    // GOSI toggle
+    var gosiOn=e.apply_gosi!==false;
+    if(inSal){
+      html+='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:9px 12px;background:#F8FAFC;border:1px solid #EDF2F7;border-radius:9px;margin-bottom:8px">';
+      html+='<input type="checkbox" id="det-apply-gosi-'+e.id+'" '+(gosiOn?'checked':'')+' onchange="var emp=EMP.find(function(x){return x.id===\''+e.id+'\';});if(emp){emp.apply_gosi=this.checked;}" style="width:15px;height:15px;accent-color:#B8904D"/>';
+      html+='<div><div style="font-size:12px;font-weight:700;color:#1E293B">Apply GOSI Deduction</div><div style="font-size:10px;color:#64748B;margin-top:1px">Bahraini: 8% of basic &nbsp;|&nbsp; Expat: 1% of basic</div></div>';
+      html+='</label>';
+      html+='<div class="emp-det-field"><div class="emp-det-field-label">Absence Deduction Rate (BD / day)</div>';
+      html+='<input type="number" step="0.001" min="0" id="det-absent-rate-'+e.id+'" value="'+(parseFloat(e.absent_rate)||0).toFixed(3)+'" onchange="var emp=EMP.find(function(x){return x.id===\''+e.id+'\';});if(emp){emp.absent_rate=parseFloat(this.value)||0;}" style="width:100%;padding:5px 8px;border:1.5px solid rgba(184,144,77,0.4);border-radius:7px;font-family:monospace;font-size:13px;background:rgba(184,144,77,0.05);color:#1E293B;box-sizing:border-box"/>';
+      html+='</div>';
+    } else {
+      html+='<div class="emp-det-grid">';
+      html+=_fld('Apply GOSI',gosiOn?'✅ Yes':'❌ No');
+      html+=_fld('Absence Rate (BD/day)',(parseFloat(e.absent_rate)||0).toFixed(3),{mono:true});
+      html+='</div>';
+    }
     html+='</div>';
     if(inSal){
       html+='<button onclick="_inlineSaveSal(\''+e.id+'\')" style="margin-top:12px;width:100%;padding:10px;background:#0A1629;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer">✓ Save Salary Changes</button>';
@@ -7706,6 +7778,11 @@ function _inlineSaveSal(empId){
   document.querySelectorAll('[data-sal-field]').forEach(function(inp){
     e[inp.getAttribute('data-sal-field')]=parseFloat(inp.value)||0;
   });
+  // GOSI toggle & absence rate from detail panel
+  var gc=document.getElementById('det-apply-gosi-'+empId);
+  if(gc)e.apply_gosi=gc.checked;
+  var ar=document.getElementById('det-absent-rate-'+empId);
+  if(ar)e.absent_rate=parseFloat(ar.value)||0;
   // Recalc total
   var earn=(e.basic||0)+(e.housing||0)+(e.transport||0)+(e.phone_allow||0)+(e.allowances||0)+((e.extra_earn||[]).reduce(function(s,r){return s+parseFloat(r.amount||0);},0));
   var ded=(e.gosi_emp||0)+(e.ded_other||0)+((e.extra_ded||[]).reduce(function(s,r){return s+parseFloat(r.amount||0);},0));
@@ -7930,13 +8007,18 @@ function openAdd(){
   ['f-first-name','f-middle-name','f-last-name','f-passport-name','f-cpr','f-pp',
    'f-dob','f-health-status','f-email','f-father','f-mother','f-spouse','f-arabic-name',
    'f-cost-centre','f-title','f-wp','f-ppe','f-offense','f-odesc',
-   'f-bank-name','f-bank-account','f-bank-iban'].forEach(function(id){_sv(id,'');});
+   'f-bank-name','f-bank-account','f-bank-iban',
+   'f-addr-block','f-addr-street','f-addr-building','f-addr-flat','f-addr-area'].forEach(function(id){_sv(id,'');});
   _sv('f-nat','IND'); _sv('f-gender','M'); _sv('f-dept','Front Office');
   _sv('f-status','RENEWED'); _sv('f-inout','IN');
   _sv('f-passport-type','Ordinary'); _sv('f-marital-status','Single');
   _sv('f-religion',''); _sv('f-location','Solymar Hotel');
+  _sv('f-addr-gov','');_sv('f-absent-rate','');
   var _ncb=document.getElementById('f-in-payroll');var _nsl=document.getElementById('f-payroll-slider');var _nkn=document.getElementById('f-payroll-knob');var _npl=document.getElementById('f-payroll-label');
   if(_ncb){_ncb.checked=true;if(_nsl)_nsl.style.background='#16A34A';if(_nkn)_nkn.style.transform='translateX(20px)';if(_npl)_npl.textContent='Yes \u2014 included in monthly payroll';}
+  // Reset GOSI toggle
+  var _gc=document.getElementById('f-apply-gosi');var _gs=document.getElementById('f-gosi-slider');var _gk=document.getElementById('f-gosi-knob');var _gl=document.getElementById('f-gosi-label');
+  if(_gc){_gc.checked=true;if(_gs)_gs.style.background='#16A34A';if(_gk)_gk.style.transform='translateX(20px)';if(_gl)_gl.textContent='Applies GOSI deduction on salary';}
   // Reset salary fields
   ['f-basic','f-housing','f-transport','f-phone-allow','f-allowances','f-gosi-emp','f-ded-other'].forEach(function(id){_sv(id,'');});
   fExtraEarn=[];fExtraDed=[];renderExtraEarnRows();renderExtraDedRows();calcSalaryTotal();
@@ -7985,10 +8067,22 @@ function openEdit(id){
   _sv('f-bank-name', e.bank_name || '');
   _sv('f-bank-account', e.bank_account || '');
   _sv('f-bank-iban', e.bank_iban || '');
+  // Address fields
+  _sv('f-addr-block', e.addr_block || '');
+  _sv('f-addr-street', e.addr_street || '');
+  _sv('f-addr-building', e.addr_building || '');
+  _sv('f-addr-flat', e.addr_flat || '');
+  _sv('f-addr-area', e.addr_area || '');
+  _sv('f-addr-gov', e.addr_gov || '');
+  _sv('f-absent-rate', e.absent_rate ? String(parseFloat(e.absent_rate).toFixed(3)) : '');
   // Payroll toggle
   var _inPay=e.in_payroll!==false;
   var _cb=document.getElementById('f-in-payroll');var _sl=document.getElementById('f-payroll-slider');var _kn=document.getElementById('f-payroll-knob');var _pl=document.getElementById('f-payroll-label');
   if(_cb){_cb.checked=_inPay;if(_sl)_sl.style.background=_inPay?'#16A34A':'#CBD5E1';if(_kn)_kn.style.transform=_inPay?'translateX(20px)':'translateX(0)';if(_pl)_pl.textContent=_inPay?'Yes \u2014 included in monthly payroll':'No \u2014 kept in Non-Payroll Staff folder';}
+  // GOSI toggle
+  var _gosiOn=e.apply_gosi!==false;
+  var _gc=document.getElementById('f-apply-gosi');var _gs=document.getElementById('f-gosi-slider');var _gk=document.getElementById('f-gosi-knob');var _glab=document.getElementById('f-gosi-label');
+  if(_gc){_gc.checked=_gosiOn;if(_gs)_gs.style.background=_gosiOn?'#16A34A':'#CBD5E1';if(_gk)_gk.style.transform=_gosiOn?'translateX(20px)':'translateX(0)';if(_glab)_glab.textContent=_gosiOn?'Applies GOSI deduction on salary':'GOSI deduction excluded for this employee';}
   // Salary fields
   _sv('f-basic', e.basic || '');
   _sv('f-housing', e.housing || '');
@@ -8050,6 +8144,14 @@ function saveEmp(){
     bank_name:_gv('f-bank-name'),
     bank_account:_gv('f-bank-account'),
     bank_iban:_gv('f-bank-iban'),
+    addr_block:_gv('f-addr-block'),
+    addr_street:_gv('f-addr-street'),
+    addr_building:_gv('f-addr-building'),
+    addr_flat:_gv('f-addr-flat'),
+    addr_area:_gv('f-addr-area'),
+    addr_gov:_gv('f-addr-gov'),
+    apply_gosi:(document.getElementById('f-apply-gosi')||{checked:true}).checked,
+    absent_rate:parseFloat((document.getElementById('f-absent-rate')||{value:0}).value)||0,
     basic:parseFloat(document.getElementById('f-basic')?document.getElementById('f-basic').value||0:prev?prev.basic||0:0),
     housing:parseFloat(document.getElementById('f-housing')?document.getElementById('f-housing').value||0:prev?prev.housing||0:0),
     transport:parseFloat(document.getElementById('f-transport')?document.getElementById('f-transport').value||0:prev?prev.transport||0:0),
