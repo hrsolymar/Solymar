@@ -2121,7 +2121,9 @@ table.prs-tbl thead th{
           <label>Weekly Off Deduction (days)</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="fs-ded-wo-days" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()" style="flex:1"/>
-            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic×12÷365</span> style="font-size:11px;color:var(--gold);margin-top:4px"></div>
+            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic×12÷365</span>
+          </div>
+          <div id="fs-ded-wo-preview" style="font-size:11px;color:var(--gold);margin-top:4px"></div>
         </div>
         <div class="fl">
           <label>Public Holiday Deduction (days)</label>
