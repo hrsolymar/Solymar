@@ -3988,9 +3988,9 @@ function fsCalc(){
     if(dedCity>0)   res+=row('City Ledger',dedCity,'#374151');
     if(dedLMRA>0)   res+=row('LMRA',dedLMRA,'#374151');
     if(dedGOSI>0)   res+=row('GOSI',dedGOSI,'#374151');
-    if(dedWO>0)  res+=row('Weekly Off Ded. ('+dedWODays+' days × BD '+fv2(basicD*30)+'/30)',dedWO,'#374151');
-    if(dedPH>0)  res+=row('Public Holiday Ded. ('+dedPHDays+' days × BD '+fv2(basicD*30)+'/30)',dedPH,'#374151');
-    if(dedAL>0)  res+=row('Annual Leave Ded. ('+dedALDays+' days × BD '+fv2(basicD*30)+'/30)',dedAL,'#374151');
+    if(dedWO>0)  res+=row('Weekly Off Ded. ('+dedWODays+' days × BD '+fv2(dailyRate2)+'/day)',dedWO,'#374151');
+    if(dedPH>0)  res+=row('Public Holiday Ded. ('+dedPHDays+' days × BD '+fv2(dailyRate2)+'/day)',dedPH,'#374151');
+    if(dedAL>0)  res+=row('Annual Leave Ded. ('+dedALDays+' days × BD '+fv2(dailyRate2)+'/day)',dedAL,'#374151');
   }
   res+='<div style="display:flex;justify-content:space-between;margin-top:8px;padding:9px 10px;background:rgba(188,151,84,0.1);border-radius:8px;font-size:14px;font-weight:800">'
     +'<span style="color:var(--gold)">Total Deductions</span>'
