@@ -2121,15 +2121,13 @@ table.prs-tbl thead th{
           <label>Weekly Off Deduction (days)</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="fs-ded-wo-days" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()" style="flex:1"/>
-            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic÷365×30</span>
-          </div>
-          <div id="fs-ded-wo-preview" style="font-size:11px;color:var(--gold);margin-top:4px"></div>
+            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic×12÷365</span> style="font-size:11px;color:var(--gold);margin-top:4px"></div>
         </div>
         <div class="fl">
           <label>Public Holiday Deduction (days)</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="fs-ded-ph-days" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()" style="flex:1"/>
-            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic÷365×30</span>
+            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic×12÷365</span>
           </div>
           <div id="fs-ded-ph-preview" style="font-size:11px;color:var(--gold);margin-top:4px"></div>
         </div>
@@ -2137,7 +2135,7 @@ table.prs-tbl thead th{
           <label>Annual Leave Deduction (days)</label>
           <div style="display:flex;gap:8px;align-items:center">
             <input id="fs-ded-al-days" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()" style="flex:1"/>
-            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic÷365×30</span>
+            <span style="font-size:11px;color:#5a5040;white-space:nowrap">× Basic×12÷365</span>
           </div>
           <div id="fs-ded-al-preview" style="font-size:11px;color:var(--gold);margin-top:4px"></div>
         </div>
@@ -3915,11 +3913,11 @@ function fsCalc(){
   var dedAL  = dedALDays>0  ? dedALDays*dailyRate2  : 0;
   // Previews
   var wop=document.getElementById('fs-ded-wo-preview');
-  if(wop)wop.textContent=dedWODays>0?('= BD '+dedWO.toFixed(3)+' ('+dedWODays+' × BD '+fv2(basicD*30)+' /30)'):'';
+  if(wop)wop.textContent=dedWODays>0?('= BD '+dedWO.toFixed(3)+' ('+dedWODays+' × BD '+fv2(dailyRate2)+'/day)'):'';
   var php=document.getElementById('fs-ded-ph-preview');
-  if(php)php.textContent=dedPHDays>0?('= BD '+dedPH.toFixed(3)+' ('+dedPHDays+' × BD '+fv2(basicD*30)+' /30)'):'';
+  if(php)php.textContent=dedPHDays>0?('= BD '+dedPH.toFixed(3)+' ('+dedPHDays+' × BD '+fv2(dailyRate2)+'/day)'):'';
   var alp=document.getElementById('fs-ded-al-preview');
-  if(alp)alp.textContent=dedALDays>0?('= BD '+dedAL.toFixed(3)+' ('+dedALDays+' × BD '+fv2(basicD*30)+' /30)'):'';
+  if(alp)alp.textContent=dedALDays>0?('= BD '+dedAL.toFixed(3)+' ('+dedALDays+' × BD '+fv2(dailyRate2)+'/day)'):'';
   var totalDed   = dedNotice+dedVac+dedIndem+dedOthers+dedCity+dedLMRA+dedGOSI+dedAbsent+dedAbsentPrev+dedWO+dedPH+dedAL;
 
   var finalTotal = totalEarnings - totalDed;
@@ -4161,9 +4159,9 @@ function fsPrint(){
     if((d.dedCity||0)>0)    dRows += row('City Ledger', '- BD '+fv(d.dedCity), '#cc0000');
     if((d.dedLMRA||0)>0)    dRows += row('LMRA', '- BD '+fv(d.dedLMRA), '#cc0000');
     if((d.dedGOSI||0)>0)    dRows += row('GOSI', '- BD '+fv(d.dedGOSI), '#cc0000');
-    if((d.dedWO||0)>0)  dRows += row('Weekly Off Deduction — '+d.dedWODays+' days × (BD '+fv(d.basic)+' ÷ 365 × 30)', '- BD '+fv(d.dedWO), '#cc0000');
-    if((d.dedPH||0)>0)  dRows += row('Public Holiday Deduction — '+d.dedPHDays+' days × (BD '+fv(d.basic)+' ÷ 365 × 30)', '- BD '+fv(d.dedPH), '#cc0000');
-    if((d.dedAL||0)>0)  dRows += row('Annual Leave Deduction — '+d.dedALDays+' days × (BD '+fv(d.basic)+' ÷ 365 × 30)', '- BD '+fv(d.dedAL), '#cc0000');
+    if((d.dedWO||0)>0)  dRows += row('Weekly Off Deduction — '+d.dedWODays+' days × (BD '+fv(d.basic)+' × 12 ÷ 365/day)', '- BD '+fv(d.dedWO), '#cc0000');
+    if((d.dedPH||0)>0)  dRows += row('Public Holiday Deduction — '+d.dedPHDays+' days × (BD '+fv(d.basic)+' × 12 ÷ 365/day)', '- BD '+fv(d.dedPH), '#cc0000');
+    if((d.dedAL||0)>0)  dRows += row('Annual Leave Deduction — '+d.dedALDays+' days × (BD '+fv(d.basic)+' × 12 ÷ 365/day)', '- BD '+fv(d.dedAL), '#cc0000');
     dRows += '<tr style="background:rgba(188,151,84,0.08);"><td style="padding:5px 10px;font-size:11px;font-weight:800;color:#8b0000;border-top:2px solid #f5a0a0;">TOTAL DEDUCTIONS</td><td style="padding:5px 10px;font-size:13px;font-weight:900;text-align:right;color:#8b0000;border-top:2px solid #f5a0a0;">BD '+fv(d.totalDed)+'</td></tr>';
   }
 
