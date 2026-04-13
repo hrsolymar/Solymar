@@ -1954,6 +1954,17 @@ table.prs-tbl thead th{
     <!-- Employee Info -->
     <div class="card" style="margin-bottom:10px">
       <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Employee Information</div>
+      <!-- Load from Employee Master -->
+      <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div style="position:relative;flex:1;min-width:180px">
+          <input id="fs-emp-search" placeholder="🔍 Search employee to auto-fill..." autocomplete="off"
+            oninput="fsEmpSearch(this.value)" onfocus="fsEmpSearch(this.value)"
+            onblur="setTimeout(function(){var d=document.getElementById('fs-emp-drop');if(d)d.style.display='none'},220)"
+            style="width:100%;background:rgba(184,144,77,0.07);border:1.5px dashed rgba(184,144,77,0.45);border-radius:var(--rs);padding:9px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none"/>
+          <div id="fs-emp-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg-white);border:1px solid var(--border-l);border-radius:var(--rs);max-height:220px;overflow-y:auto;z-index:600;box-shadow:0 6px 20px rgba(0,0,0,0.12);margin-top:3px"></div>
+        </div>
+        <div id="fs-emp-loaded-tag" style="display:none;font-size:11px;padding:5px 10px;background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:8px;color:#16A34A;font-weight:600;white-space:nowrap">✓ Loaded</div>
+      </div>
       <div class="fgrid">
         <div class="fl"><label>Full Name</label><input id="fs-name" placeholder="Employee name"/></div>
         <div class="fl"><label>Staff No.</label><input id="fs-staffno" placeholder="e.g. 498"/></div>
@@ -2046,26 +2057,145 @@ table.prs-tbl thead th{
           <div id="fs-month-auto-info" style="font-size:11px;color:var(--text-2)"></div>
         </div>
       </div>
-      <div class="fgrid">
-        <div class="fl"><label>Basic Salary (BD)</label><input id="fs-basic" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
-        <div class="fl"><label>Housing Allowance (BD)</label><input id="fs-housing" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
-        <div class="fl"><label>Transport Allowance (BD)</label><input id="fs-transport" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
-        <div class="fl"><label>Tel Allowance (BD)</label><input id="fs-tel" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
+      <!-- Salary fields -->
+      <div class="fgrid" id="fs-sal-grid">
+        <div class="fl" id="fs-fl-basic">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <label style="margin-bottom:0">Basic Salary (BD)</label>
+            <span id="fs-basic-orig-badge" style="display:none;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(184,144,77,0.12);color:var(--gold);font-weight:600;cursor:pointer" onclick="fsRevertField('basic')" title="Click to revert">Was: —</span>
+          </div>
+          <input id="fs-basic" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsSalAdj('basic');fsCalc()"/>
+          <div id="fs-basic-adj-hint" style="display:none;font-size:10px;margin-top:3px"></div>
+        </div>
+        <div class="fl" id="fs-fl-housing">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <label style="margin-bottom:0">Housing Allowance (BD)</label>
+            <span id="fs-housing-orig-badge" style="display:none;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(184,144,77,0.12);color:var(--gold);font-weight:600;cursor:pointer" onclick="fsRevertField('housing')" title="Click to revert">Was: —</span>
+          </div>
+          <input id="fs-housing" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsSalAdj('housing');fsCalc()"/>
+          <div id="fs-housing-adj-hint" style="display:none;font-size:10px;margin-top:3px"></div>
+        </div>
+        <div class="fl" id="fs-fl-transport">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <label style="margin-bottom:0">Transport Allowance (BD)</label>
+            <span id="fs-transport-orig-badge" style="display:none;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(184,144,77,0.12);color:var(--gold);font-weight:600;cursor:pointer" onclick="fsRevertField('transport')" title="Click to revert">Was: —</span>
+          </div>
+          <input id="fs-transport" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsSalAdj('transport');fsCalc()"/>
+          <div id="fs-transport-adj-hint" style="display:none;font-size:10px;margin-top:3px"></div>
+        </div>
+        <div class="fl" id="fs-fl-tel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <label style="margin-bottom:0">Tel Allowance (BD)</label>
+            <span id="fs-tel-orig-badge" style="display:none;font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(184,144,77,0.12);color:var(--gold);font-weight:600;cursor:pointer" onclick="fsRevertField('tel')" title="Click to revert">Was: —</span>
+          </div>
+          <input id="fs-tel" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsSalAdj('tel');fsCalc()"/>
+          <div id="fs-tel-adj-hint" style="display:none;font-size:10px;margin-top:3px"></div>
+        </div>
       </div>
-      <div id="fs-total-sal-box" style="display:none;background:rgba(188,151,84,0.06);border:1px solid rgba(188,151,84,0.25);border-radius:8px;padding:9px 13px;font-size:12px">
+
+      <!-- Lock / snapshot button — always visible when any salary field has a value -->
+      <div id="fs-sal-lock-row" style="display:none;margin-top:6px;margin-bottom:2px">
+        <button onclick="fsLockSalary()" style="width:100%;padding:7px 12px;background:rgba(184,144,77,0.08);border:1.5px dashed rgba(184,144,77,0.4);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--gold);cursor:pointer;letter-spacing:0.3px">
+          📌 Lock current salary as baseline (to track adjustments)
+        </button>
+      </div>
+
+      <div id="fs-total-sal-box" style="display:none;background:rgba(188,151,84,0.06);border:1px solid rgba(188,151,84,0.25);border-radius:8px;padding:9px 13px;font-size:12px;margin-top:8px">
         <div style="display:flex;justify-content:space-between"><span style="color:var(--text-2)">Total Monthly Salary</span><span id="fs-total-sal" style="font-weight:800;color:var(--gold)"></span></div>
+      </div>
+
+      <!-- Adjustment summary bar — shown when baseline is locked and any value differs -->
+      <div id="fs-sal-adj-bar" style="display:none;margin-top:8px;padding:9px 12px;background:rgba(184,144,77,0.07);border:1px solid rgba(184,144,77,0.3);border-radius:8px;font-size:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:5px">
+          <span style="color:#64748B;font-weight:700;font-size:11px">⚡ SALARY ADJUSTMENT</span>
+          <div style="display:flex;gap:6px">
+            <button onclick="fsRevertSalary()" style="padding:4px 10px;background:rgba(142,62,62,0.1);border:1px solid rgba(142,62,62,0.3);border-radius:6px;font-size:11px;font-weight:600;color:#8E3E3E;cursor:pointer">↩ Revert All</button>
+            <button onclick="fsClearSalLock()" style="padding:4px 10px;background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.2);border-radius:6px;font-size:11px;font-weight:600;color:#64748B;cursor:pointer">✕ Clear</button>
+          </div>
+        </div>
+        <div id="fs-sal-adj-summary" style="color:#1A202C;line-height:2"></div>
       </div>
     </div>
 
     <!-- Earnings -->
     <div class="card" style="margin-bottom:10px">
       <div style="font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Earnings</div>
-      <div id="fs-earn-basic" style="display:none;margin-bottom:8px;padding:8px 10px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--border)">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><div style="font-size:11px;font-weight:600;color:var(--gold-l)">Basic Salary (last month)</div><div id="fs-earn-basic-desc" style="font-size:10px;color:var(--text-2)"></div></div>
-          <div style="font-weight:800;color:var(--gold)" id="fs-earn-basic-val"></div>
+
+      <!-- Last Month Salary — Auto / Manual toggle -->
+      <div style="margin-bottom:10px;border:1px solid var(--border-l);border-radius:10px;overflow:hidden">
+        <!-- Toggle header -->
+        <div style="display:flex;background:var(--bg2)">
+          <button id="fs-lm-btn-auto" onclick="fsSetLMMode('auto')"
+            style="flex:1;padding:8px 10px;border:none;background:var(--gold);color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s">
+            ⚡ Auto (by date)
+          </button>
+          <button id="fs-lm-btn-manual" onclick="fsSetLMMode('manual')"
+            style="flex:1;padding:8px 10px;border:none;background:transparent;color:#64748B;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s">
+            ✏️ Manual
+          </button>
+        </div>
+
+        <!-- Auto mode display -->
+        <div id="fs-lm-auto-panel" style="padding:10px 12px">
+          <div id="fs-earn-basic" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:11px;font-weight:600;color:var(--gold)">Last Month Salary (auto-calculated)</div>
+                <div id="fs-earn-basic-desc" style="font-size:10px;color:var(--text-2)"></div>
+              </div>
+              <div style="font-weight:800;color:var(--gold);font-size:14px" id="fs-earn-basic-val"></div>
+            </div>
+          </div>
+          <div id="fs-lm-auto-empty" style="font-size:11px;color:#94A3B8;text-align:center;padding:4px 0">Fill dates &amp; salary above to auto-calculate</div>
+        </div>
+
+        <!-- Manual mode panel -->
+        <div id="fs-lm-manual-panel" style="display:none;padding:10px 12px;background:rgba(184,144,77,0.03)">
+          <div style="font-size:11px;color:#64748B;margin-bottom:8px;font-weight:600">Choose how to enter the last month payment:</div>
+
+          <!-- Sub-toggle: by days vs fixed amount -->
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <button id="fs-lm-btn-days" onclick="fsSetLMSubMode('days')"
+              style="flex:1;padding:6px 8px;border:1.5px solid var(--gold);border-radius:7px;background:var(--gold);color:#fff;font-size:11px;font-weight:700;cursor:pointer">
+              By Working Days
+            </button>
+            <button id="fs-lm-btn-fixed" onclick="fsSetLMSubMode('fixed')"
+              style="flex:1;padding:6px 8px;border:1.5px solid var(--border-l);border-radius:7px;background:transparent;color:#64748B;font-size:11px;font-weight:600;cursor:pointer">
+              Fixed Amount (BD)
+            </button>
+          </div>
+
+          <!-- Days sub-panel -->
+          <div id="fs-lm-days-panel">
+            <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+              <div style="flex:1;min-width:100px">
+                <label style="font-size:11px;color:#64748B;display:block;margin-bottom:4px">Days Worked</label>
+                <input id="fs-lm-days-worked" type="number" min="0" max="31" step="0.5" placeholder="e.g. 25"
+                  oninput="fsCalcLMManual()" style="width:100%;background:var(--bg2);border:1px solid var(--border-l);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none"/>
+              </div>
+              <div style="flex:1;min-width:100px">
+                <label style="font-size:11px;color:#64748B;display:block;margin-bottom:4px">Days in Month</label>
+                <input id="fs-lm-month-days" type="number" min="28" max="31" step="1" placeholder="e.g. 31"
+                  oninput="fsCalcLMManual()" style="width:100%;background:var(--bg2);border:1px solid var(--border-l);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none"/>
+              </div>
+            </div>
+            <div id="fs-lm-days-preview" style="display:none;margin-top:8px;padding:7px 10px;background:rgba(184,144,77,0.08);border-radius:7px;font-size:11px;color:var(--gold);font-weight:600"></div>
+          </div>
+
+          <!-- Fixed amount sub-panel -->
+          <div id="fs-lm-fixed-panel" style="display:none">
+            <label style="font-size:11px;color:#64748B;display:block;margin-bottom:4px">Last Month Total Payment (BD)</label>
+            <input id="fs-lm-fixed-amount" type="number" min="0" step="0.001" placeholder="0.000"
+              oninput="fsCalcLMManual()" style="width:100%;background:var(--bg2);border:1px solid var(--border-l);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none"/>
+            <div style="font-size:10px;color:#94A3B8;margin-top:4px">Enter the exact BD amount to pay for the last (partial) month</div>
+          </div>
         </div>
       </div>
+
+      <input type="hidden" id="fs-lm-mode" value="auto"/>
+      <input type="hidden" id="fs-lm-submode" value="days"/>
+      <input type="hidden" id="fs-lm-override" value=""/>
+
       <div class="fgrid">
         <div class="fl" style="grid-column:1/-1">
           <label>Previous Month Unpaid Days (optional)</label>
@@ -3837,19 +3967,50 @@ function fsCalc(){
       +'<br/>'+indemNote;
   }
 
-  // Basic last month
-  var basicLastMonth = basic*daysInLastMonth/lastMonthDays;
-  var housingLM   = housing*daysInLastMonth/lastMonthDays;
-  var transportLM = transport*daysInLastMonth/lastMonthDays;
-  var telLM       = tel*daysInLastMonth/lastMonthDays;
+  // Basic last month — auto or manual override
+  var lmMode = (document.getElementById('fs-lm-mode')||{value:'auto'}).value;
+  var lmOverrideRaw = (document.getElementById('fs-lm-override')||{value:''}).value;
+  // In manual mode: use override (could be 0 — that's valid!). Only fall back if override is blank/unparseable.
+  var lmManualActive = (lmMode==='manual');
+  var lmOverride = lmManualActive ? (parseFloat(lmOverrideRaw)||0) : 0;
+  var basicLastMonth, housingLM, transportLM, telLM;
+  if(lmManualActive){
+    // Manual mode: override is the full last-month salary (0 is valid — means no payment)
+    basicLastMonth = lmOverride;
+    housingLM=0; transportLM=0; telLM=0;
+  } else {
+    basicLastMonth = basic*daysInLastMonth/lastMonthDays;
+    housingLM   = housing*daysInLastMonth/lastMonthDays;
+    transportLM = transport*daysInLastMonth/lastMonthDays;
+    telLM       = tel*daysInLastMonth/lastMonthDays;
+  }
 
   // Basic last month display
   var ebb=document.getElementById('fs-earn-basic');
   var ebd=document.getElementById('fs-earn-basic-desc');
   var ebv=document.getElementById('fs-earn-basic-val');
-  if(ebb) ebb.style.display='block';
-  if(ebd) ebd.textContent=daysInLastMonth+' days / '+lastMonthDays+' days ('+months[end.getMonth()]+')';
-  if(ebv) ebv.textContent='BD '+basicLastMonth.toFixed(3);
+  if(lmManualActive){
+    var lmSubModeDisp=(document.getElementById('fs-lm-submode')||{value:'days'}).value;
+    var hasManualInput = lmOverrideRaw!=='' && lmOverrideRaw!==null;
+    if(ebb) ebb.style.display= hasManualInput ? 'block' : 'none';
+    if(hasManualInput){
+      if(ebd){
+        if(lmSubModeDisp==='days'){
+          var dwDisp=parseFloat((document.getElementById('fs-lm-days-worked')||{value:0}).value)||0;
+          var dmDisp=parseFloat((document.getElementById('fs-lm-month-days')||{value:30}).value)||30;
+          ebd.textContent=dwDisp+' days / '+dmDisp+' days (manual)';
+        } else { ebd.textContent='Fixed amount (manual)'; }
+      }
+      if(ebv) ebv.textContent='BD '+lmOverride.toFixed(3);
+    }
+  } else {
+    if(ebb) ebb.style.display='block';
+    if(ebd) ebd.textContent=daysInLastMonth+' days / '+lastMonthDays+' days ('+months[end.getMonth()]+')';
+    if(ebv) ebv.textContent='BD '+(basicLastMonth+housingLM+transportLM+telLM).toFixed(3);
+  }
+  // Show/hide auto-empty hint
+  var ae=document.getElementById('fs-lm-auto-empty');
+  if(ae) ae.style.display=(lmMode==='auto'&&(!basic||(basicLastMonth===0)))?'':'none';
 
   // Earning inputs
   var vac    = parseFloat(document.getElementById('fs-vac').value)||0;
@@ -3956,10 +4117,18 @@ function fsCalc(){
   res+='<div class="card" style="margin-bottom:10px">';
   res+='<div style="font-size:10px;font-weight:700;color:#8a6830;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">&#9650; Earnings Breakdown</div>';
   if(prevMonthAmt>0)res+=row('Prev Month ('+prevDays+'/'+prevMonthDays+' days)',prevMonthAmt,'#374151');
-  res+=row('Basic ('+daysInLastMonth+'/'+lastMonthDays+' days \u2014 '+months[end.getMonth()]+')',basicLastMonth,'#374151');
-  if(housing>0) res+=row('Housing Allowance',housingLM,'#374151');
-  if(transport>0) res+=row('Transport Allowance',transportLM,'#374151');
-  if(tel>0) res+=row('Tel Allowance',telLM,'#374151');
+  if(lmManualActive){
+    var lmSubMode2=(document.getElementById('fs-lm-submode')||{value:'days'}).value;
+    var lmLabel = lmSubMode2==='days'
+      ? 'Last Month Salary (manual — '+(parseFloat((document.getElementById('fs-lm-days-worked')||{value:0}).value)||0)+' days)'
+      : 'Last Month Salary (manual — fixed)';
+    res+=row(lmLabel, lmOverride, '#374151');
+  } else {
+    res+=row('Basic ('+daysInLastMonth+'/'+lastMonthDays+' days \u2014 '+months[end.getMonth()]+')',basicLastMonth,'#374151');
+    if(housing>0) res+=row('Housing Allowance',housingLM,'#374151');
+    if(transport>0) res+=row('Transport Allowance',transportLM,'#374151');
+    if(tel>0) res+=row('Tel Allowance',telLM,'#374151');
+  }
   if(vac>0) res+=row('Vacation ('+vac+' days)',earnVac,'#374151');
   if(ph>0) res+=row('Public Holidays ('+ph+' days)',earnPH,'#374151');
   if(wo>0) res+=row('Weekly Off ('+wo+' days)',earnWO,'#374151');
@@ -4048,6 +4217,305 @@ function fsCalc(){
 
 
 
+// ─── Final Settlement: Employee Search & Salary Adjustment ───────────────────
+
+var _fsOrigSal = {}; // stores {basic,housing,transport,tel} when locked as baseline
+
+// Show/hide the Lock button whenever salary has values but no baseline yet
+function fsShowLockBtn(){
+  var hasVal=['basic','housing','transport','tel'].some(function(k){
+    var el=document.getElementById('fs-'+k); return el&&(parseFloat(el.value)||0)>0;
+  });
+  var row=document.getElementById('fs-sal-lock-row');
+  if(row) row.style.display=(hasVal&&!Object.keys(_fsOrigSal).length)?'':'none';
+}
+
+// Lock the current salary values as the baseline for adjustment tracking
+function fsLockSalary(){
+  _fsOrigSal={};
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var el=document.getElementById('fs-'+k);
+    _fsOrigSal[k]=parseFloat((el||{}).value)||0;
+  });
+  var row=document.getElementById('fs-sal-lock-row');
+  if(row) row.style.display='none';
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var badge=document.getElementById('fs-'+k+'-orig-badge');
+    if(badge){badge.textContent='Was: BD '+_fsOrigSal[k].toFixed(3)+' ↩';badge.style.display='';}
+  });
+  fsUpdateAdjBar();
+  toast('Salary baseline locked — edit any field to track the adjustment','s');
+}
+
+// Called on every salary input oninput
+function fsSalAdj(field){
+  if(!Object.keys(_fsOrigSal).length){fsShowLockBtn();return;}
+  var orig=_fsOrigSal[field]; if(orig===undefined) return;
+  var inp=document.getElementById('fs-'+field);
+  var hint=document.getElementById('fs-'+field+'-adj-hint');
+  if(!inp) return;
+  var cur=parseFloat(inp.value)||0;
+  var delta=cur-orig;
+  if(Math.abs(delta)<0.0005){
+    inp.style.borderColor='';
+    if(hint){hint.style.display='none';hint.innerHTML='';}
+  } else {
+    var sign=delta>0?'+':'';
+    var color=delta>0?'#16A34A':'#8E3E3E';
+    inp.style.borderColor=delta>0?'rgba(22,163,74,0.6)':'rgba(142,62,62,0.6)';
+    if(hint){
+      hint.innerHTML='<span style="color:'+color+';font-weight:600">'+sign+delta.toFixed(3)+' BD</span> from baseline ('+orig.toFixed(3)+')';
+      hint.style.display='';
+    }
+  }
+  fsUpdateAdjBar();
+}
+
+// Click the "Was:" badge to revert just that one field
+function fsRevertField(field){
+  if(_fsOrigSal[field]===undefined) return;
+  var inp=document.getElementById('fs-'+field);
+  if(inp){inp.value=_fsOrigSal[field]?_fsOrigSal[field].toFixed(3):'0.000';inp.style.borderColor='';}
+  var hint=document.getElementById('fs-'+field+'-adj-hint');
+  if(hint) hint.style.display='none';
+  fsCalc(); fsUpdateAdjBar();
+}
+
+// Update the adjustment summary bar
+function fsUpdateAdjBar(){
+  if(!Object.keys(_fsOrigSal).length) return;
+  var bar=document.getElementById('fs-sal-adj-bar');
+  var sum=document.getElementById('fs-sal-adj-summary');
+  if(!bar||!sum) return;
+  var labels={basic:'Basic Salary',housing:'Housing Allow.',transport:'Transport Allow.',tel:'Tel Allow.'};
+  var lines=[]; var hasAdj=false;
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var orig=_fsOrigSal[k]; if(orig===undefined) return;
+    var inp=document.getElementById('fs-'+k);
+    var cur=parseFloat((inp||{}).value)||0;
+    var delta=cur-orig;
+    if(Math.abs(delta)>=0.0005){
+      hasAdj=true;
+      var sign=delta>0?'+':'';
+      var color=delta>0?'#16A34A':'#8E3E3E';
+      lines.push(
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.04)">'+
+        '<span style="color:#64748B">'+labels[k]+'</span>'+
+        '<span>'+
+          '<span style="color:#94A3B8;text-decoration:line-through;margin-right:6px">BD '+orig.toFixed(3)+'</span>'+
+          '<span style="font-weight:700;color:'+color+'">BD '+cur.toFixed(3)+'</span>'+
+          ' <span style="font-size:10px;background:rgba('+(delta>0?'22,163,74':'142,62,62')+',0.1);color:'+color+';padding:1px 5px;border-radius:4px;font-weight:600">'+sign+delta.toFixed(3)+'</span>'+
+        '</span></div>'
+      );
+    }
+  });
+  if(hasAdj){bar.style.display='';sum.innerHTML=lines.join('');}
+  else{bar.style.display='none';}
+}
+
+// Revert ALL adjusted fields to the locked baseline
+function fsRevertSalary(){
+  if(!Object.keys(_fsOrigSal).length) return;
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var orig=_fsOrigSal[k]; if(orig===undefined) return;
+    var inp=document.getElementById('fs-'+k);
+    if(inp){inp.value=orig?orig.toFixed(3):'0.000';inp.style.borderColor='';}
+    var hint=document.getElementById('fs-'+k+'-adj-hint');
+    if(hint) hint.style.display='none';
+  });
+  var bar=document.getElementById('fs-sal-adj-bar');
+  if(bar) bar.style.display='none';
+  fsCalc();
+  toast('Salary reverted to baseline','s');
+}
+
+// Clear the lock entirely
+function fsClearSalLock(){
+  _fsOrigSal={};
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var badge=document.getElementById('fs-'+k+'-orig-badge');
+    var hint=document.getElementById('fs-'+k+'-adj-hint');
+    var inp=document.getElementById('fs-'+k);
+    if(badge) badge.style.display='none';
+    if(hint)  hint.style.display='none';
+    if(inp)   inp.style.borderColor='';
+  });
+  var bar=document.getElementById('fs-sal-adj-bar');
+  if(bar) bar.style.display='none';
+  fsShowLockBtn();
+}
+
+function fsClearSalAdj(){
+  fsClearSalLock();
+  var row=document.getElementById('fs-sal-lock-row');
+  if(row) row.style.display='none';
+  var tag=document.getElementById('fs-emp-loaded-tag');
+  if(tag) tag.style.display='none';
+  var srch=document.getElementById('fs-emp-search');
+  if(srch) srch.value='';
+}
+
+function fsEmpSearch(q){
+  var drop=document.getElementById('fs-emp-drop');
+  if(!drop) return;
+  q=(q||'').trim().toLowerCase();
+  if(!q){drop.style.display='none';return;}
+  var list=(typeof EMP!=='undefined'?EMP:[]);
+  var hits=list.filter(function(e){
+    return (e.name||'').toLowerCase().indexOf(q)!==-1||
+           (e.emp_code||'').toLowerCase().indexOf(q)!==-1||
+           (e.dept||'').toLowerCase().indexOf(q)!==-1;
+  }).slice(0,12);
+  if(!hits.length){drop.style.display='none';return;}
+  drop.innerHTML=hits.map(function(e){
+    return '<div onclick="fsLoadEmpFs(\''+e.id+'\')" style="padding:9px 12px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px" '+
+      'onmouseover="this.style.background=\'#faf7f0\'" onmouseout="this.style.background=\'\'">'+
+      '<div style="font-weight:600;color:#1A202C">'+e.name+'</div>'+
+      '<div style="font-size:11px;color:#64748B">'+e.emp_code+' · '+e.dept+(e.title?' · '+e.title:'')+'</div></div>';
+  }).join('');
+  drop.style.display='block';
+}
+
+function fsLoadEmpFs(empId){
+  var drop=document.getElementById('fs-emp-drop');
+  if(drop) drop.style.display='none';
+  var list=(typeof EMP!=='undefined'?EMP:[]);
+  var e=list.find(function(x){return x.id===empId;});
+  if(!e){toast('Employee not found','e');return;}
+  var _sv=function(id,v){var el=document.getElementById(id);if(el)el.value=v||'';};
+  _sv('fs-name',e.name); _sv('fs-staffno',e.emp_code);
+  _sv('fs-dept',e.dept); _sv('fs-title',e.title); _sv('fs-nat',e.nationality);
+  var nt=document.getElementById('fs-nattype');
+  if(nt) nt.value=(e.nationality||'').toLowerCase()==='bahraini'?'local':'expat';
+  var basic=parseFloat(e.basic)||0,housing=parseFloat(e.housing)||0,
+      transport=parseFloat(e.transport)||0,tel=parseFloat(e.phone_allow)||0;
+  _sv('fs-basic',basic?basic.toFixed(3):'0.000');
+  _sv('fs-housing',housing?housing.toFixed(3):'0.000');
+  _sv('fs-transport',transport?transport.toFixed(3):'0.000');
+  _sv('fs-tel',tel?tel.toFixed(3):'0.000');
+  // Auto-lock baseline on load
+  _fsOrigSal={basic:basic,housing:housing,transport:transport,tel:tel};
+  var row=document.getElementById('fs-sal-lock-row');
+  if(row) row.style.display='none';
+  ['basic','housing','transport','tel'].forEach(function(k){
+    var badge=document.getElementById('fs-'+k+'-orig-badge');
+    if(badge){badge.textContent='Was: BD '+_fsOrigSal[k].toFixed(3)+' ↩';badge.style.display='';}
+    var hint=document.getElementById('fs-'+k+'-adj-hint');
+    if(hint) hint.style.display='none';
+    var inp=document.getElementById('fs-'+k);
+    if(inp) inp.style.borderColor='';
+  });
+  var bar=document.getElementById('fs-sal-adj-bar'); if(bar) bar.style.display='none';
+  var tag=document.getElementById('fs-emp-loaded-tag');
+  if(tag){tag.style.display='';tag.textContent='✓ '+e.name+' loaded';}
+  var srch=document.getElementById('fs-emp-search'); if(srch) srch.value='';
+  if(e.join_date||e.joining_date) _sv('fs-start',e.join_date||e.joining_date);
+  fsCalc();
+  toast('Loaded: '+e.name+' ('+e.emp_code+')','s');
+}
+
+// ─── Last Month Salary Mode (Auto / Manual) ──────────────────────────────────
+
+function fsSetLMMode(mode){
+  var modeEl=document.getElementById('fs-lm-mode');
+  if(modeEl) modeEl.value=mode;
+  var autoPanel=document.getElementById('fs-lm-auto-panel');
+  var manPanel=document.getElementById('fs-lm-manual-panel');
+  var btnAuto=document.getElementById('fs-lm-btn-auto');
+  var btnManual=document.getElementById('fs-lm-btn-manual');
+  if(mode==='auto'){
+    if(autoPanel) autoPanel.style.display='';
+    if(manPanel)  manPanel.style.display='none';
+    if(btnAuto){btnAuto.style.background='var(--gold)';btnAuto.style.color='#fff';}
+    if(btnManual){btnManual.style.background='transparent';btnManual.style.color='#64748B';}
+    // Clear override
+    var ov=document.getElementById('fs-lm-override'); if(ov) ov.value='';
+  } else {
+    if(autoPanel) autoPanel.style.display='none';
+    if(manPanel)  manPanel.style.display='';
+    if(btnAuto){btnAuto.style.background='transparent';btnAuto.style.color='#64748B';}
+    if(btnManual){btnManual.style.background='var(--gold)';btnManual.style.color='#fff';}
+    fsCalcLMManual();
+  }
+  fsCalc();
+}
+
+function fsSetLMSubMode(sub){
+  var subEl=document.getElementById('fs-lm-submode'); if(subEl) subEl.value=sub;
+  var daysPanel=document.getElementById('fs-lm-days-panel');
+  var fixedPanel=document.getElementById('fs-lm-fixed-panel');
+  var btnDays=document.getElementById('fs-lm-btn-days');
+  var btnFixed=document.getElementById('fs-lm-btn-fixed');
+  if(sub==='days'){
+    if(daysPanel)  daysPanel.style.display='';
+    if(fixedPanel) fixedPanel.style.display='none';
+    if(btnDays){btnDays.style.background='var(--gold)';btnDays.style.color='#fff';btnDays.style.borderColor='var(--gold)';}
+    if(btnFixed){btnFixed.style.background='transparent';btnFixed.style.color='#64748B';btnFixed.style.borderColor='var(--border-l)';}
+  } else {
+    if(daysPanel)  daysPanel.style.display='none';
+    if(fixedPanel) fixedPanel.style.display='';
+    if(btnDays){btnDays.style.background='transparent';btnDays.style.color='#64748B';btnDays.style.borderColor='var(--border-l)';}
+    if(btnFixed){btnFixed.style.background='var(--gold)';btnFixed.style.color='#fff';btnFixed.style.borderColor='var(--gold)';}
+  }
+  fsCalcLMManual();
+}
+
+function fsCalcLMManual(){
+  var sub=(document.getElementById('fs-lm-submode')||{value:'days'}).value;
+  var ov=document.getElementById('fs-lm-override');
+  var preview=document.getElementById('fs-lm-days-preview');
+  if(sub==='days'){
+    var dwEl=document.getElementById('fs-lm-days-worked');
+    var dmEl=document.getElementById('fs-lm-month-days');
+    var dwRaw=(dwEl||{value:''}).value;
+    var dmRaw=(dmEl||{value:''}).value;
+    var dw=parseFloat(dwRaw)||0;
+    var dm=parseFloat(dmRaw)||0;
+    var basic=parseFloat((document.getElementById('fs-basic')||{value:0}).value)||0;
+    var housing=parseFloat((document.getElementById('fs-housing')||{value:0}).value)||0;
+    var transport=parseFloat((document.getElementById('fs-transport')||{value:0}).value)||0;
+    var tel=parseFloat((document.getElementById('fs-tel')||{value:0}).value)||0;
+    var totalSalary=basic+housing+transport+tel;
+    // Need both fields filled (days worked can be 0 = no payment)
+    if(dwRaw!=='' && dmRaw!=='' && dm>0){
+      var amt=(dw===0) ? 0 : (totalSalary*dw/dm);
+      if(ov) ov.value=amt.toFixed(3);
+      if(preview){
+        preview.style.display='';
+        if(dw===0){
+          preview.innerHTML='<span style="color:#8E3E3E;font-weight:700">0 days worked = BD 0.000</span>';
+        } else {
+          preview.innerHTML='<span style="color:#64748B">'+dw+' days ÷ '+dm+' × BD '+totalSalary.toFixed(3)+'</span> = <span style="font-size:14px;font-weight:700;color:var(--gold)">BD '+amt.toFixed(3)+'</span>';
+        }
+      }
+    } else {
+      if(ov) ov.value='';
+      if(preview) preview.style.display='none';
+    }
+  } else {
+    var fa=parseFloat((document.getElementById('fs-lm-fixed-amount')||{value:''}).value);
+    var faEl=document.getElementById('fs-lm-fixed-amount');
+    if(faEl && faEl.value!==''){
+      if(ov) ov.value=(isNaN(fa)?0:fa).toFixed(3);
+    } else {
+      if(ov) ov.value='';
+    }
+  }
+  fsCalc();
+}
+
+function fsResetLMMode(){
+  var modeEl=document.getElementById('fs-lm-mode'); if(modeEl) modeEl.value='auto';
+  var subEl=document.getElementById('fs-lm-submode'); if(subEl) subEl.value='days';
+  var ov=document.getElementById('fs-lm-override'); if(ov) ov.value='';
+  var dw=document.getElementById('fs-lm-days-worked'); if(dw) dw.value='';
+  var dm=document.getElementById('fs-lm-month-days'); if(dm) dm.value='';
+  var fa=document.getElementById('fs-lm-fixed-amount'); if(fa) fa.value='';
+  var preview=document.getElementById('fs-lm-days-preview'); if(preview) preview.style.display='none';
+  // Reset UI back to auto mode
+  fsSetLMMode('auto');
+}
+
 function fsReset(){
   ['fs-name','fs-staffno','fs-dept','fs-title','fs-nat',
    'fs-start','fs-end','fs-basic','fs-housing','fs-transport','fs-tel',
@@ -4061,6 +4529,8 @@ function fsReset(){
   ['fs-result','fs-days-info','fs-earn-basic','fs-total-sal-box'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.style.display='none';
   });
+  fsClearSalAdj();
+  fsResetLMMode();
 }
 
 
@@ -4103,10 +4573,19 @@ function fsPrint(){
     var hLM = (d.housingLM!==undefined) ? d.housingLM : d.housing*d.daysInLastMonth/d.lastMonthDays;
     var tLM = (d.transportLM!==undefined) ? d.transportLM : d.transport*d.daysInLastMonth/d.lastMonthDays;
     var telLM = d.telLM||0;
-    eRows += row('Basic Salary — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days ('+d.monthName+') x BD '+fv(d.basic)+' / '+d.lastMonthDays, '+ BD '+fv(bLM), '#006600');
-    if(d.housing>0) eRows += row('Housing Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(hLM), '#006600');
-    if(d.transport>0) eRows += row('Transport Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(tLM), '#006600');
-    if(telLM>0) eRows += row('Tel Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(telLM), '#006600');
+    var lmModeP=(document.getElementById('fs-lm-mode')||{value:'auto'}).value;
+    var lmOvRawP=(document.getElementById('fs-lm-override')||{value:''}).value;
+    var lmOvP=parseFloat(lmOvRawP)||0;
+    if(lmModeP==='manual' && lmOvRawP!==''){
+      var lmSubP=(document.getElementById('fs-lm-submode')||{value:'days'}).value;
+      var lmLabelP=lmSubP==='days'?'Last Month Salary (manual — '+(parseFloat((document.getElementById('fs-lm-days-worked')||{value:0}).value)||0)+' days)':'Last Month Salary (manual — fixed amount)';
+      eRows += row(lmLabelP, '+ BD '+fv(lmOvP), '#006600');
+    } else {
+      eRows += row('Basic Salary — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days ('+d.monthName+') x BD '+fv(d.basic)+' / '+d.lastMonthDays, '+ BD '+fv(bLM), '#006600');
+      if(d.housing>0) eRows += row('Housing Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(hLM), '#006600');
+      if(d.transport>0) eRows += row('Transport Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(tLM), '#006600');
+      if(telLM>0) eRows += row('Tel Allowance — '+d.daysInLastMonth+'/'+d.lastMonthDays+' days', '+ BD '+fv(telLM), '#006600');
+    }
   }
   if((d.prevDays||0)>0) eRows += row('Previous Month Unpaid — '+d.prevDays+' days', '+ BD '+fv(d.prevMonthAmt), '#006600');
   if((d.vac||0)>0)  eRows += row('Annual Leave — '+d.vac+' days', '+ BD '+fv(d.earnVac), '#006600');
