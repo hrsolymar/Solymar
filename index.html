@@ -2209,6 +2209,28 @@ table.prs-tbl thead th{
         <div class="fl"><label>Pending Public Holidays</label><input id="fs-ph" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()"/></div>
         <div class="fl"><label>Weekly Off Days</label><input id="fs-wo" type="number" min="0" step="0.5" placeholder="0" oninput="fsCalc()"/></div>
         <div class="fl"><label>Notice Period (days)</label><input id="fs-notice-earn" type="number" min="0" step="1" placeholder="0" oninput="fsCalc()"/></div>
+
+        <!-- Indemnity Rate Override -->
+        <div class="fl" style="grid-column:1/-1">
+          <label style="margin-bottom:6px;display:block">Indemnity Rate Override</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button id="fs-indem-btn-auto" onclick="fsSetIndemRate('auto')"
+              style="flex:1;min-width:100px;padding:8px 10px;border:1.5px solid var(--gold);border-radius:8px;background:var(--gold);color:#fff;font-size:11.5px;font-weight:700;cursor:pointer">
+              ⚙️ Auto (by service)
+            </button>
+            <button id="fs-indem-btn-y3" onclick="fsSetIndemRate('y3')"
+              style="flex:1;min-width:100px;padding:8px 10px;border:1.5px solid var(--border-l);border-radius:8px;background:transparent;color:#64748B;font-size:11.5px;font-weight:600;cursor:pointer">
+              📅 All at 15/365 (≤3 yrs)
+            </button>
+            <button id="fs-indem-btn-y3plus" onclick="fsSetIndemRate('y3plus')"
+              style="flex:1;min-width:100px;padding:8px 10px;border:1.5px solid var(--border-l);border-radius:8px;background:transparent;color:#64748B;font-size:11.5px;font-weight:600;cursor:pointer">
+              📅 All at 30/365 (&gt;3 yrs)
+            </button>
+          </div>
+          <div id="fs-indem-rate-hint" style="font-size:10px;color:var(--gold);margin-top:5px;display:none"></div>
+          <input type="hidden" id="fs-indem-rate" value="auto"/>
+        </div>
+
         <div class="fl"><label>Manual Indemnity Days</label><input id="fs-manual-indem" type="number" min="0" step="0.5" placeholder="e.g. 10" oninput="fsCalc()"/></div><div class="fl"><label>Ticket (one way)</label><input id="fs-ticket" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
         <div class="fl"><label>Settlement Amount</label><input id="fs-settle" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
         <div class="fl"><label>Medical Refund</label><input id="fs-medical" type="number" min="0" step="0.001" placeholder="0.000" oninput="fsCalc()"/></div>
@@ -3946,8 +3968,28 @@ function fsCalc(){
     }
     if(indemEligibleDays<=1095){days1=indemEligibleDays;days2=0;}
     else{days1=1095;days2=indemEligibleDays-1095;}
-    indem1Amt = (days1*15/365)*(basic/30);
-    indem2Amt = (days2*30/365)*(basic/30);
+
+    // Rate override
+    var indemRate=(document.getElementById('fs-indem-rate')||{value:'auto'}).value;
+    var rateHint=document.getElementById('fs-indem-rate-hint');
+    if(indemRate==='y3'){
+      // Force ALL days at 15/365 rate (first 3 years rate)
+      indem1Amt = (indemEligibleDays*(basic*12/365))*(15/365);
+      indem2Amt = 0;
+      days1=indemEligibleDays; days2=0;
+      if(rateHint){rateHint.style.display='';rateHint.textContent='⚠ Overridden: all '+indemEligibleDays+' days at 15/365 rate (first 3 years)';}
+    } else if(indemRate==='y3plus'){
+      // Force ALL days at 30/365 rate (after 3 years rate)
+      indem1Amt = 0;
+      indem2Amt = (indemEligibleDays*(basic*12/365))*(30/365);
+      days1=0; days2=indemEligibleDays;
+      if(rateHint){rateHint.style.display='';rateHint.textContent='⚠ Overridden: all '+indemEligibleDays+' days at 30/365 rate (after 3 years)';}
+    } else {
+      // Auto — original split
+      indem1Amt = (days1*(basic*12/365))*(15/365);
+      indem2Amt = (days2*(basic*12/365))*(30/365);
+      if(rateHint) rateHint.style.display='none';
+    }
     indemAmount = indem1Amt + indem2Amt;
   }
 
@@ -4105,7 +4147,11 @@ function fsCalc(){
         res+='<div style="font-size:11px;color:#5a5040;margin-bottom:8px">Eligible days: <strong style="color:var(--gold-l)">'+indemEligibleDays+'</strong></div>';
         if(days1>0) res+=row('First 3 years ('+days1+' days \xd7 15/365)',indem1Amt);
         if(days2>0) res+=row('After 3 years ('+days2+' days \xd7 30/365)',indem2Amt);
-        res+=row('Auto Indemnity',indemAmount,'#c9a96e');
+        var indemRateDisp=(document.getElementById('fs-indem-rate')||{value:'auto'}).value;
+        var indemRowLabel = indemRateDisp==='y3' ? 'Indemnity (overridden — 15/365 rate)'
+                          : indemRateDisp==='y3plus' ? 'Indemnity (overridden — 30/365 rate)'
+                          : 'Auto Indemnity';
+        res+=row(indemRowLabel,indemAmount,'#c9a96e');
       }
       if(manualDays>0) res+=row('Manual days ('+manualDays+' \xd7 daily rate)',manualIndemAmt,'#c9a96e');
       if(indemEligibleDays>0||manualDays>0) res+=row('Total Indemnity',totalIndem,'#e8c97e');
@@ -4504,6 +4550,28 @@ function fsCalcLMManual(){
   fsCalc();
 }
 
+// ─── Indemnity Rate Override ──────────────────────────────────────────────────
+
+function fsSetIndemRate(mode){
+  var el=document.getElementById('fs-indem-rate');
+  if(el) el.value=mode;
+  var btns={auto:'fs-indem-btn-auto',y3:'fs-indem-btn-y3',y3plus:'fs-indem-btn-y3plus'};
+  Object.keys(btns).forEach(function(k){
+    var btn=document.getElementById(btns[k]);
+    if(!btn) return;
+    if(k===mode){
+      btn.style.background='var(--gold)';
+      btn.style.color='#fff';
+      btn.style.borderColor='var(--gold)';
+    } else {
+      btn.style.background='transparent';
+      btn.style.color='#64748B';
+      btn.style.borderColor='var(--border-l)';
+    }
+  });
+  fsCalc();
+}
+
 function fsResetLMMode(){
   var modeEl=document.getElementById('fs-lm-mode'); if(modeEl) modeEl.value='auto';
   var subEl=document.getElementById('fs-lm-submode'); if(subEl) subEl.value='days';
@@ -4514,6 +4582,7 @@ function fsResetLMMode(){
   var preview=document.getElementById('fs-lm-days-preview'); if(preview) preview.style.display='none';
   // Reset UI back to auto mode
   fsSetLMMode('auto');
+  fsSetIndemRate('auto');
 }
 
 function fsReset(){
@@ -4618,8 +4687,8 @@ function fsPrint(){
     if((d.indemEligibleDays||0)>0){
       eRows += row('Eligible Service Days', d.indemEligibleDays+' days', '#555');
     }
-    if((d.days1||0)>0) eRows += row('First 3 years — '+d.days1+' days × (BD '+fv(d.basic)+' ÷ 365 × 15)', '+ BD '+fv(d.indem1Amt), '#006600', true);
-    if((d.days2||0)>0) eRows += row('After 3 years — '+d.days2+' days × (BD '+fv(d.basic)+' ÷ 365 × 30)', '+ BD '+fv(d.indem2Amt), '#006600', true);
+    if((d.days1||0)>0) eRows += row('First 3 years — '+d.days1+' days × (BD '+fv(d.basic)+' × 12/365) × 15/365', '+ BD '+fv(d.indem1Amt), '#006600', true);
+    if((d.days2||0)>0) eRows += row('After 3 years — '+d.days2+' days × (BD '+fv(d.basic)+' × 12/365) × 30/365', '+ BD '+fv(d.indem2Amt), '#006600', true);
     if((d.manualDays||0)>0) eRows += row('Manual Indemnity — '+d.manualDays+' days', '+ BD '+fv(d.manualIndemAmt), '#006600', true);
     eRows += '<tr style="background:rgba(188,151,84,0.08);"><td style="padding:6px 12px;font-size:11px;font-weight:800;color:#006600;border-bottom:1px solid #a8d5a8;">Total Indemnity</td>'
       +'<td style="padding:6px 12px;font-size:12px;font-weight:800;text-align:right;color:#006600;border-bottom:1px solid #a8d5a8;">+ BD '+fv(d.totalIndem)+'</td></tr>';
