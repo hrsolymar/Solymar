@@ -3484,7 +3484,14 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
 /* ─ Watermark ─ */
 .c2-wm {
-  display: none !important;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 55%; height: auto;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 1;
+  object-fit: contain;
 }
 
 /* ─ Content layer — flex column, fills the whole doc ─ */
@@ -3520,7 +3527,7 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
 /* Training */
 .c2-training {
-  font-weight:800; font-size:1.05em; color:#0D1B2A;
+  font-weight:800; font-size:1.15em; color:#0D1B2A;
   text-align:center; letter-spacing:.02em;
   max-width:90%; line-height:1.2; flex-shrink:0;
 }
@@ -3529,22 +3536,22 @@ table.rst tbody tr:hover{background:#F0F7F0}
   width:55%; max-width:82%; flex-shrink:0;
 }
 .c2-presented {
-  font-size:.55em; color:#A8B2BC; letter-spacing:.04em;
+  font-size:.64em; color:#A8B2BC; letter-spacing:.04em;
 }
 .c2-name {
   font-family: 'Playfair Display', Georgia, serif;
-  font-style: italic; font-size:1.6em; color:#0D1B2A;
+  font-style: italic; font-size:2em; color:#0D1B2A;
   text-align:center; line-height:1.1; max-width:85%;
   word-break:break-word; flex-shrink:0;
 }
 .c2-name-line { height:.9px; background:#C9A84C; width:52%; flex-shrink:0; }
 .c2-body {
-  font-size:.52em; color:#444; text-align:center;
-  line-height:1.6; padding:0 4%; max-width:100%; flex-shrink:0;
+  font-size:.62em; color:#444; text-align:center;
+  line-height:1.5; padding:0 4%; max-width:100%; flex-shrink:0;
 }
 .c2-body strong { color:#0D1B2A; font-weight:700; display:block; }
 .c2-date {
-  font-size:.56em; font-weight:700; color:#C9A84C;
+  font-size:.64em; font-weight:700; color:#C9A84C;
   letter-spacing:.12em; text-transform:uppercase; flex-shrink:0;
 }
 
@@ -3555,12 +3562,12 @@ table.rst tbody tr:hover{background:#F0F7F0}
 }
 .c2-sig { display:flex; flex-direction:column; align-items:center; width:44%; }
 .c2-sig-line { width:100%; height:.6px; background:#1A2E45; margin-bottom:.4em; }
-.c2-sig-name { font-size:.52em; font-weight:700; color:#0D1B2A; text-align:center; }
-.c2-sig-dept { font-size:.44em; color:#A8B2BC; text-align:center; margin-top:.15em; }
+.c2-sig-name { font-size:.60em; font-weight:700; color:#0D1B2A; text-align:center; }
+.c2-sig-dept { font-size:.52em; color:#A8B2BC; text-align:center; margin-top:.15em; }
 
 /* Footer — inside the flex flow (not absolute) */
 .c2-footer {
-  font-size:.4em; color:#A8B2BC; text-align:center;
+  font-size:.48em; color:#A8B2BC; text-align:center;
   letter-spacing:.02em; flex-shrink:0; width:100%;
   padding-top: .3em;
 }
@@ -3716,7 +3723,7 @@ table.rst tbody tr:hover{background:#F0F7F0}
         <div class="c2-bdr-gold"></div>
         <div class="c2-bdr-thin"></div>
 
-        <!-- Corner ornaments -->
+        <!-- Corner ornaments (top-left, top-right, bottom-left only) -->
         <div class="c2-corner tl">
           <svg viewBox="0 0 28 28" fill="none">
             <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
@@ -3744,17 +3751,9 @@ table.rst tbody tr:hover{background:#F0F7F0}
             <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
           </svg>
         </div>
-        <div class="c2-corner br">
-          <svg viewBox="0 0 28 28" fill="none">
-            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
-            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
-            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
-            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
-            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
-          </svg>
-        </div>
 
-        <!-- Watermark logo removed -->
+        <!-- Watermark logo -->
+        <img class="c2-wm" src="" id="cert-wm-logo" alt="">
 
         <!-- Content -->
         <div class="c2-content">
@@ -12293,6 +12292,10 @@ function certRefreshAll() {
   certSyncDeptHead();
   certSyncHRManager();
   certUpdateCertId();
+  // Sync watermark from top logo
+  var topLogo = document.getElementById('cert-top-logo');
+  var wmLogo = document.getElementById('cert-wm-logo');
+  if (topLogo && wmLogo && topLogo.src) wmLogo.src = topLogo.src;
 }
 
 function certPrint() {
@@ -12369,6 +12372,10 @@ function certPrint() {
         certSyncDate();
       }
       certPopulateEmployees();
+      // Sync watermark logo
+      var topLogo = document.getElementById('cert-top-logo');
+      var wmLogo = document.getElementById('cert-wm-logo');
+      if (topLogo && wmLogo) wmLogo.src = topLogo.src;
     }
   };
 })();
