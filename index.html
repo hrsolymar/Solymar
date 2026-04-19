@@ -3574,7 +3574,7 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
 /* ─ Print styles ─ */
 @media print {
-  @page { size: A4 landscape; margin: 0; }
+  @page { size: A4 landscape; margin: 10mm; }
 
   /* Color accuracy */
   * {
@@ -3592,16 +3592,19 @@ table.rst tbody tr:hover{background:#F0F7F0}
     display: block !important;
     visibility: visible !important;
     position: fixed !important;
-    top: 0 !important; left: 0 !important;
-    width: 297mm !important;
-    height: 210mm !important;
-    max-width: 297mm !important;
-    aspect-ratio: unset !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    /* Match the live preview proportions: max 700px wide with A4 landscape ratio */
+    width: 230mm !important;
+    height: calc(230mm * (210 / 297)) !important;
+    max-width: 230mm !important;
+    aspect-ratio: 297 / 210 !important;
     box-shadow: none !important;
-    border-radius: 0 !important;
+    border-radius: 3px !important;
     margin: 0 !important;
     padding: 0 !important;
-    font-size: 13.5px !important;
+    font-size: 11px !important;
     background: #FDFAF3 !important;
     overflow: hidden !important;
     z-index: 99999 !important;
