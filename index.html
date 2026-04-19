@@ -1372,6 +1372,10 @@ table.prs-tbl thead th{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span class="ni-label">Disciplinary Log</span>
     </div>
+    <div class="nav-item" onclick="showPg('certificate');closeSidebar()" data-pg="certificate">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <span class="ni-label">Certificates</span>
+    </div>
     <div class="nav-item" id="nav-audit" onclick="showPg('audit');closeSidebar()" data-pg="audit" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span class="ni-label">Audit Log</span>
@@ -3311,6 +3315,466 @@ table.rst tbody tr:hover{background:#F0F7F0}
 </div>
 </div>
 <!-- END IMPORT DATA PAGE -->
+
+<!-- ═══════════════════════════════════════════════════
+     CERTIFICATE GENERATOR PAGE
+═══════════════════════════════════════════════════ -->
+<div id="pg-certificate" class="pg">
+<div class="back-btn-container" onclick="showPg('dash')">
+  <div class="back-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    <span>Back</span>
+  </div>
+</div>
+
+<style>
+/* ── Certificate Page Styles ─────────────────────── */
+.cert-pg-header {
+  background: linear-gradient(135deg, #0A1629 0%, #1A2E45 100%);
+  border-radius: 20px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.cert-pg-header-left { display: flex; align-items: center; gap: 12px; }
+.cert-pg-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(184,144,77,0.18);
+  border: 1px solid rgba(184,144,77,0.35);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.cert-pg-title { font-size: 15px; font-weight: 800; color: #fff; }
+.cert-pg-sub   { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+/* Two-column layout */
+.cert-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  align-items: flex-start;
+}
+@media(max-width:900px){ .cert-layout{ grid-template-columns:1fr; } }
+
+/* Form card */
+.cert-form-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(184,144,77,0.12);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  position: sticky; top: 80px;
+}
+.cert-form-section-label {
+  font-size: 10px; font-weight: 700; color: #B8904D;
+  letter-spacing: .15em; text-transform: uppercase; margin-bottom: 14px;
+}
+.cert-field { margin-bottom: 14px; }
+.cert-field label {
+  display: block; font-size: 11px; font-weight: 600; color: #64748B;
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px;
+}
+.cert-field input, .cert-field textarea, .cert-field select {
+  width: 100%; background: #F8FAFC;
+  border: 1px solid #EDF2F7; border-radius: 10px;
+  padding: 10px 12px; font-family: var(--font); font-size: 13px; color: #1A202C;
+  outline: none; transition: border-color .2s, box-shadow .2s; resize: none;
+}
+.cert-field input:focus, .cert-field textarea:focus, .cert-field select:focus {
+  border-color: #B8904D;
+  box-shadow: 0 0 0 3px rgba(184,144,77,0.12);
+}
+.cert-hint { font-size: 10px; color: #94A3B8; margin-top: 4px; line-height: 1.4; }
+.cert-divider-row { height: 1px; background: #EDF2F7; margin: 16px 0; }
+
+.cert-btn-print {
+  width: 100%; padding: 13px; margin-top: 4px;
+  background: linear-gradient(135deg, #B8904D 0%, #D4AA6A 100%);
+  color: #0A1629; font-family: var(--font);
+  font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  border: none; border-radius: 12px; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(184,144,77,0.28);
+  transition: all .25s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.cert-btn-print:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(184,144,77,0.42); }
+.cert-btn-print:active { transform: none; }
+.cert-btn-update {
+  width: 100%; padding: 10px; margin-bottom: 10px;
+  background: #F1F5F9; color: #0A1629;
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  border: 1px solid #E2E8F0; border-radius: 10px; cursor: pointer;
+  transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.cert-btn-update:hover { background: #EEF2F7; border-color: #B8904D; color: #B8904D; }
+
+/* Preview card */
+.cert-preview-card {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(184,144,77,0.12);
+  border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+.cert-preview-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.cert-preview-topbar-label {
+  font-size: 11px; font-weight: 700; color: #64748B;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.cert-scale-badge {
+  font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(184,144,77,0.1); color: #8A6830;
+  border: 1px solid rgba(184,144,77,0.22);
+}
+
+/* ── THE CERTIFICATE ITSELF ───────────────────────── */
+.cert-preview-outer {
+  display: flex; justify-content: center; align-items: center;
+  background: #E8E5DD; border-radius: 12px; padding: 24px;
+}
+
+/* Scaled to fit in the card — the actual proportions are A4 landscape (297:210) */
+.cert-doc {
+  width: 100%; max-width: 660px;
+  aspect-ratio: 297 / 210;
+  background: #FDFAF3;
+  position: relative; overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.20), 0 0 0 1px rgba(201,168,76,0.22);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─ Borders ─ */
+.c2-bdr-gold  { position:absolute; inset:12px; border:2.2px solid #C9A84C; border-radius:1px; }
+.c2-bdr-thin  { position:absolute; inset:16px; border:.5px solid rgba(201,168,76,.4); }
+
+/* ─ Corner ornaments ─ */
+.c2-corner { position:absolute; width:28px; height:28px; z-index:2; }
+.c2-corner svg { width:100%; height:100%; }
+.c2-corner.tl { top:14px; left:14px; }
+.c2-corner.tr { top:14px; right:14px; transform:scaleX(-1); }
+.c2-corner.bl { bottom:14px; left:14px; transform:scaleY(-1); }
+.c2-corner.br { bottom:14px; right:14px; transform:scale(-1,-1); }
+
+/* ─ Watermark ─ */
+.c2-wm {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:68%; z-index:0; opacity:.055; pointer-events:none;
+  filter: grayscale(30%);
+}
+
+/* ─ Content layer ─ */
+.c2-content {
+  position:absolute; inset:0; z-index:3;
+  display:flex; flex-direction:column; align-items:center;
+  padding: 4% 7% 3%;
+}
+
+.c2-logo { height: 10%; width: auto; max-width: 34%; object-fit:contain; display:block; }
+
+.c2-rule { width:88%; height:.5px; background:#D4B86A; margin: 1.5% 0 1.2%; flex-shrink:0; }
+
+.c2-label {
+  font-size:.6em; font-weight:600; letter-spacing:.22em;
+  color:#8B7338; text-transform:uppercase; margin-bottom:.8%;
+}
+.c2-divider {
+  display:flex; align-items:center; gap:.4em; width:72%; margin:.5% 0;
+}
+.c2-div-line { flex:1; height:.5px; background:#C9A84C; }
+.c2-div-diamond { width:.55em; height:.55em; background:#C9A84C; transform:rotate(45deg); flex-shrink:0; }
+
+/* Training type — large, plain */
+.c2-training {
+  font-weight:800; font-size:1.1em; color:#0D1B2A;
+  text-align:center; margin: .8% 0 .3%;
+  letter-spacing:.02em; max-width:90%; line-height:1.2;
+}
+.c2-training-underline {
+  height:1.2px; background:#C9A84C;
+  margin:.2% auto .9%; width:55%; max-width:82%;
+}
+.c2-presented {
+  font-size:.55em; color:#A8B2BC; letter-spacing:.04em; margin:.8% 0 .3%;
+}
+.c2-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic; font-size:1.65em; color:#0D1B2A;
+  text-align:center; line-height:1.1; max-width:85%; word-break:break-word;
+}
+.c2-name-line { height:.9px; background:#C9A84C; margin:.3% auto .8%; width:52%; }
+.c2-body {
+  font-size:.5em; color:#444; text-align:center;
+  line-height:1.75; padding:0 6%; max-width:100%;
+}
+.c2-body strong { color:#0D1B2A; font-weight:700; display:block; margin:.15em 0; }
+.c2-date {
+  font-size:.55em; font-weight:700; color:#C9A84C;
+  letter-spacing:.12em; margin: 1.2% 0 .6%; text-transform:uppercase;
+}
+
+/* Sig section */
+.c2-sigs {
+  display:flex; justify-content:space-around; width:86%; gap:5%;
+  margin-top: .8%;
+}
+.c2-sig { display:flex; flex-direction:column; align-items:center; width:46%; }
+.c2-sig-line { width:100%; height:.6px; background:#1A2E45; margin-bottom:.5em; }
+.c2-sig-name { font-size:.5em; font-weight:700; color:#0D1B2A; text-align:center; }
+.c2-sig-dept { font-size:.42em; color:#A8B2BC; text-align:center; margin-top:.2em; }
+
+.c2-footer {
+  position:absolute; bottom:2%; left:0; right:0;
+  font-size:.42em; color:#A8B2BC; text-align:center; z-index:4;
+  letter-spacing:.02em;
+}
+
+/* ─ Print styles ─ */
+@media print {
+  #pg-certificate .cert-layout { display: block !important; }
+  #cert-form-panel { display: none !important; }
+  #cert-preview-panel { padding: 0 !important; background: none !important; }
+  .cert-pg-header, .cert-preview-topbar, .back-btn-container { display: none !important; }
+  .cert-preview-outer { padding: 0 !important; background: none !important; border-radius: 0; }
+  .cert-doc {
+    width: 297mm !important; height: 210mm !important;
+    max-width: 100% !important;
+    aspect-ratio: unset !important;
+    box-shadow: none !important; border-radius: 0 !important;
+    page-break-inside: avoid;
+  }
+  @page { size: A4 landscape; margin: 0; }
+  body > * { display: none !important; }
+  #app { display: block !important; padding: 0 !important; }
+  #sidebar { display: none !important; }
+  #main-wrap { display: block !important; }
+  #topbar { display: none !important; }
+  #content { padding: 0 !important; overflow: visible !important; }
+  .pg { display: none !important; }
+  #pg-certificate { display: block !important; }
+  .cert-preview-card { padding: 0 !important; border: none !important; box-shadow: none !important; background: none !important; }
+  /* Scale em-based type to physical A4 */
+  .cert-doc { font-size: 18px !important; }
+}
+</style>
+
+<!-- Page header -->
+<div class="cert-pg-header">
+  <div class="cert-pg-header-left">
+    <div class="cert-pg-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B8904D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+    </div>
+    <div>
+      <div class="cert-pg-title">Certificate Generator</div>
+      <div class="cert-pg-sub">Generate & print official completion certificates</div>
+    </div>
+  </div>
+</div>
+
+<div class="cert-layout">
+
+  <!-- ── LEFT: Form ─────────────────────────────── -->
+  <div class="cert-form-card" id="cert-form-panel">
+
+    <div class="cert-form-section-label">Certificate Details</div>
+
+    <div class="cert-field">
+      <label>Recipient Full Name</label>
+      <input type="text" id="cert-name" placeholder="e.g. Ahmed Al-Mansoori"
+             oninput="certSyncName()" value="">
+    </div>
+
+    <div class="cert-field">
+      <label>Select from Employees</label>
+      <select id="cert-emp-sel" onchange="certPickEmployee()">
+        <option value="">— or choose from directory —</option>
+      </select>
+      <div class="cert-hint">Selecting fills the name automatically.</div>
+    </div>
+
+    <div class="cert-divider-row"></div>
+
+    <div class="cert-field">
+      <label>Type of Training / Course</label>
+      <textarea id="cert-training" rows="2"
+                placeholder="e.g. HRMS Comprehensive Training Program"
+                oninput="certSyncTraining()"></textarea>
+      <div class="cert-hint">Enter the exact course name as it should appear on the certificate.</div>
+    </div>
+
+    <div class="cert-field">
+      <label>Date of Completion</label>
+      <input type="text" id="cert-date" placeholder="e.g. April 19, 2026"
+             oninput="certSyncDate()"
+             value="">
+    </div>
+
+    <div class="cert-divider-row"></div>
+
+    <button class="cert-btn-update" onclick="certRefreshAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Update Preview
+    </button>
+
+    <button class="cert-btn-print" onclick="certPrint()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Print Certificate
+    </button>
+
+    <div style="margin-top:12px;padding:10px 12px;background:#F8FAFC;border-radius:10px;border:1px solid #EDF2F7;">
+      <div style="font-size:10px;font-weight:700;color:#B8904D;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;">Certificate includes</div>
+      <div style="font-size:10.5px;color:#64748B;line-height:1.8;">
+        ✦ Official Solymar Hotel logo<br>
+        ✦ Faded logo watermark<br>
+        ✦ Gold border & corner ornaments<br>
+        ✦ Head of Department signature line<br>
+        ✦ HR Manager signature line<br>
+        ✦ Unique Certificate ID
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT: Preview ─────────────────────────── -->
+  <div class="cert-preview-card" id="cert-preview-panel">
+
+    <div class="cert-preview-topbar">
+      <div class="cert-preview-topbar-label">Live Preview</div>
+      <span class="cert-scale-badge">A4 Landscape · Print Ready</span>
+    </div>
+
+    <div class="cert-preview-outer">
+      <div class="cert-doc" id="cert-doc-root">
+
+        <!-- Borders -->
+        <div class="c2-bdr-gold"></div>
+        <div class="c2-bdr-thin"></div>
+
+        <!-- Corner ornaments -->
+        <div class="c2-corner tl">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner tr">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner bl">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner br">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+
+        <!-- Watermark logo (faded) -->
+        <img class="c2-wm" id="cert-wm-logo" src="1945.png" alt="" aria-hidden="true"
+             onerror="this.style.display='none'">
+
+        <!-- Content -->
+        <div class="c2-content">
+
+          <!-- Logo -->
+          <img class="c2-logo" id="cert-top-logo" src="1945.png" alt="Solymar Hotel"
+               onerror="this.style.display='none'">
+
+          <!-- Thin rule -->
+          <div class="c2-rule"></div>
+
+          <!-- CERTIFICATE OF COMPLETION label -->
+          <div class="c2-label">Certificate of Completion</div>
+
+          <!-- Divider -->
+          <div class="c2-divider">
+            <div class="c2-div-line"></div>
+            <div class="c2-div-diamond"></div>
+            <div class="c2-div-line"></div>
+          </div>
+
+          <!-- Training type — prominent, no box -->
+          <div class="c2-training" id="pv2-training">HRMS Comprehensive Training Program</div>
+          <div class="c2-training-underline" id="pv2-training-ul"></div>
+
+          <!-- Presented to -->
+          <div class="c2-presented">This certificate is proudly presented to</div>
+
+          <!-- Recipient name -->
+          <div class="c2-name" id="pv2-name">Recipient Name</div>
+          <div class="c2-name-line"></div>
+
+          <!-- Body -->
+          <div class="c2-body">
+            for the successful completion of all required modules and assessments in the
+            <strong id="pv2-body-training">HRMS Comprehensive Training Program</strong>
+            conducted by the Human Resources Department, Solymar Hotel W.L.L., Bahrain
+          </div>
+
+          <!-- Date -->
+          <div class="c2-date" id="pv2-date">Date of Completion: —</div>
+
+          <!-- Bottom divider -->
+          <div class="c2-divider" style="width:86%;margin:.4% 0;">
+            <div class="c2-div-line"></div>
+            <div class="c2-div-diamond"></div>
+            <div class="c2-div-line"></div>
+          </div>
+
+          <!-- Two signature lines — empty for manual signing -->
+          <div class="c2-sigs">
+            <div class="c2-sig">
+              <div class="c2-sig-line"></div>
+              <div class="c2-sig-name" id="pv2-dept-head">Head of Department</div>
+              <div class="c2-sig-dept" id="pv2-dept-sub"></div>
+            </div>
+            <div class="c2-sig">
+              <div class="c2-sig-line"></div>
+              <div class="c2-sig-name">HR Manager</div>
+              <div class="c2-sig-dept">Human Resources Department</div>
+            </div>
+          </div>
+
+        </div><!-- /c2-content -->
+
+        <!-- Footer cert ID -->
+        <div class="c2-footer" id="pv2-certid">
+          Certificate ID: CERT-HRMS-XXXXXXXX &nbsp;|&nbsp; Solymar Hotel W.L.L., Kingdom of Bahrain
+        </div>
+
+      </div><!-- /cert-doc -->
+    </div><!-- /cert-preview-outer -->
+
+  </div><!-- /cert-preview-card -->
+
+</div><!-- /cert-layout -->
+</div><!-- /pg-certificate -->
+<!-- END CERTIFICATE PAGE -->
+
 </div><!-- /main -->
 
   </main>
@@ -11671,6 +12135,137 @@ document.addEventListener('click',function(e){var m=document.getElementById('rst
 <!-- ═══ SEED DATA — paste your exported data between the script tags below ═══ -->
 <script id="seed-data" type="application/json">
 [{"id": "s000281", "emp_code": "281", "name": "Ismail Yeasin", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Bangladeshi", "dob": "1987-12-20", "cpr": "871246481", "basic": 160.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 160.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000459", "emp_code": "459", "name": "Ghita Aakif", "dept": "Food & Beverages", "title": "Hostess", "nationality": "Moroccan", "dob": "1998-08-09", "cpr": "980846790", "basic": 350.0, "housing": 50.0, "transport": 0.0, "phone_allow": 0.0, "total": 400.0, "allowances": 50.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000521", "emp_code": "521", "name": "Waree Pattawee", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Thai", "dob": "1985-10-01", "cpr": "851476635", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000538", "emp_code": "538", "name": "Maria Cristina Solmia", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Filipino", "dob": "1997-11-18", "cpr": "971138583", "basic": 250.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 250.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000548", "emp_code": "548", "name": "Laxman Phuke", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Indian", "dob": "2002-09-03", "cpr": "020339100", "basic": 80.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 80.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000549", "emp_code": "549", "name": "Vithal Kuknur", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Indian", "dob": "2002-10-06", "cpr": "020636407", "basic": 80.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 80.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000550", "emp_code": "550", "name": "Tushar Chaudhari", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Indian", "dob": "2005-02-03", "cpr": "050227564", "basic": 80.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 80.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000551", "emp_code": "551", "name": "Raj Kaundal", "dept": "Food & Beverages", "title": "Waiter", "nationality": "Indian", "dob": "2007-02-11", "cpr": "070220565", "basic": 80.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 80.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000553", "emp_code": "553", "name": "Tarik Ghanmi", "dept": "Food & Beverages", "title": "F&B Manager", "nationality": "Moroccan", "dob": "1988-03-17", "cpr": "881470821", "basic": 800.0, "housing": 250.0, "transport": 50.0, "phone_allow": 0.0, "total": 1100.0, "allowances": 300.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000277", "emp_code": "277", "name": "Bhanudas Suryaji", "dept": "Finance", "title": "Financial Controller", "nationality": "Indian", "dob": "1966-07-03", "cpr": "660735997", "basic": 1200.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 1200.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000333", "emp_code": "333", "name": "Ajit Arjun Gawas", "dept": "Finance", "title": "Accountant", "nationality": "Indian", "dob": "1991-06-15", "cpr": "910635692", "basic": 300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000378", "emp_code": "378", "name": "Mahendra Dakua", "dept": "Finance", "title": "Cost Controller", "nationality": "Indian", "dob": "1994-05-08", "cpr": "940533863", "basic": 450.0, "housing": 150.0, "transport": 20.0, "phone_allow": 0.0, "total": 620.0, "allowances": 170.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000432", "emp_code": "432", "name": "Suresh Shetty", "dept": "Finance", "title": "Store Keeper", "nationality": "Indian", "dob": "1982-11-21", "cpr": "821130943", "basic": 260.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 260.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000437", "emp_code": "437", "name": "Abdul Atheeq", "dept": "Finance", "title": "Chief Accountant", "nationality": "Indian", "dob": "1980-08-01", "cpr": "800886747", "basic": 575.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 575.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000489", "emp_code": "489", "name": "Nehal Khale", "dept": "Finance", "title": "Purchasing Officer", "nationality": "Indian", "dob": "1989-07-15", "cpr": "890730920", "basic": 550.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 550.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000531", "emp_code": "531", "name": "Shaik Musheer", "dept": "Finance", "title": "Accountant", "nationality": "Indian", "dob": "1985-10-06", "cpr": "851090524", "basic": 290.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 290.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000564", "emp_code": "564", "name": "Ganesh Govindankutty", "dept": "Finance", "title": "Cost Controller", "nationality": "Indian", "dob": "1999-08-05", "cpr": "990837300", "basic": 230.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 230.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000016", "emp_code": "016", "name": "Syed Ilyas", "dept": "Information Technology", "title": "IT Manager", "nationality": "Indian", "dob": "1973-03-04", "cpr": "730355330", "basic": 900.0, "housing": 300.0, "transport": 50.0, "phone_allow": 0.0, "total": 1250.0, "allowances": 350.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000360", "emp_code": "360", "name": "Ibrahim Abouzamel", "dept": "Front Office", "title": "Asst. FO Manager", "nationality": "Egyptian", "dob": "1984-04-11", "cpr": "840497636", "basic": 500.0, "housing": 150.0, "transport": 0.0, "phone_allow": 0.0, "total": 650.0, "allowances": 150.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000363", "emp_code": "363", "name": "Reda Saaidi", "dept": "Front Office", "title": "Front Office Supervisor", "nationality": "Moroccan", "dob": "1994-02-13", "cpr": "940246945", "basic": 300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000421", "emp_code": "421", "name": "Yusuf Ahmed Ramadhan Nasralla", "dept": "Front Office", "title": "Telephone Operator", "nationality": "Bahraini", "dob": "1990-10-15", "cpr": "901008427", "basic": 500.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 500.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000446", "emp_code": "446", "name": "Velpula Dass", "dept": "Front Office", "title": "Bellboy", "nationality": "Indian", "dob": "1973-05-12", "cpr": "730595900", "basic": 220.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 220.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000482", "emp_code": "482", "name": "Husain Mohamed Nasralla", "dept": "Front Office", "title": "Bellboy", "nationality": "Bahraini", "dob": "1996-12-13", "cpr": "961203927", "basic": 500.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 500.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000485", "emp_code": "485", "name": "Basem Hamdi Elmaghrabi", "dept": "Front Office", "title": "Director Of Rooms", "nationality": "Egyptian", "dob": "1974-07-01", "cpr": "740760343", "basic": 935.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 935.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000490", "emp_code": "490", "name": "Arianne Lyn Gubaton", "dept": "Front Office", "title": "Front Office Supervisor", "nationality": "Filipino", "dob": "1992-02-19", "cpr": "920226604", "basic": 300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000497", "emp_code": "497", "name": "Andrea Mae Timbol", "dept": "Front Office", "title": "Guest Service Agent", "nationality": "Filipino", "dob": "2002-05-01", "cpr": "020527306", "basic": 230.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 230.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000515", "emp_code": "515", "name": "Abdulla Alghannami", "dept": "Front Office", "title": "Telephone Operator", "nationality": "Bahraini", "dob": "2001-09-04", "cpr": "010902767", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000528", "emp_code": "528", "name": "Muhammad Ammar", "dept": "Front Office", "title": "Bellboy", "nationality": "Pakistani", "dob": "2003-06-04", "cpr": "030630924", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000547", "emp_code": "547", "name": "Nazar Khalil", "dept": "Front Office", "title": "Bellboy", "nationality": "Pakistani", "dob": "2001-07-26", "cpr": "010728589", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000554", "emp_code": "554", "name": "Eman Almas", "dept": "Front Office", "title": "Guest Service Agent", "nationality": "Egyptian", "dob": "1995-03-07", "cpr": "950360465", "basic": 230.0, "housing": 75.0, "transport": 25.0, "phone_allow": 0.0, "total": 330.0, "allowances": 100.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000556", "emp_code": "556", "name": "Essa Ali", "dept": "Front Office", "title": "Bellboy", "nationality": "Bahraini", "dob": "2006-02-26", "cpr": "060210508", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000557", "emp_code": "557", "name": "Saleem Barkhadar", "dept": "Front Office", "title": "Bellboy", "nationality": "Bahraini", "dob": "2004-07-16", "cpr": "040705986", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000559", "emp_code": "559", "name": "Muhammad Latif", "dept": "Front Office", "title": "Bellboy", "nationality": "Bahraini", "dob": "2006-10-17", "cpr": "061006394", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000562", "emp_code": "562", "name": "Bolotbek Samalievich", "dept": "Front Office", "title": "Bellboy", "nationality": "Kyrgyzstan", "dob": "2005-12-18", "cpr": "51229056", "basic": 150.0, "housing": 50.0, "transport": 0.0, "phone_allow": 0.0, "total": 200.0, "allowances": 50.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000563", "emp_code": "563", "name": "Saif Dad Mohamed", "dept": "Front Office", "title": "Bellboy", "nationality": "Bahraini", "dob": "1997-09-02", "cpr": "970900058", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000571", "emp_code": "571", "name": "Fatima A K Jawabreh", "dept": "Front Office", "title": "Guest Service Agent", "nationality": "Jordanian", "dob": "", "cpr": "Still No Visa", "basic": 200.0, "housing": 100.0, "transport": 30.0, "phone_allow": 0.0, "total": 330.0, "allowances": 130.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000061", "emp_code": "061", "name": "Dewaka Sisira Kumara", "dept": "Housekeeping", "title": "Tailor", "nationality": "Sri Lankan", "dob": "1969-12-26", "cpr": "691201072", "basic": 200.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 200.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000211", "emp_code": "211", "name": "Sudipta Kundu", "dept": "Housekeeping", "title": "Housekeeping Supervisor", "nationality": "Indian", "dob": "1994-10-05", "cpr": "941035344", "basic": 220.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 220.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000280", "emp_code": "280", "name": "Sumon Salam", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1987-01-01", "cpr": "871304295", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000283", "emp_code": "283", "name": "Fukrul Islam", "dept": "Housekeeping", "title": "Housekeeping Supervisor", "nationality": "Bangladeshi", "dob": "1982-06-20", "cpr": "820640689", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000301", "emp_code": "301", "name": "Mozammel Rafiqul Islam", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1990-05-08", "cpr": "900558474", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000305", "emp_code": "305", "name": "Mohammad Mosaraf", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1984-03-23", "cpr": "840389647", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000331", "emp_code": "331", "name": "Hakim Harun", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1988-05-05", "cpr": "880581140", "basic": 145.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 145.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000348", "emp_code": "348", "name": "Sayem Kamal", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1987-03-01", "cpr": "870344137", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000362", "emp_code": "362", "name": "Mohammad Akther", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1987-05-11", "cpr": "870561839", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000400", "emp_code": "400", "name": "Abdur Rashid Miah", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1988-05-03", "cpr": "880599626", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000416", "emp_code": "416", "name": "Siddiq Miah", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Bangladeshi", "dob": "1986-06-08", "cpr": "860675637", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000441", "emp_code": "441", "name": "Aitaraj Thebe", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Nepalese", "dob": "1998-10-31", "cpr": "981029337", "basic": 140.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 140.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000530", "emp_code": "530", "name": "Gopal Khadka", "dept": "Housekeeping", "title": "Room Attendant", "nationality": "Nepalese", "dob": "1988-05-31", "cpr": "881406031", "basic": 150.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 150.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000532", "emp_code": "532", "name": "Rodrigo Jr. Placidas", "dept": "Housekeeping", "title": "Florist", "nationality": "Filipino", "dob": "1990-05-17", "cpr": "900576189", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000543", "emp_code": "543", "name": "Tuan Rasheed Bahaman", "dept": "Housekeeping", "title": "Housekeeping Manager", "nationality": "Sri Lankan", "dob": "1974-07-11", "cpr": "740761226", "basic": 700.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 700.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000229", "emp_code": "229", "name": "Hasan Ali", "dept": "Human Resources", "title": "PRO", "nationality": "Bahraini", "dob": "2001-01-01", "cpr": "0", "basic": 760.0, "housing": 0.0, "transport": 100.0, "phone_allow": 40.0, "total": 900.0, "allowances": 140.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000463", "emp_code": "463", "name": "MD Shah Alam Tarafdar", "dept": "Human Resources", "title": "HR Assistant", "nationality": "Bangladeshi", "dob": "1977-02-15", "cpr": "770271430", "basic": 140.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 140.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000473", "emp_code": "473", "name": "Khalid Farooq Saleh", "dept": "Human Resources", "title": "Asst. HR Manager", "nationality": "Bahraini", "dob": "1989-12-18", "cpr": "891204709", "basic": 600.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 600.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000540", "emp_code": "540", "name": "Nabeela Ahmed Naji Yahya", "dept": "Human Resources", "title": "HR Specialist", "nationality": "Bahraini", "dob": "2001-11-12", "cpr": "011106255", "basic": 500.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 500.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000332", "emp_code": "332", "name": "Mohammed Japar Uddin", "dept": "Kitchen", "title": "Chef De Partie", "nationality": "Bangladeshi", "dob": "1985-08-10", "cpr": "850837693", "basic": 320.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 320.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000338", "emp_code": "338", "name": "Soshan Shenith Dilanka", "dept": "Kitchen", "title": "Sous Chef", "nationality": "Sri Lankan", "dob": "1985-12-18", "cpr": "851249523", "basic": 550.0, "housing": 250.0, "transport": 50.0, "phone_allow": 0.0, "total": 850.0, "allowances": 300.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000349", "emp_code": "349", "name": "Mohammad Syful Islam", "dept": "Kitchen", "title": "Commis", "nationality": "Bangladeshi", "dob": "1983-03-12", "cpr": "830386785", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000350", "emp_code": "350", "name": "Hukum Bam", "dept": "Kitchen", "title": "Chef De Partie", "nationality": "Nepalese", "dob": "1984-08-18", "cpr": "840851251", "basic": 250.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 250.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000374", "emp_code": "374", "name": "Mohamed Farag Moustafa", "dept": "Kitchen", "title": "Sous Chef", "nationality": "Egyptian", "dob": "1987-10-04", "cpr": "871085259", "basic": 600.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 600.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000395", "emp_code": "395", "name": "Mohamed Mohamed", "dept": "Kitchen", "title": "Chef De Partie", "nationality": "Egyptian", "dob": "1999-12-02", "cpr": "991233751", "basic": 405.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 405.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000418", "emp_code": "418", "name": "Digar Singh", "dept": "Kitchen", "title": "Chef De Partie", "nationality": "Indian", "dob": "1991-08-01", "cpr": "910830525", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000461", "emp_code": "461", "name": "Carlo Cirone", "dept": "Kitchen", "title": "Cluster Executive Chef", "nationality": "Italian", "dob": "1967-09-17", "cpr": "670932485", "basic": 1920.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 1920.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000483", "emp_code": "483", "name": "Kavinda Manod Warnakulasuriya", "dept": "Kitchen", "title": "Baker", "nationality": "Sri Lankan", "dob": "1999-10-13", "cpr": "991027396", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000506", "emp_code": "506", "name": "Paulami Paul", "dept": "Kitchen", "title": "Commis 1", "nationality": "Indian", "dob": "1997-10-07", "cpr": "971040320", "basic": 220.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 220.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000525", "emp_code": "525", "name": "Mohammad Rashid", "dept": "Kitchen", "title": "Pastry Chef", "nationality": "Bangladeshi", "dob": "1981-03-01", "cpr": "810353512", "basic": 550.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 550.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000552", "emp_code": "552", "name": "Aditi Bhondve", "dept": "Kitchen", "title": "Cook", "nationality": "Indian", "dob": "2005-06-02", "cpr": "050628704", "basic": 80.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 80.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000567", "emp_code": "567", "name": "Omar Ali", "dept": "Kitchen", "title": "Cook", "nationality": "Egyptian", "dob": "", "cpr": "Still No Visa", "basic": 320.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 320.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000569", "emp_code": "569", "name": "Mohamed Elbakly", "dept": "Kitchen", "title": "Cook", "nationality": "Egyptian", "dob": "1999-02-13", "cpr": "990244377", "basic": 260.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 260.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000353", "emp_code": "353", "name": "Ramkumar Kannan", "dept": "Engineering", "title": "Chief Engineer", "nationality": "Indian", "dob": "1991-04-21", "cpr": "910451192", "basic": 900.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 900.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000394", "emp_code": "394", "name": "MD Shahbaz Khan", "dept": "Engineering", "title": "AC Technician", "nationality": "Indian", "dob": "1997-01-20", "cpr": "970133685", "basic": 200.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 200.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000408", "emp_code": "408", "name": "Asarudeen Ameen Basheer", "dept": "Engineering", "title": "Duty Engineer", "nationality": "Indian", "dob": "1993-05-11", "cpr": "930522729", "basic": 300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000444", "emp_code": "444", "name": "Sadham Hussain Ameer Batcha", "dept": "Engineering", "title": "Electrical General", "nationality": "Indian", "dob": "1991-02-19", "cpr": "910271534", "basic": 180.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 180.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000452", "emp_code": "452", "name": "Melvin Thomas", "dept": "Engineering", "title": "Electrical Supervisor", "nationality": "Indian", "dob": "1994-08-17", "cpr": "940838117", "basic": 280.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 280.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000453", "emp_code": "453", "name": "Albin Antony", "dept": "Engineering", "title": "AC Technician", "nationality": "Indian", "dob": "1998-03-07", "cpr": "980327725", "basic": 220.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 220.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000468", "emp_code": "468", "name": "Shafiqul Islam", "dept": "Engineering", "title": "Electrician", "nationality": "Bangladeshi", "dob": "1991-01-01", "cpr": "910159106", "basic": 200.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 200.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000555", "emp_code": "555", "name": "Palwinder Pal", "dept": "Engineering", "title": "Electrician", "nationality": "Indian", "dob": "", "cpr": "Still No Visa", "basic": 200.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 200.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000366", "emp_code": "366", "name": "Kibwana Ramadhan", "dept": "Recreation", "title": "Lifeguard", "nationality": "Kenyan", "dob": "1993-12-21", "cpr": "931221862", "basic": 250.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 250.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000445", "emp_code": "445", "name": "Vishnu Valappil", "dept": "Recreation", "title": "GYM Instructor", "nationality": "Indian", "dob": "1997-11-02", "cpr": "971142912", "basic": 400.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 400.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000537", "emp_code": "537", "name": "Smriti Rana Magar", "dept": "Recreation", "title": "GYM Instructor", "nationality": "Nepalese", "dob": "1991-10-17", "cpr": "911015361", "basic": 300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000341", "emp_code": "341", "name": "Lily Ann Cadacio", "dept": "Sales & Marketing", "title": "Reservation Supervisor", "nationality": "Filipino", "dob": "1990-12-27", "cpr": "901254835", "basic": 320.0, "housing": 50.0, "transport": 0.0, "phone_allow": 0.0, "total": 370.0, "allowances": 50.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000518", "emp_code": "518", "name": "Kristine Reyes", "dept": "Sales & Marketing", "title": "Reservation Manager", "nationality": "Filipino", "dob": "1979-09-11", "cpr": "790930480", "basic": 800.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 800.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000541", "emp_code": "541", "name": "Mohammed Azeemuddin", "dept": "Sales & Marketing", "title": "Director of Sales", "nationality": "Indian", "dob": "1979-05-22", "cpr": "791341623", "basic": 1300.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 1300.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000542", "emp_code": "542", "name": "Noman Tariq", "dept": "Sales & Marketing", "title": "Sales Coordinator", "nationality": "Pakistani", "dob": "1995-05-10", "cpr": "950549487", "basic": 400.0, "housing": 100.0, "transport": 25.0, "phone_allow": 0.0, "total": 525.0, "allowances": 125.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000566", "emp_code": "566", "name": "El Rhalia Rami", "dept": "Sales & Marketing", "title": "Sales Executive", "nationality": "Moroccan", "dob": "1993-12-18", "cpr": "931235286", "basic": 400.0, "housing": 200.0, "transport": 50.0, "phone_allow": 0.0, "total": 650.0, "allowances": 250.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000570", "emp_code": "570", "name": "Kateryna Yanhol", "dept": "Sales & Marketing", "title": "Sales Executive", "nationality": "Ukrainian", "dob": "", "cpr": "Still No Visa", "basic": 400.0, "housing": 150.0, "transport": 50.0, "phone_allow": 0.0, "total": 600.0, "allowances": 200.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000070", "emp_code": "070", "name": "Sayed Jalal Alawi", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "", "cpr": "0", "basic": 285.0, "housing": 40.0, "transport": 20.0, "phone_allow": 0.0, "total": 345.0, "allowances": 60.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000297", "emp_code": "297", "name": "Hussain Ali", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "1997-10-26", "cpr": "971008086", "basic": 400.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 400.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000336", "emp_code": "336", "name": "Hasan Ali Hasan", "dept": "Security & Safety", "title": "Security Officer", "nationality": "Bahraini", "dob": "1992-04-13", "cpr": "920406203", "basic": 500.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 500.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000488", "emp_code": "488", "name": "Haider Ahmed Husain", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "2003-03-14", "cpr": "030304245", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000509", "emp_code": "509", "name": "James Chikwado Okpe", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Nigerian", "dob": "1990-02-14", "cpr": "900287608", "basic": 160.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 160.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000534", "emp_code": "534", "name": "Mohamed Janahi", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "1972-07-10", "cpr": "720705754", "basic": 500.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 500.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000545", "emp_code": "545", "name": "Fowad Abdulqadir Durra Mir", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "1988-07-16", "cpr": "880712112", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000560", "emp_code": "560", "name": "Hasan Alhayki", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "2006-11-07", "cpr": "061102466", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000561", "emp_code": "561", "name": "Murtadha Hasan", "dept": "Security & Safety", "title": "Security Guard", "nationality": "Bahraini", "dob": "2007-09-19", "cpr": "070906939", "basic": 350.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 350.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000278", "emp_code": "278", "name": "Kabir Miah", "dept": "Stewarding", "title": "Stewarding", "nationality": "Bangladeshi", "dob": "1987-04-10", "cpr": "870478150", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000328", "emp_code": "328", "name": "Anwar Hossain Hasmot", "dept": "Stewarding", "title": "Stewarding", "nationality": "Bangladeshi", "dob": "1987-01-01", "cpr": "871305283", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000447", "emp_code": "447", "name": "Muhammad Bilal", "dept": "Stewarding", "title": "Stewarding Team Leader", "nationality": "Pakistani", "dob": "2001-02-13", "cpr": "010218564", "basic": 140.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 140.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000467", "emp_code": "467", "name": "Deu Kumar Magar", "dept": "Stewarding", "title": "Stewarding", "nationality": "Nepalese", "dob": "1985-11-12", "cpr": "851171478", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000508", "emp_code": "508", "name": "Muhammad Usman", "dept": "Stewarding", "title": "Stewarding", "nationality": "Pakistani", "dob": "1996-12-15", "cpr": "961239166", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000568", "emp_code": "568", "name": "Muhammad Farooq", "dept": "Stewarding", "title": "Stewarding", "nationality": "Pakistani", "dob": "", "cpr": "Still No Visa", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}, {"id": "s000573", "emp_code": "573", "name": "Prem Kumar", "dept": "Stewarding", "title": "Stewarding", "nationality": "Pakistani", "dob": "", "cpr": "Still No Visa", "basic": 120.0, "housing": 0.0, "transport": 0.0, "phone_allow": 0.0, "total": 120.0, "allowances": 0.0, "status": "active", "in_payroll": true, "company": "Solymar Hotel", "payroll_company": "Solymar Hotel", "dependents": [], "gender": "", "pp": "", "wp_expiry": "", "pp_expiry": "", "in_out": "", "offense": "", "offense_desc": ""}]
+
+/* ═══════════════════════════════════════════════════════
+   CERTIFICATE GENERATOR — JavaScript
+═══════════════════════════════════════════════════════ */
+
+function certSimpleHash(str) {
+  var h = 0;
+  for (var i = 0; i < str.length; i++) {
+    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h).toString(16).padStart(8,'0').toUpperCase().slice(0,8);
+}
+
+function certFormatDate(d) {
+  if (!d) return '';
+  var months = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+  var dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+}
+
+/* Populate employee dropdown from global EMP array */
+function certPopulateEmployees() {
+  var sel = document.getElementById('cert-emp-sel');
+  if (!sel) return;
+  // Keep first placeholder option
+  while (sel.options.length > 1) sel.remove(1);
+  var list = (typeof EMP !== 'undefined' ? EMP : []).slice()
+    .sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+  list.forEach(function(e) {
+    if (!e.name) return;
+    var opt = document.createElement('option');
+    opt.value = e.name;
+    opt.textContent = e.name + (e.dept ? ' — ' + e.dept : '');
+    sel.appendChild(opt);
+  });
+}
+
+function certPickEmployee() {
+  var sel = document.getElementById('cert-emp-sel');
+  if (!sel || !sel.value) return;
+  document.getElementById('cert-name').value = sel.value;
+  certSyncName();
+}
+
+function certSyncName() {
+  var v = (document.getElementById('cert-name').value || '').trim() || 'Recipient Name';
+  document.getElementById('pv2-name').textContent = v;
+  certUpdateCertId();
+}
+
+function certSyncTraining() {
+  var v = (document.getElementById('cert-training').value || '').trim() || '—';
+  document.getElementById('pv2-training').textContent = v;
+  document.getElementById('pv2-body-training').textContent = v;
+  certUpdateCertId();
+}
+
+function certSyncDate() {
+  var raw = (document.getElementById('cert-date').value || '').trim();
+  var display = raw || '—';
+  document.getElementById('pv2-date').textContent = 'Date of Completion:   ' + display;
+  certUpdateCertId();
+}
+
+function certUpdateCertId() {
+  var name     = (document.getElementById('cert-name')     || {value:''}).value.trim();
+  var training = (document.getElementById('cert-training') || {value:''}).value.trim();
+  var date     = (document.getElementById('cert-date')     || {value:''}).value.trim();
+  var id = 'CERT-HRMS-' + certSimpleHash(name + training + date);
+  var el = document.getElementById('pv2-certid');
+  if (el) el.textContent = 'Certificate ID: ' + id + '   |   Solymar Hotel W.L.L., Kingdom of Bahrain';
+}
+
+function certRefreshAll() {
+  certSyncName();
+  certSyncTraining();
+  certSyncDate();
+  certUpdateCertId();
+}
+
+function certPrint() {
+  // Validate minimum fields
+  var name     = (document.getElementById('cert-name')     || {value:''}).value.trim();
+  var training = (document.getElementById('cert-training') || {value:''}).value.trim();
+  var date     = (document.getElementById('cert-date')     || {value:''}).value.trim();
+
+  if (!name) {
+    toast('Please enter the recipient name before printing.', 'w');
+    document.getElementById('cert-name').focus();
+    return;
+  }
+  if (!training) {
+    toast('Please enter the training / course type before printing.', 'w');
+    document.getElementById('cert-training').focus();
+    return;
+  }
+  if (!date) {
+    toast('Please enter the date of completion before printing.', 'w');
+    document.getElementById('cert-date').focus();
+    return;
+  }
+
+  // Final sync before print
+  certRefreshAll();
+
+  // Trigger browser print dialog — CSS @media print handles layout
+  window.print();
+}
+
+/* Hook into showPg to initialise the certificate page */
+(function() {
+  var _origShowPgCert = window.showPg;
+  window.showPg = function(id) {
+    _origShowPgCert(id);
+    if (id === 'certificate') {
+      // Set today's date as default if blank
+      var dateEl = document.getElementById('cert-date');
+      if (dateEl && !dateEl.value) {
+        var now = new Date();
+        var months = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+        dateEl.value = months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+        certSyncDate();
+      }
+      certPopulateEmployees();
+    }
+  };
+})();
+
 </script>
 
 </body>
