@@ -3635,6 +3635,22 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
     <div class="cert-form-section-label">Certificate Details</div>
 
+    <!-- Certificate Type Toggle -->
+    <div class="cert-field" style="margin-bottom:16px;">
+      <label style="margin-bottom:8px;display:block;">Certificate Type</label>
+      <div style="display:flex;gap:8px;">
+        <button id="cert-type-standard" onclick="certSetType('standard')"
+          style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid #C9A84C;background:#C9A84C;color:#fff;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
+          Standard
+        </button>
+        <button id="cert-type-hod" onclick="certSetType('hod')"
+          style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid #EDF2F7;background:#F8FAFC;color:#64748B;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
+          HOD
+        </button>
+      </div>
+      <div class="cert-hint" id="cert-type-hint">Standard: signed by Head of Department &amp; HR Manager.</div>
+    </div>
+
     <div class="cert-field">
       <label>Recipient Full Name</label>
       <input type="text" id="cert-name" placeholder="e.g. Ahmed Al-Mansoori"
@@ -3668,7 +3684,8 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
     <div class="cert-divider-row"></div>
 
-    <div class="cert-field">
+    <!-- Standard only: Dept Head field -->
+    <div class="cert-field" id="cert-field-dept-head">
       <label>Head of Department Name</label>
       <input type="text" id="cert-dept-head" placeholder="e.g. Ahmed Al-Rashidi"
              oninput="certSyncDeptHead()" value="">
@@ -3676,9 +3693,17 @@ table.rst tbody tr:hover{background:#F0F7F0}
     </div>
 
     <div class="cert-field">
-      <label>HR Manager Name</label>
+      <label id="cert-hr-label">HR Manager Name</label>
       <input type="text" id="cert-hr-manager" placeholder="e.g. Sara Al-Khalifa"
              oninput="certSyncHRManager()" value="">
+      <div class="cert-hint" id="cert-hr-hint">Appears under the right signature line.</div>
+    </div>
+
+    <!-- HOD only: CEO field -->
+    <div class="cert-field" id="cert-field-ceo" style="display:none;">
+      <label>CEO Name</label>
+      <input type="text" id="cert-ceo" placeholder="e.g. John Smith"
+             oninput="certSyncCEO()">
       <div class="cert-hint">Appears under the right signature line.</div>
     </div>
 
@@ -3755,6 +3780,8 @@ table.rst tbody tr:hover{background:#F0F7F0}
         <!-- Watermark logo -->
         <img class="c2-wm" src="" id="cert-wm-logo" alt="">
 
+        <!-- Watermark logo removed -->
+
         <!-- Content -->
         <div class="c2-content">
 
@@ -3807,13 +3834,13 @@ table.rst tbody tr:hover{background:#F0F7F0}
           <div class="c2-sigs">
             <div class="c2-sig">
               <div class="c2-sig-line"></div>
-              <div class="c2-sig-name" id="pv2-dept-head-name">Head of Department</div>
-              <div class="c2-sig-dept" id="pv2-dept-sub">Department</div>
+              <div class="c2-sig-name" id="pv2-sig1-name">Head of Department</div>
+              <div class="c2-sig-dept" id="pv2-sig1-title">Department</div>
             </div>
             <div class="c2-sig">
               <div class="c2-sig-line"></div>
-              <div class="c2-sig-name" id="pv2-hr-manager-name">HR Manager</div>
-              <div class="c2-sig-dept">Human Resources Manager</div>
+              <div class="c2-sig-name" id="pv2-sig2-name">HR Manager</div>
+              <div class="c2-sig-dept" id="pv2-sig2-title">Human Resources Manager</div>
             </div>
           </div>
 
@@ -12218,11 +12245,83 @@ function certFormatDate(d) {
   return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
 }
 
+/* ── Certificate Type ── */
+var _certType = 'standard'; // 'standard' | 'hod'
+
+function certSetType(type) {
+  _certType = type;
+  var btnStd = document.getElementById('cert-type-standard');
+  var btnHod = document.getElementById('cert-type-hod');
+  var fieldDept = document.getElementById('cert-field-dept-head');
+  var fieldCeo  = document.getElementById('cert-field-ceo');
+  var hint      = document.getElementById('cert-type-hint');
+  var hrLabel   = document.getElementById('cert-hr-label');
+  var hrHint    = document.getElementById('cert-hr-hint');
+
+  if (type === 'hod') {
+    // HOD: active button
+    btnHod.style.background  = '#C9A84C';
+    btnHod.style.color       = '#fff';
+    btnHod.style.borderColor = '#C9A84C';
+    btnStd.style.background  = '#F8FAFC';
+    btnStd.style.color       = '#64748B';
+    btnStd.style.borderColor = '#EDF2F7';
+    // Hide dept head, show CEO
+    if (fieldDept) fieldDept.style.display = 'none';
+    if (fieldCeo)  fieldCeo.style.display  = '';
+    // Update HR label position hint
+    if (hrLabel) hrLabel.textContent = 'HR Manager Name';
+    if (hrHint)  hrHint.textContent  = 'Appears under the left signature line.';
+    if (hint)    hint.textContent    = 'HOD: signed by HR Manager & CEO.';
+  } else {
+    // Standard: active button
+    btnStd.style.background  = '#C9A84C';
+    btnStd.style.color       = '#fff';
+    btnStd.style.borderColor = '#C9A84C';
+    btnHod.style.background  = '#F8FAFC';
+    btnHod.style.color       = '#64748B';
+    btnHod.style.borderColor = '#EDF2F7';
+    // Show dept head, hide CEO
+    if (fieldDept) fieldDept.style.display = '';
+    if (fieldCeo)  fieldCeo.style.display  = 'none';
+    if (hrLabel) hrLabel.textContent = 'HR Manager Name';
+    if (hrHint)  hrHint.textContent  = 'Appears under the right signature line.';
+    if (hint)    hint.textContent    = 'Standard: signed by Head of Department & HR Manager.';
+  }
+  // Re-render signatures
+  certRenderSigs();
+}
+
+function certRenderSigs() {
+  var sig1Name  = document.getElementById('pv2-sig1-name');
+  var sig1Title = document.getElementById('pv2-sig1-title');
+  var sig2Name  = document.getElementById('pv2-sig2-name');
+  var sig2Title = document.getElementById('pv2-sig2-title');
+  if (!sig1Name) return;
+
+  if (_certType === 'hod') {
+    // Left: HR Manager, Right: CEO
+    var hrVal  = (document.getElementById('cert-hr-manager') || {value:''}).value.trim();
+    var ceoVal = (document.getElementById('cert-ceo')        || {value:''}).value.trim();
+    sig1Name.textContent  = hrVal  || 'HR Manager';
+    sig1Title.textContent = 'Human Resources Manager';
+    sig2Name.textContent  = ceoVal || 'CEO';
+    sig2Title.textContent = 'Chief Executive Officer';
+  } else {
+    // Left: Head of Dept, Right: HR Manager
+    var deptVal = (document.getElementById('cert-dept-head')  || {value:''}).value.trim();
+    var hrVal2  = (document.getElementById('cert-hr-manager') || {value:''}).value.trim();
+    sig1Name.textContent  = deptVal || 'Head of Department';
+    sig1Title.textContent = deptVal ? 'Head of Department' : 'Department';
+    sig2Name.textContent  = hrVal2  || 'HR Manager';
+    sig2Title.textContent = 'Human Resources Manager';
+  }
+}
+
 /* Populate employee dropdown from global EMP array */
 function certPopulateEmployees() {
   var sel = document.getElementById('cert-emp-sel');
   if (!sel) return;
-  // Keep first placeholder option
   while (sel.options.length > 1) sel.remove(1);
   var list = (typeof EMP !== 'undefined' ? EMP : []).slice()
     .sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
@@ -12263,17 +12362,15 @@ function certSyncDate() {
 }
 
 function certSyncDeptHead() {
-  var v = (document.getElementById('cert-dept-head').value || '').trim();
-  var el = document.getElementById('pv2-dept-head-name');
-  if (el) el.textContent = v || 'Head of Department';
-  var sub = document.getElementById('pv2-dept-sub');
-  if (sub) sub.textContent = v ? 'Head of Department' : 'Department';
+  certRenderSigs();
 }
 
 function certSyncHRManager() {
-  var v = (document.getElementById('cert-hr-manager').value || '').trim();
-  var el = document.getElementById('pv2-hr-manager-name');
-  if (el) el.textContent = v || 'HR Manager';
+  certRenderSigs();
+}
+
+function certSyncCEO() {
+  certRenderSigs();
 }
 
 function certUpdateCertId() {
@@ -12289,12 +12386,11 @@ function certRefreshAll() {
   certSyncName();
   certSyncTraining();
   certSyncDate();
-  certSyncDeptHead();
-  certSyncHRManager();
+  certRenderSigs();
   certUpdateCertId();
   // Sync watermark from top logo
   var topLogo = document.getElementById('cert-top-logo');
-  var wmLogo = document.getElementById('cert-wm-logo');
+  var wmLogo  = document.getElementById('cert-wm-logo');
   if (topLogo && wmLogo && topLogo.src) wmLogo.src = topLogo.src;
 }
 
@@ -12374,8 +12470,10 @@ function certPrint() {
       certPopulateEmployees();
       // Sync watermark logo
       var topLogo = document.getElementById('cert-top-logo');
-      var wmLogo = document.getElementById('cert-wm-logo');
+      var wmLogo  = document.getElementById('cert-wm-logo');
       if (topLogo && wmLogo) wmLogo.src = topLogo.src;
+      // Ensure toggle buttons render correctly on first open
+      certSetType(_certType);
     }
   };
 })();
