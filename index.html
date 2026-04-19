@@ -3614,6 +3614,11 @@ table.rst tbody tr:hover{background:#F0F7F0}
   body > .cert-doc * {
     visibility: visible !important;
   }
+
+  /* Appreciation cert dark background prints correctly */
+  body > .cert-appr-doc {
+    background: #F8F3E8 !important;
+  }
 }
 </style>
 
@@ -3637,9 +3642,27 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
     <div class="cert-form-section-label">Certificate Details</div>
 
+    <!-- ── Certificate Style Toggle (Completion vs Appreciation) ── -->
+    <div class="cert-field" style="margin-bottom:16px;">
+      <label style="margin-bottom:8px;display:block;">Certificate Style</label>
+      <div style="display:flex;gap:8px;">
+        <button id="cert-style-completion" onclick="certSetStyle('completion')"
+          style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid #C9A84C;background:#C9A84C;color:#fff;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
+          Completion
+        </button>
+        <button id="cert-style-appreciation" onclick="certSetStyle('appreciation')"
+          style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid #EDF2F7;background:#F8FAFC;color:#64748B;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
+          Appreciation
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Fields shown only for COMPLETION ── -->
+    <div id="cert-completion-fields">
+
     <!-- Certificate Type Toggle -->
     <div class="cert-field" style="margin-bottom:16px;">
-      <label style="margin-bottom:8px;display:block;">Certificate Type</label>
+      <label style="margin-bottom:8px;display:block;">Signatory Type</label>
       <div style="display:flex;gap:8px;">
         <button id="cert-type-standard" onclick="certSetType('standard')"
           style="flex:1;padding:9px 0;border-radius:9px;border:1.5px solid #C9A84C;background:#C9A84C;color:#fff;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s;">
@@ -3652,6 +3675,37 @@ table.rst tbody tr:hover{background:#F0F7F0}
       </div>
       <div class="cert-hint" id="cert-type-hint">Standard: signed by Head of Department &amp; HR Manager.</div>
     </div>
+
+    </div><!-- /cert-completion-fields -->
+
+    <!-- ── Fields shown only for APPRECIATION ── -->
+    <div id="cert-appreciation-fields" style="display:none;">
+      <div class="cert-field">
+        <label>Reason for Appreciation</label>
+        <textarea id="cert-appr-reason" rows="2"
+                  placeholder="e.g. Outstanding dedication and exceptional performance"
+                  oninput="certSyncApprReason()"></textarea>
+        <div class="cert-hint">Appears as the main recognition text on the certificate.</div>
+      </div>
+      <div class="cert-field">
+        <label>Department / Team</label>
+        <input type="text" id="cert-appr-dept" placeholder="e.g. Food &amp; Beverage"
+               oninput="certSyncApprDept()" value="">
+        <div class="cert-hint">Appears in the body text.</div>
+      </div>
+      <div class="cert-field">
+        <label>General Manager Name</label>
+        <input type="text" id="cert-appr-gm" placeholder="e.g. James Anderson"
+               oninput="certSyncApprSigs()" value="">
+        <div class="cert-hint">Left signature line.</div>
+      </div>
+      <div class="cert-field">
+        <label>HR Manager / Director Name</label>
+        <input type="text" id="cert-appr-hr" placeholder="e.g. Sara Al-Khalifa"
+               oninput="certSyncApprSigs()" value="">
+        <div class="cert-hint">Right signature line.</div>
+      </div>
+    </div><!-- /cert-appreciation-fields -->
 
     <div class="cert-field">
       <label>Recipient Full Name</label>
@@ -3854,6 +3908,134 @@ table.rst tbody tr:hover{background:#F0F7F0}
         </div><!-- /c2-content -->
 
       </div><!-- /cert-doc -->
+
+      <!-- ── CERTIFICATE OF APPRECIATION ── -->
+      <div class="cert-doc cert-appr-doc" id="cert-appr-doc-root" style="display:none;background:#F8F3E8;">
+
+        <!-- Decorative background gradient -->
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#FDFAF3 0%,#F8F3E8 55%,#FDFAF3 100%);z-index:0;"></div>
+
+        <!-- Gold top bar -->
+        <div style="position:absolute;top:0;left:0;right:0;height:1.2%;background:linear-gradient(90deg,#C9A84C,#F0D080,#C9A84C);z-index:2;"></div>
+        <!-- Gold bottom bar -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:1.2%;background:linear-gradient(90deg,#C9A84C,#F0D080,#C9A84C);z-index:2;"></div>
+
+        <!-- Outer gold border lines -->
+        <div style="position:absolute;inset:2.5%;border:1.5px solid #C9A84C;z-index:2;"></div>
+        <div style="position:absolute;inset:3.2%;border:.5px solid rgba(201,168,76,0.5);z-index:2;"></div>
+
+        <!-- Corner ornaments -->
+        <div class="c2-corner tl" style="z-index:3;">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner tr" style="z-index:3;">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner bl" style="z-index:3;">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+        <div class="c2-corner br" style="z-index:3;">
+          <svg viewBox="0 0 28 28" fill="none">
+            <line x1="0" y1="0" x2="24" y2="0" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="0" y1="0" x2="0" y2="24" stroke="#C9A84C" stroke-width="2.2"/>
+            <line x1="7" y1="7" x2="17" y2="7" stroke="#C9A84C" stroke-width=".9"/>
+            <line x1="7" y1="7" x2="7" y2="17" stroke="#C9A84C" stroke-width=".9"/>
+            <rect x="-2.5" y="-2.5" width="5" height="5" fill="#C9A84C" transform="rotate(45 0 0)"/>
+          </svg>
+        </div>
+
+        <!-- Watermark logo -->
+        <img class="c2-wm" src="" id="cert-appr-wm-logo" alt="" style="opacity:0.07;filter:brightness(0) saturate(0);">
+
+        <!-- Content -->
+        <div class="c2-content" style="inset:3.5% 5% 5%;justify-content:space-between;">
+
+          <!-- Logo (white version via brightness filter) -->
+          <img class="c2-logo" id="cert-appr-top-logo" src="" alt="Solymar Hotel"
+               style=""
+               onerror="this.style.display='none'">
+
+          <!-- Thin gold rule -->
+          <div class="c2-rule" style="background:#C9A84C;"></div>
+
+          <!-- CERTIFICATE OF APPRECIATION label -->
+          <div class="c2-label" style="color:#8B6830;letter-spacing:.28em;">Certificate of Appreciation</div>
+
+          <!-- Gold divider -->
+          <div class="c2-divider">
+            <div class="c2-div-line" style="background:#C9A84C;"></div>
+            <div class="c2-div-diamond"></div>
+            <div class="c2-div-line" style="background:#C9A84C;"></div>
+          </div>
+
+          <!-- "This certificate is proudly presented to" -->
+          <div class="c2-presented" style="color:#8B9BB0;">This certificate is proudly presented to</div>
+
+          <!-- Recipient name -->
+          <div class="c2-name" id="appr-pv-name" style="color:#0D1B2A;font-size:2.2em;">Recipient Name</div>
+
+          <!-- Gold underline -->
+          <div class="c2-name-line" style="background:#C9A84C;width:46%;"></div>
+
+          <!-- Reason / body -->
+          <div class="c2-body" style="color:#3D4F62;font-size:.64em;line-height:1.55;">
+            In sincere recognition of
+            <strong id="appr-pv-reason" style="color:#8B6830;display:inline;font-style:italic;"> outstanding dedication and exceptional performance</strong><br>
+            <span id="appr-pv-dept-wrap">within the <strong id="appr-pv-dept" style="color:#8B6830;font-style:normal;">Solymar Hotel</strong> team,</span>
+            and in grateful appreciation of the commitment shown to excellence and the values of Solymar Hotel W.L.L., Bahrain.
+          </div>
+
+          <!-- Date -->
+          <div class="c2-date" id="appr-pv-date" style="color:#8B6830;letter-spacing:.14em;">Date: —</div>
+
+          <!-- Bottom divider -->
+          <div class="c2-divider" style="width:86%;margin:.3% 0;">
+            <div class="c2-div-line" style="background:#C9A84C;"></div>
+            <div class="c2-div-diamond"></div>
+            <div class="c2-div-line" style="background:#C9A84C;"></div>
+          </div>
+
+          <!-- Signature lines -->
+          <div class="c2-sigs">
+            <div class="c2-sig">
+              <div class="c2-sig-line" style="background:#C9A84C;"></div>
+              <div class="c2-sig-name" id="appr-pv-sig1-name" style="color:#0D1B2A;">General Manager</div>
+              <div class="c2-sig-dept" id="appr-pv-sig1-title" style="color:#7A8FA6;">General Manager</div>
+            </div>
+            <div class="c2-sig">
+              <div class="c2-sig-line" style="background:#C9A84C;"></div>
+              <div class="c2-sig-name" id="appr-pv-sig2-name" style="color:#0D1B2A;">HR Manager</div>
+              <div class="c2-sig-dept" id="appr-pv-sig2-title" style="color:#7A8FA6;">Human Resources</div>
+            </div>
+          </div>
+
+          <!-- Footer cert ID -->
+          <div class="c2-footer" id="appr-pv-certid" style="color:#A0AEBB;">
+            Certificate No: 000000
+          </div>
+
+        </div><!-- /c2-content -->
+
+      </div><!-- /cert-appr-doc-root -->
+
     </div><!-- /cert-preview-outer -->
 
   </div><!-- /cert-preview-card -->
@@ -12448,6 +12630,151 @@ function certPrint() {
   }, 100);
 }
 
+/* ── Certificate STYLE toggle (Completion / Appreciation) ── */
+var _certStyle = 'completion'; // 'completion' | 'appreciation'
+
+function certSetStyle(style) {
+  _certStyle = style;
+  var btnComp  = document.getElementById('cert-style-completion');
+  var btnAppr  = document.getElementById('cert-style-appreciation');
+  var compDoc  = document.getElementById('cert-doc-root');
+  var apprDoc  = document.getElementById('cert-appr-doc-root');
+  var compFields = document.getElementById('cert-completion-fields');
+  var apprFields = document.getElementById('cert-appreciation-fields');
+
+  if (style === 'appreciation') {
+    // Active button styling
+    btnAppr.style.background  = '#C9A84C';
+    btnAppr.style.color       = '#fff';
+    btnAppr.style.borderColor = '#C9A84C';
+    btnComp.style.background  = '#F8FAFC';
+    btnComp.style.color       = '#64748B';
+    btnComp.style.borderColor = '#EDF2F7';
+    // Show appreciation, hide completion
+    if (compDoc)  compDoc.style.display  = 'none';
+    if (apprDoc)  apprDoc.style.display  = 'block';
+    if (compFields) compFields.style.display = 'none';
+    if (apprFields) apprFields.style.display = '';
+    // Sync logo + name into appreciation doc
+    var topLogo = document.getElementById('cert-top-logo');
+    var apprLogo = document.getElementById('cert-appr-top-logo');
+    var apprWm  = document.getElementById('cert-appr-wm-logo');
+    if (topLogo && apprLogo) apprLogo.src = topLogo.src;
+    if (topLogo && apprWm)   apprWm.src   = topLogo.src;
+    // Sync name from shared input
+    certSyncApprName();
+    certSyncApprDate();
+    certSyncApprReason();
+    certSyncApprDept();
+    certSyncApprSigs();
+    certSyncApprCertId();
+  } else {
+    btnComp.style.background  = '#C9A84C';
+    btnComp.style.color       = '#fff';
+    btnComp.style.borderColor = '#C9A84C';
+    btnAppr.style.background  = '#F8FAFC';
+    btnAppr.style.color       = '#64748B';
+    btnAppr.style.borderColor = '#EDF2F7';
+    if (compDoc)  compDoc.style.display  = 'block';
+    if (apprDoc)  apprDoc.style.display  = 'none';
+    if (compFields) compFields.style.display = '';
+    if (apprFields) apprFields.style.display = 'none';
+  }
+}
+
+/* Appreciation sync helpers */
+function certSyncApprName() {
+  var v = (document.getElementById('cert-name') || {value:''}).value.trim() || 'Recipient Name';
+  var el = document.getElementById('appr-pv-name');
+  if (el) el.textContent = v;
+  certSyncApprCertId();
+}
+function certSyncApprDate() {
+  var raw = (document.getElementById('cert-date') || {value:''}).value.trim();
+  var el = document.getElementById('appr-pv-date');
+  if (el) el.textContent = 'Date: ' + (raw || '—');
+  certSyncApprCertId();
+}
+function certSyncApprReason() {
+  var v = (document.getElementById('cert-appr-reason') || {value:''}).value.trim();
+  var el = document.getElementById('appr-pv-reason');
+  if (el) el.textContent = v ? ' ' + v : ' outstanding dedication and exceptional performance';
+  certSyncApprCertId();
+}
+function certSyncApprDept() {
+  var v = (document.getElementById('cert-appr-dept') || {value:''}).value.trim();
+  var el = document.getElementById('appr-pv-dept');
+  if (el) el.textContent = v || 'Solymar Hotel';
+}
+function certSyncApprSigs() {
+  var gm  = (document.getElementById('cert-appr-gm') || {value:''}).value.trim();
+  var hr  = (document.getElementById('cert-appr-hr') || {value:''}).value.trim();
+  var n1  = document.getElementById('appr-pv-sig1-name');
+  var t1  = document.getElementById('appr-pv-sig1-title');
+  var n2  = document.getElementById('appr-pv-sig2-name');
+  var t2  = document.getElementById('appr-pv-sig2-title');
+  if (n1) n1.textContent = gm || 'General Manager';
+  if (t1) t1.textContent = 'General Manager';
+  if (n2) n2.textContent = hr || 'HR Manager';
+  if (t2) t2.textContent = 'Human Resources';
+}
+function certSyncApprCertId() {
+  var name   = (document.getElementById('cert-name')         || {value:''}).value.trim();
+  var reason = (document.getElementById('cert-appr-reason')  || {value:''}).value.trim();
+  var date   = (document.getElementById('cert-date')         || {value:''}).value.trim();
+  var id = certSimpleHash(name + reason + date);
+  var el = document.getElementById('appr-pv-certid');
+  if (el) el.textContent = 'Certificate No: ' + id;
+}
+
+/* Override certSyncName to also push into appreciation if active */
+var _origCertSyncName = window.certSyncName;
+window.certSyncName = function() {
+  _origCertSyncName && _origCertSyncName();
+  if (_certStyle === 'appreciation') certSyncApprName();
+};
+var _origCertSyncDate = window.certSyncDate;
+window.certSyncDate = function() {
+  _origCertSyncDate && _origCertSyncDate();
+  if (_certStyle === 'appreciation') certSyncApprDate();
+};
+
+/* Override certPrint to handle appreciation doc */
+var _origCertPrint = window.certPrint;
+window.certPrint = function() {
+  if (_certStyle === 'appreciation') {
+    // Validate
+    var name = (document.getElementById('cert-name') || {value:''}).value.trim();
+    var date = (document.getElementById('cert-date') || {value:''}).value.trim();
+    if (!name) { toast('Please enter the recipient name before printing.', 'w'); return; }
+    if (!date) { toast('Please enter the date before printing.', 'w'); return; }
+    certSyncApprName(); certSyncApprDate(); certSyncApprReason(); certSyncApprDept(); certSyncApprSigs();
+    var certDoc = document.getElementById('cert-appr-doc-root');
+    var certPlaceholder = document.getElementById('cert-appr-doc-placeholder');
+    if (certDoc && !certPlaceholder) {
+      var ph = document.createElement('div');
+      ph.id = 'cert-appr-doc-placeholder';
+      ph.style.display = 'none';
+      certDoc.parentNode.insertBefore(ph, certDoc);
+      certDoc.classList.add('cert-doc');
+      document.body.appendChild(certDoc);
+    }
+    setTimeout(function() {
+      window.print();
+      setTimeout(function() {
+        var ph2 = document.getElementById('cert-appr-doc-placeholder');
+        var cd2 = document.getElementById('cert-appr-doc-root');
+        if (ph2 && cd2) {
+          ph2.parentNode.insertBefore(cd2, ph2);
+          ph2.parentNode.removeChild(ph2);
+        }
+      }, 1000);
+    }, 100);
+  } else {
+    _origCertPrint && _origCertPrint();
+  }
+};
+
 /* Hook into showPg to initialise the certificate page */
 (function() {
   var _origShowPgCert = window.showPg;
@@ -12470,12 +12797,17 @@ function certPrint() {
         certSyncDate();
       }
       certPopulateEmployees();
-      // Sync watermark logo
-      var topLogo = document.getElementById('cert-top-logo');
-      var wmLogo  = document.getElementById('cert-wm-logo');
-      if (topLogo && wmLogo) wmLogo.src = topLogo.src;
+      // Sync watermark logo into both certs
+      var topLogo  = document.getElementById('cert-top-logo');
+      var wmLogo   = document.getElementById('cert-wm-logo');
+      var apprLogo = document.getElementById('cert-appr-top-logo');
+      var apprWm   = document.getElementById('cert-appr-wm-logo');
+      if (topLogo && wmLogo)   wmLogo.src   = topLogo.src;
+      if (topLogo && apprLogo) apprLogo.src = topLogo.src;
+      if (topLogo && apprWm)   apprWm.src   = topLogo.src;
       // Ensure toggle buttons render correctly on first open
       certSetType(_certType);
+      certSetStyle(_certStyle);
     }
   };
 })();
