@@ -3694,8 +3694,8 @@ table.rst tbody tr:hover{background:#F0F7F0}
         <div class="cert-hint">Appears in the body text.</div>
       </div>
       <div class="cert-field">
-        <label>General Manager Name</label>
-        <input type="text" id="cert-appr-gm" placeholder="e.g. James Anderson"
+        <label>Head of Department Name</label>
+        <input type="text" id="cert-appr-gm" placeholder="e.g. Ahmed Al-Rashidi"
                oninput="certSyncApprSigs()" value="">
         <div class="cert-hint">Left signature line.</div>
       </div>
@@ -3970,8 +3970,7 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
           <!-- Logo (white version via brightness filter) -->
           <img class="c2-logo" id="cert-appr-top-logo" src="" alt="Solymar Hotel"
-               style=""
-               onerror="this.style.display='none'">
+               style="">
 
           <!-- Thin gold rule -->
           <div class="c2-rule" style="background:#C9A84C;"></div>
@@ -4000,7 +3999,9 @@ table.rst tbody tr:hover{background:#F0F7F0}
             In sincere recognition of
             <strong id="appr-pv-reason" style="color:#8B6830;display:inline;font-style:italic;"> outstanding dedication and exceptional performance</strong><br>
             <span id="appr-pv-dept-wrap">within the <strong id="appr-pv-dept" style="color:#8B6830;font-style:normal;">Solymar Hotel</strong> team,</span>
-            and in grateful appreciation of the commitment shown to excellence and the values of Solymar Hotel W.L.L., Bahrain.
+            and in grateful appreciation of the commitment shown to excellence<span id="appr-pv-training-wrap" style="display:none;">,
+            and for the successful completion of <strong id="appr-pv-training" style="color:#8B6830;font-style:normal;"></strong></span>
+            and the values of Solymar Hotel W.L.L., Bahrain.
           </div>
 
           <!-- Date -->
@@ -4017,13 +4018,13 @@ table.rst tbody tr:hover{background:#F0F7F0}
           <div class="c2-sigs">
             <div class="c2-sig">
               <div class="c2-sig-line" style="background:#C9A84C;"></div>
-              <div class="c2-sig-name" id="appr-pv-sig1-name" style="color:#0D1B2A;">General Manager</div>
-              <div class="c2-sig-dept" id="appr-pv-sig1-title" style="color:#7A8FA6;">General Manager</div>
+              <div class="c2-sig-name" id="appr-pv-sig1-name" style="color:#0D1B2A;">Head of Department</div>
+              <div class="c2-sig-dept" id="appr-pv-sig1-title" style="color:#7A8FA6;">Head of Department</div>
             </div>
             <div class="c2-sig">
               <div class="c2-sig-line" style="background:#C9A84C;"></div>
               <div class="c2-sig-name" id="appr-pv-sig2-name" style="color:#0D1B2A;">HR Manager</div>
-              <div class="c2-sig-dept" id="appr-pv-sig2-title" style="color:#7A8FA6;">Human Resources</div>
+              <div class="c2-sig-dept" id="appr-pv-sig2-title" style="color:#7A8FA6;">Human Resources Manager</div>
             </div>
           </div>
 
@@ -12659,13 +12660,14 @@ function certSetStyle(style) {
     var topLogo = document.getElementById('cert-top-logo');
     var apprLogo = document.getElementById('cert-appr-top-logo');
     var apprWm  = document.getElementById('cert-appr-wm-logo');
-    if (topLogo && apprLogo) apprLogo.src = topLogo.src;
+    if (topLogo && apprLogo) { apprLogo.src = topLogo.src; apprLogo.style.display = ''; }
     if (topLogo && apprWm)   apprWm.src   = topLogo.src;
     // Sync name from shared input
     certSyncApprName();
     certSyncApprDate();
     certSyncApprReason();
     certSyncApprDept();
+    certSyncApprTraining();
     certSyncApprSigs();
     certSyncApprCertId();
   } else {
@@ -12701,6 +12703,14 @@ function certSyncApprReason() {
   if (el) el.textContent = v ? ' ' + v : ' outstanding dedication and exceptional performance';
   certSyncApprCertId();
 }
+function certSyncApprTraining() {
+  var v = (document.getElementById('cert-training') || {value:''}).value.trim();
+  var wrap = document.getElementById('appr-pv-training-wrap');
+  var el   = document.getElementById('appr-pv-training');
+  if (wrap) wrap.style.display = v ? 'inline' : 'none';
+  if (el)   el.textContent = v;
+  certSyncApprCertId();
+}
 function certSyncApprDept() {
   var v = (document.getElementById('cert-appr-dept') || {value:''}).value.trim();
   var el = document.getElementById('appr-pv-dept');
@@ -12713,10 +12723,10 @@ function certSyncApprSigs() {
   var t1  = document.getElementById('appr-pv-sig1-title');
   var n2  = document.getElementById('appr-pv-sig2-name');
   var t2  = document.getElementById('appr-pv-sig2-title');
-  if (n1) n1.textContent = gm || 'General Manager';
-  if (t1) t1.textContent = 'General Manager';
+  if (n1) n1.textContent = gm || 'Head of Department';
+  if (t1) t1.textContent = 'Head of Department';
   if (n2) n2.textContent = hr || 'HR Manager';
-  if (t2) t2.textContent = 'Human Resources';
+  if (t2) t2.textContent = 'Human Resources Manager';
 }
 function certSyncApprCertId() {
   var name   = (document.getElementById('cert-name')         || {value:''}).value.trim();
@@ -12732,6 +12742,11 @@ var _origCertSyncName = window.certSyncName;
 window.certSyncName = function() {
   _origCertSyncName && _origCertSyncName();
   if (_certStyle === 'appreciation') certSyncApprName();
+};
+var _origCertSyncTraining = window.certSyncTraining;
+window.certSyncTraining = function() {
+  _origCertSyncTraining && _origCertSyncTraining();
+  if (_certStyle === 'appreciation') certSyncApprTraining();
 };
 var _origCertSyncDate = window.certSyncDate;
 window.certSyncDate = function() {
@@ -12803,7 +12818,7 @@ window.certPrint = function() {
       var apprLogo = document.getElementById('cert-appr-top-logo');
       var apprWm   = document.getElementById('cert-appr-wm-logo');
       if (topLogo && wmLogo)   wmLogo.src   = topLogo.src;
-      if (topLogo && apprLogo) apprLogo.src = topLogo.src;
+      if (topLogo && apprLogo) { apprLogo.src = topLogo.src; apprLogo.style.display = ''; }
       if (topLogo && apprWm)   apprWm.src   = topLogo.src;
       // Ensure toggle buttons render correctly on first open
       certSetType(_certType);
