@@ -79,6 +79,14 @@ body::before {
   z-index: 0;
   pointer-events: none;
 }
+/* Hide decorative circle when certificate page is active */
+#pg-certificate.on ~ * body::before,
+body:has(#pg-certificate.on)::before {
+  display: none !important;
+}
+body.cert-page-active::before {
+  display: none !important;
+}
 #app {
   position: relative;
   z-index: 1;
@@ -3436,6 +3444,13 @@ table.rst tbody tr:hover{background:#F0F7F0}
   display: flex; justify-content: center; align-items: center;
   background: #E8E5DD; border-radius: 12px; padding: 24px;
   position: relative; overflow: hidden; isolation: isolate;
+  /* Solid background blocks the body::before circle from showing */
+  z-index: 2;
+}
+/* Extra: ensure cert-doc fully covers any bleed-through */
+.cert-doc {
+  position: relative;
+  z-index: 3;
 }
 
 /* Scaled to fit in the card — the actual proportions are A4 landscape (297:210) */
@@ -3552,35 +3567,41 @@ table.rst tbody tr:hover{background:#F0F7F0}
 
 /* ─ Print styles ─ */
 @media print {
-  #pg-certificate .cert-layout { display: block !important; }
-  #cert-form-panel { display: none !important; }
-  #cert-preview-panel { padding: 0 !important; background: none !important; }
-  .cert-pg-header, .cert-preview-topbar, .back-btn-container { display: none !important; }
-  .cert-preview-outer { padding: 0 !important; background: none !important; border-radius: 0; }
+  @page { size: A4 landscape; margin: 0; }
+
+  /* Hide everything, then selectively show the cert */
+  html, body {
+    margin: 0 !important; padding: 0 !important;
+    background: white !important;
+    width: 297mm !important; height: 210mm !important;
+  }
+
+  body * { visibility: hidden !important; }
+
+  /* Show only the certificate doc and all its children */
+  .cert-doc,
+  .cert-doc * { visibility: visible !important; }
+
+  /* Position cert to fill the page exactly */
   .cert-doc {
     position: fixed !important;
     top: 0 !important; left: 0 !important;
     width: 297mm !important; height: 210mm !important;
     max-width: 297mm !important;
     aspect-ratio: unset !important;
-    box-shadow: none !important; border-radius: 0 !important;
-    page-break-inside: avoid;
+    box-shadow: none !important;
+    border-radius: 0 !important;
     margin: 0 !important;
-    /* Physical A4: 297mm wide → ~1122px at 96dpi; scale font to match */
     font-size: 13px !important;
+    background: #FDFAF3 !important;
+    overflow: hidden !important;
   }
-  @page { size: A4 landscape; margin: 0; }
-  html, body { margin: 0 !important; padding: 0 !important; width: 297mm !important; height: 210mm !important; overflow: hidden !important; }
-  body > * { display: none !important; visibility: hidden !important; }
-  #app { display: block !important; padding: 0 !important; }
-  #sidebar { display: none !important; }
-  #main-wrap { display: block !important; }
-  #topbar { display: none !important; }
-  #content { padding: 0 !important; overflow: visible !important; }
-  .pg { display: none !important; }
-  #pg-certificate { display: block !important; }
-  .cert-preview-card { padding: 0 !important; border: none !important; box-shadow: none !important; background: none !important; margin: 0 !important; }
-  /* font-size now set inside .cert-doc above */
+
+  /* Hide form controls */
+  #cert-form-panel,
+  .cert-pg-header,
+  .cert-preview-topbar,
+  .back-btn-container { display: none !important; }
 }
 </style>
 
@@ -3633,6 +3654,22 @@ table.rst tbody tr:hover{background:#F0F7F0}
       <input type="text" id="cert-date" placeholder="e.g. April 19, 2026"
              oninput="certSyncDate()"
              value="">
+    </div>
+
+    <div class="cert-divider-row"></div>
+
+    <div class="cert-field">
+      <label>Head of Department Name</label>
+      <input type="text" id="cert-dept-head" placeholder="e.g. Ahmed Al-Rashidi"
+             oninput="certSyncDeptHead()" value="">
+      <div class="cert-hint">Appears under the left signature line.</div>
+    </div>
+
+    <div class="cert-field">
+      <label>HR Manager Name</label>
+      <input type="text" id="cert-hr-manager" placeholder="e.g. Sara Al-Khalifa"
+             oninput="certSyncHRManager()" value="">
+      <div class="cert-hint">Appears under the right signature line.</div>
     </div>
 
     <div class="cert-divider-row"></div>
@@ -3766,16 +3803,16 @@ table.rst tbody tr:hover{background:#F0F7F0}
             <div class="c2-div-line"></div>
           </div>
 
-          <!-- Two signature lines — empty for manual signing -->
+          <!-- Two signature lines — editable names -->
           <div class="c2-sigs">
             <div class="c2-sig">
               <div class="c2-sig-line"></div>
-              <div class="c2-sig-name" id="pv2-dept-head">Head of Department</div>
-              <div class="c2-sig-dept" id="pv2-dept-sub"></div>
+              <div class="c2-sig-name" id="pv2-dept-head-name">Head of Department</div>
+              <div class="c2-sig-dept" id="pv2-dept-sub">Department</div>
             </div>
             <div class="c2-sig">
               <div class="c2-sig-line"></div>
-              <div class="c2-sig-name">HR Manager</div>
+              <div class="c2-sig-name" id="pv2-hr-manager-name">HR Manager</div>
               <div class="c2-sig-dept">Human Resources Department</div>
             </div>
           </div>
@@ -12225,6 +12262,20 @@ function certSyncDate() {
   certUpdateCertId();
 }
 
+function certSyncDeptHead() {
+  var v = (document.getElementById('cert-dept-head').value || '').trim();
+  var el = document.getElementById('pv2-dept-head-name');
+  if (el) el.textContent = v || 'Head of Department';
+  var sub = document.getElementById('pv2-dept-sub');
+  if (sub) sub.textContent = v ? 'Head of Department' : 'Department';
+}
+
+function certSyncHRManager() {
+  var v = (document.getElementById('cert-hr-manager').value || '').trim();
+  var el = document.getElementById('pv2-hr-manager-name');
+  if (el) el.textContent = v || 'HR Manager';
+}
+
 function certUpdateCertId() {
   var name     = (document.getElementById('cert-name')     || {value:''}).value.trim();
   var training = (document.getElementById('cert-training') || {value:''}).value.trim();
@@ -12238,6 +12289,8 @@ function certRefreshAll() {
   certSyncName();
   certSyncTraining();
   certSyncDate();
+  certSyncDeptHead();
+  certSyncHRManager();
   certUpdateCertId();
 }
 
@@ -12275,6 +12328,12 @@ function certPrint() {
   var _origShowPgCert = window.showPg;
   window.showPg = function(id) {
     _origShowPgCert(id);
+    /* Toggle body class to hide/show decorative circle */
+    if (id === 'certificate') {
+      document.body.classList.add('cert-page-active');
+    } else {
+      document.body.classList.remove('cert-page-active');
+    }
     if (id === 'certificate') {
       // Set today's date as default if blank
       var dateEl = document.getElementById('cert-date');
