@@ -95,6 +95,50 @@ body.cert-page-active::before {
 ::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px}
 ::-webkit-scrollbar-track{background:transparent}
 
+/* ═══ BIOMETRIC MODULE STYLES ═══ */
+.bio-card{background:var(--card-bg);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-md);border:1px solid var(--border-l)}
+.bio-clock{font-size:52px;font-weight:800;letter-spacing:-2px;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1}
+.bio-date{font-size:13px;color:var(--text-muted);margin-top:4px;font-weight:500}
+.bio-pulse{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:6px;animation:bioPulse 1.5s infinite}
+@keyframes bioPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.bio-status-ok{background:#16A34A}
+.bio-status-warn{background:#EA580C}
+.bio-status-err{background:#DC2626}
+.bio-map-wrap{border-radius:14px;overflow:hidden;border:1.5px solid var(--border-l);position:relative;background:#f0f4f8}
+.bio-map-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(10,22,41,.04);pointer-events:none;z-index:2}
+.bio-btn-in{background:linear-gradient(135deg,#16A34A,#15803D);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.3px;transition:all .2s;box-shadow:0 4px 15px rgba(22,163,74,.25)}
+.bio-btn-in:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,163,74,.35)}
+.bio-btn-in:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.bio-btn-out{background:linear-gradient(135deg,#DC2626,#B91C1C);color:#fff;border:none;border-radius:14px;padding:16px 32px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.3px;transition:all .2s;box-shadow:0 4px 15px rgba(220,38,38,.25)}
+.bio-btn-out:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(220,38,38,.35)}
+.bio-btn-out:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.bio-zone-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.3px}
+.bio-zone-in{background:#ECFDF5;color:#16A34A;border:1.5px solid #BBF7D0}
+.bio-zone-out{background:#FFF5F5;color:#DC2626;border:1.5px solid #FECACA}
+.bio-zone-checking{background:#FFF7ED;color:#EA580C;border:1.5px solid #FED7AA}
+.bio-log-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-l)}
+.bio-log-row:last-child{border-bottom:none}
+.bio-log-type{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.bio-log-in{background:#ECFDF5}
+.bio-log-out{background:#FFF5F5}
+.bio-coord-text{font-size:10px;color:#94A3B8;font-family:monospace}
+.bio-settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-l)}
+.bio-settings-row:last-child{border-bottom:none}
+.bio-settings-label{font-size:13px;font-weight:600;color:var(--text)}
+.bio-settings-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.bio-input{width:100%;padding:10px 14px;border:1.5px solid var(--border-l);border-radius:10px;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border .2s}
+.bio-input:focus{border-color:var(--gold)}
+.bio-emp-select{width:100%;padding:10px 14px;border:1.5px solid var(--border-l);border-radius:10px;font-size:13px;background:var(--bg);color:var(--text);outline:none;appearance:none}
+.bio-geofence-ring{position:absolute;border-radius:50%;border:2px dashed rgba(184,144,77,.5);background:rgba(184,144,77,.06);transform:translate(-50%,-50%);pointer-events:none;z-index:1}
+.bio-you-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#2563EB;border:3px solid #fff;box-shadow:0 2px 8px rgba(37,99,235,.5);transform:translate(-50%,-50%);z-index:3}
+.bio-center-dot{position:absolute;width:10px;height:10px;border-radius:50%;background:rgba(184,144,77,.8);border:2px solid #fff;transform:translate(-50%,-50%);z-index:2}
+.bio-report-table{width:100%;border-collapse:collapse;font-size:12px}
+.bio-report-table th{background:var(--primary);color:#fff;padding:8px 12px;text-align:left;font-weight:600;font-size:11px}
+.bio-report-table td{padding:8px 12px;border-bottom:1px solid var(--border-l)}
+.bio-report-table tr:hover td{background:var(--primary-light)}
+.bio-tab{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border-l);background:transparent;color:var(--text-muted);transition:all .2s}
+.bio-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
 /* ═══ NAVY TEXT OVERRIDE ═══ */
 .kv,.en,.mt,.dval,.section-title,.page-header h1,
 #topbar-title,.data-table td,.data-table th,
@@ -1321,6 +1365,10 @@ table.prs-tbl thead th{
         <div class="nav-sub-item" onclick="showPg('rep');closeSidebar()" data-pg="rep">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>Reports</span>
+        </div>
+        <div class="nav-sub-item" onclick="showPg('biometric');closeSidebar()" data-pg="biometric">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span>Mobile Biometric</span>
         </div>
       </div>
     </div>
@@ -3330,6 +3378,210 @@ table.rst tbody tr:hover{background:#F0F7F0}
 <!-- ═══════════════════════════════════════════════════
      CERTIFICATE GENERATOR PAGE
 ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     MOBILE BIOMETRIC PAGE
+═══════════════════════════════════════════════════════════ -->
+<div id="pg-biometric" class="pg">
+  <div class="page-header">
+    <div>
+      <h1 style="font-size:20px;font-weight:800;color:var(--primary)">Mobile Biometric</h1>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:2px">Geo-fenced attendance — punch in/out from your phone</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="bio-tab active" id="bio-tab-punch" onclick="bioSwitchTab('punch')">Clock In/Out</button>
+      <button class="bio-tab" id="bio-tab-log" onclick="bioSwitchTab('log')">My Log</button>
+      <button class="bio-tab" id="bio-tab-report" onclick="bioSwitchTab('report')" id="bio-tab-report-btn">Report</button>
+      <button class="bio-tab" id="bio-tab-settings" onclick="bioSwitchTab('settings')">⚙ Settings</button>
+    </div>
+  </div>
+
+  <!-- TAB: PUNCH IN/OUT -->
+  <div id="bio-panel-punch">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+      <!-- Clock card -->
+      <div class="bio-card" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)">Current Time</span>
+          <span id="bio-zone-badge" class="bio-zone-badge bio-zone-checking">
+            <span class="bio-pulse bio-status-warn"></span> Checking location…
+          </span>
+        </div>
+        <div class="bio-clock" id="bio-clock">--:--:--</div>
+        <div class="bio-date" id="bio-date">--</div>
+        <div style="height:1px;background:var(--border-l);margin:4px 0"></div>
+        <!-- Employee selector -->
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px">Employee</label>
+          <select id="bio-emp-sel" class="bio-emp-select" style="margin-top:6px" onchange="bioOnEmpChange()">
+            <option value="">— Select employee —</option>
+          </select>
+        </div>
+        <div id="bio-last-punch" style="font-size:11px;color:var(--text-muted);display:none">
+          Last: <span id="bio-last-punch-val" style="font-weight:600;color:var(--text)"></span>
+        </div>
+      </div>
+
+      <!-- Map card -->
+      <div class="bio-card" style="padding:16px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px">Your Location</div>
+        <div class="bio-map-wrap" style="height:160px" id="bio-map-wrap">
+          <!-- SVG canvas map -->
+          <svg id="bio-map-svg" width="100%" height="160" xmlns="http://www.w3.org/2000/svg" style="display:block">
+            <defs>
+              <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#e8f0fe;stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:#dde6f5;stop-opacity:1"/>
+              </radialGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+            <!-- Grid lines -->
+            <line x1="0" y1="53" x2="100%" y2="53" stroke="#c8d6ea" stroke-width=".5"/>
+            <line x1="0" y1="107" x2="100%" y2="107" stroke="#c8d6ea" stroke-width=".5"/>
+            <line x1="25%" y1="0" x2="25%" y2="100%" stroke="#c8d6ea" stroke-width=".5"/>
+            <line x1="50%" y1="0" x2="50%" y2="100%" stroke="#c8d6ea" stroke-width=".5"/>
+            <line x1="75%" y1="0" x2="75%" y2="100%" stroke="#c8d6ea" stroke-width=".5"/>
+            <!-- Geofence circle (drawn by JS) -->
+            <circle id="bio-svg-fence" cx="50%" cy="50%" r="0" fill="rgba(184,144,77,.08)" stroke="rgba(184,144,77,.4)" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <!-- Center (work) dot -->
+            <circle id="bio-svg-center" cx="50%" cy="50%" r="6" fill="#B8904D" stroke="#fff" stroke-width="2"/>
+            <!-- User dot -->
+            <circle id="bio-svg-you" cx="-50" cy="-50" r="7" fill="#2563EB" stroke="#fff" stroke-width="2.5"/>
+            <!-- Accuracy ring -->
+            <circle id="bio-svg-acc" cx="-50" cy="-50" r="0" fill="rgba(37,99,235,.06)" stroke="rgba(37,99,235,.2)" stroke-width="1"/>
+            <!-- Labels -->
+            <text id="bio-svg-label-work" x="50%" y="44%" text-anchor="middle" font-size="9" fill="#B8904D" font-weight="700" dy="-10"></text>
+            <text id="bio-svg-label-you" x="-50" y="-50" text-anchor="middle" font-size="9" fill="#2563EB" font-weight="700" dy="-12">You</text>
+          </svg>
+        </div>
+        <div id="bio-coord-row" style="margin-top:8px;display:none">
+          <span class="bio-coord-text" id="bio-coord-text">--</span>
+          <span style="float:right" class="bio-coord-text" id="bio-dist-text">-- m away</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status message -->
+    <div id="bio-geofence-msg" style="margin-bottom:14px;padding:12px 16px;border-radius:12px;background:#FFF7ED;border:1.5px solid #FED7AA;font-size:13px;font-weight:600;color:#EA580C;display:flex;align-items:center;gap:8px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+      Requesting your location…
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <button class="bio-btn-in" id="bio-btn-in" onclick="bioPunch('in')" disabled>
+        ✓ &nbsp;Clock IN
+      </button>
+      <button class="bio-btn-out" id="bio-btn-out" onclick="bioPunch('out')" disabled>
+        ✗ &nbsp;Clock OUT
+      </button>
+    </div>
+
+    <!-- Today's punches -->
+    <div class="bio-card">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:12px">Today's Punches</div>
+      <div id="bio-today-list">
+        <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">No punches recorded today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: LOG -->
+  <div id="bio-panel-log" style="display:none">
+    <div class="bio-card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text)">Attendance Log</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">All recorded punch events</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <select id="bio-log-filter-emp" class="bio-input" style="width:160px;padding:7px 12px" onchange="bioRenderLog()">
+            <option value="">All Employees</option>
+          </select>
+          <input type="month" id="bio-log-filter-month" class="bio-input" style="width:150px;padding:7px 12px" onchange="bioRenderLog()">
+          <button onclick="bioExportCSV()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer">↓ CSV</button>
+        </div>
+      </div>
+      <div id="bio-log-list"></div>
+    </div>
+  </div>
+
+  <!-- TAB: REPORT -->
+  <div id="bio-panel-report" style="display:none">
+    <div class="bio-card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text)">Monthly Attendance Report</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Summary per employee — In/Out totals</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="month" id="bio-rep-month" class="bio-input" style="width:160px;padding:7px 12px" onchange="bioRenderReport()">
+          <button onclick="bioRenderReport()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer">Generate</button>
+        </div>
+      </div>
+      <div id="bio-report-wrap" style="overflow-x:auto"></div>
+    </div>
+  </div>
+
+  <!-- TAB: SETTINGS (admin only) -->
+  <div id="bio-panel-settings" style="display:none">
+    <div class="bio-card" style="max-width:600px">
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Geofence Configuration</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:20px">Define the allowed zone for clock in/out</div>
+
+      <div class="bio-settings-row">
+        <div>
+          <div class="bio-settings-label">Work Location Name</div>
+          <div class="bio-settings-sub">Label shown to employees</div>
+        </div>
+        <input type="text" id="bio-s-name" class="bio-input" style="width:220px" placeholder="e.g. Solymar Hotel">
+      </div>
+
+      <div class="bio-settings-row">
+        <div>
+          <div class="bio-settings-label">Latitude</div>
+          <div class="bio-settings-sub">Center point of the geofence</div>
+        </div>
+        <input type="number" id="bio-s-lat" class="bio-input" style="width:220px" placeholder="e.g. 26.2235" step="0.0001">
+      </div>
+
+      <div class="bio-settings-row">
+        <div>
+          <div class="bio-settings-label">Longitude</div>
+          <div class="bio-settings-sub">Center point of the geofence</div>
+        </div>
+        <input type="number" id="bio-s-lng" class="bio-input" style="width:220px" placeholder="e.g. 50.5876" step="0.0001">
+      </div>
+
+      <div class="bio-settings-row">
+        <div>
+          <div class="bio-settings-label">Allowed Radius (meters)</div>
+          <div class="bio-settings-sub">Max distance from work center</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="range" id="bio-s-radius-slider" min="50" max="1000" step="10" style="width:130px" oninput="document.getElementById('bio-s-radius').value=this.value">
+          <input type="number" id="bio-s-radius" class="bio-input" style="width:80px" placeholder="200" min="50" max="2000" oninput="document.getElementById('bio-s-radius-slider').value=this.value">
+          <span style="font-size:12px;color:var(--text-muted)">m</span>
+        </div>
+      </div>
+
+      <div class="bio-settings-row">
+        <div>
+          <div class="bio-settings-label">Use My Current Location as Center</div>
+          <div class="bio-settings-sub">Auto-fill coordinates from your GPS</div>
+        </div>
+        <button onclick="bioCaptureCurrentAsCenter()" style="background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer">📍 Capture GPS</button>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px">
+        <button onclick="bioSaveSettings()" style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:13px;font-weight:700;cursor:pointer;flex:1">Save Settings</button>
+        <button onclick="bioClearAllLogs()" style="background:#FFF5F5;color:var(--red);border:1.5px solid #FECACA;border-radius:10px;padding:11px 20px;font-size:12px;font-weight:600;cursor:pointer">Clear All Logs</button>
+      </div>
+      <div id="bio-settings-msg" style="margin-top:12px;font-size:12px;font-weight:600;display:none"></div>
+    </div>
+  </div>
+</div>
+
 <div id="pg-certificate" class="pg">
 <div class="back-btn-container" onclick="showPg('dash')">
   <div class="back-btn">
@@ -12789,6 +13041,590 @@ window.certPrint = function() {
     _origCertPrint && _origCertPrint();
   }
 };
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE BIOMETRIC MODULE  —  Geo-fenced Punch In/Out
+// Storage: localStorage key 'solymar_bio_v1'
+// ═══════════════════════════════════════════════════════════
+
+var BIO = (function() {
+
+  // ── Constants ────────────────────────────────────────────
+  var SK_LOGS     = 'solymar_bio_logs_v1';
+  var SK_SETTINGS = 'solymar_bio_settings_v1';
+
+  // ── State ────────────────────────────────────────────────
+  var _settings = {
+    name:   'Solymar Hotel',
+    lat:    26.2235,
+    lng:    50.5876,
+    radius: 200
+  };
+  var _logs      = [];           // [{id,empId,empName,type,ts,lat,lng,dist,dept}]
+  var _userLat   = null;
+  var _userLng   = null;
+  var _userAcc   = null;
+  var _inZone    = false;
+  var _watching  = null;
+  var _clockInt  = null;
+  var _tab       = 'punch';
+  var _svgW      = 0;
+  var _svgH      = 0;
+
+  // ── Load / Save ──────────────────────────────────────────
+  function _load() {
+    try {
+      var s = localStorage.getItem(SK_SETTINGS);
+      if (s) _settings = JSON.parse(s);
+    } catch(e) {}
+    try {
+      var l = localStorage.getItem(SK_LOGS);
+      if (l) _logs = JSON.parse(l);
+    } catch(e) {}
+  }
+
+  function _save() {
+    try { localStorage.setItem(SK_LOGS, JSON.stringify(_logs)); } catch(e) {}
+  }
+
+  function _saveSettings() {
+    try { localStorage.setItem(SK_SETTINGS, JSON.stringify(_settings)); } catch(e) {}
+  }
+
+  // ── Haversine distance (meters) ───────────────────────────
+  function _haversine(lat1, lng1, lat2, lng2) {
+    var R = 6371000;
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
+            Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+            Math.sin(dLng/2)*Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  // ── Clock ticker ─────────────────────────────────────────
+  function _startClock() {
+    if (_clockInt) clearInterval(_clockInt);
+    _clockInt = setInterval(function() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2,'0');
+      var m = String(now.getMinutes()).padStart(2,'0');
+      var s = String(now.getSeconds()).padStart(2,'0');
+      var el = document.getElementById('bio-clock');
+      if (el) el.textContent = h + ':' + m + ':' + s;
+      var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var mths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var de = document.getElementById('bio-date');
+      if (de) de.textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + mths[now.getMonth()] + ' ' + now.getFullYear();
+    }, 1000);
+  }
+
+  // ── SVG Map renderer ──────────────────────────────────────
+  function _updateMap() {
+    var svg = document.getElementById('bio-map-svg');
+    if (!svg) return;
+    var rect = svg.getBoundingClientRect();
+    var W = rect.width  || svg.clientWidth  || 300;
+    var H = rect.height || svg.clientHeight || 160;
+    _svgW = W; _svgH = H;
+
+    var cx = W / 2;
+    var cy = H / 2;
+
+    // Update center dot
+    var centerDot = document.getElementById('bio-svg-center');
+    if (centerDot) { centerDot.setAttribute('cx', cx); centerDot.setAttribute('cy', cy); }
+
+    // Update work label
+    var workLabel = document.getElementById('bio-svg-label-work');
+    if (workLabel) {
+      workLabel.setAttribute('x', cx);
+      workLabel.setAttribute('y', cy - 14);
+      workLabel.textContent = _settings.name || 'Work';
+    }
+
+    if (_userLat === null || _userLng === null) return;
+
+    // Compute degrees per pixel based on radius
+    // We want the geofence circle to take ~40% of the smallest dimension
+    var latPerM = 1 / 111320;
+    var lngPerM = 1 / (111320 * Math.cos(_settings.lat * Math.PI / 180));
+    var scale   = (_svgH * 0.35) / (_settings.radius * latPerM); // px per meter (lat)
+
+    // Fence radius in px
+    var fenceR = _settings.radius * latPerM * scale;
+    fenceR = Math.min(fenceR, Math.min(W,H) * 0.42);
+
+    var fenceEl = document.getElementById('bio-svg-fence');
+    if (fenceEl) { fenceEl.setAttribute('cx', cx); fenceEl.setAttribute('cy', cy); fenceEl.setAttribute('r', fenceR); }
+
+    // User dot position relative to center
+    var dLat = (_userLat - _settings.lat) * scale / latPerM;
+    var dLng = (_userLng - _settings.lng) * scale / lngPerM;
+    var ux = cx + dLng;
+    var uy = cy - dLat;
+    // Clamp to SVG bounds with small padding
+    ux = Math.max(8, Math.min(W - 8, ux));
+    uy = Math.max(8, Math.min(H - 8, uy));
+
+    var youDot = document.getElementById('bio-svg-you');
+    if (youDot) { youDot.setAttribute('cx', ux); youDot.setAttribute('cy', uy); }
+
+    var youLabel = document.getElementById('bio-svg-label-you');
+    if (youLabel) { youLabel.setAttribute('x', ux); youLabel.setAttribute('y', uy - 12); }
+
+    // Accuracy ring
+    if (_userAcc) {
+      var accR = _userAcc * latPerM * scale;
+      var accEl = document.getElementById('bio-svg-acc');
+      if (accEl) { accEl.setAttribute('cx', ux); accEl.setAttribute('cy', uy); accEl.setAttribute('r', Math.min(accR, 50)); }
+    }
+  }
+
+  // ── Geolocation watch ─────────────────────────────────────
+  function _startWatch() {
+    if (!navigator.geolocation) {
+      _setMsg('❌ Geolocation is not supported by your browser/device.', 'err');
+      return;
+    }
+    _watching = navigator.geolocation.watchPosition(
+      _onPosition, _onGeoError,
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+    );
+  }
+
+  function _onPosition(pos) {
+    _userLat = pos.coords.latitude;
+    _userLng = pos.coords.longitude;
+    _userAcc = pos.coords.accuracy;
+
+    var dist = Math.round(_haversine(_userLat, _userLng, _settings.lat, _settings.lng));
+    _inZone  = dist <= _settings.radius;
+
+    // Update coord display
+    var ct = document.getElementById('bio-coord-text');
+    var dt = document.getElementById('bio-dist-text');
+    var cr = document.getElementById('bio-coord-row');
+    if (cr) cr.style.display = 'block';
+    if (ct) ct.textContent = _userLat.toFixed(5) + ', ' + _userLng.toFixed(5);
+    if (dt) dt.textContent = dist + ' m from ' + (_settings.name || 'work');
+
+    // Zone badge
+    var badge = document.getElementById('bio-zone-badge');
+    if (badge) {
+      if (_inZone) {
+        badge.className = 'bio-zone-badge bio-zone-in';
+        badge.innerHTML = '<span class="bio-pulse bio-status-ok"></span> Inside Zone';
+      } else {
+        badge.className = 'bio-zone-badge bio-zone-out';
+        badge.innerHTML = '<span class="bio-pulse bio-status-err"></span> Outside Zone (' + dist + ' m)';
+      }
+    }
+
+    // Update message
+    if (_inZone) {
+      _setMsg('✅ You are inside the work zone (' + dist + ' m). You can punch in/out.', 'ok');
+    } else {
+      _setMsg('🚫 You are ' + dist + ' m away from ' + (_settings.name || 'work') + '. Move within ' + _settings.radius + ' m to punch.', 'err');
+    }
+
+    // Enable/disable buttons based on zone AND employee selection
+    _updateButtons();
+
+    // Update map
+    _updateMap();
+  }
+
+  function _onGeoError(err) {
+    var msg = {
+      1: '❌ Location permission denied. Please allow location access in your browser settings.',
+      2: '❌ Location unavailable. Please check your GPS.',
+      3: '⏱ Location request timed out. Please try again.'
+    }[err.code] || '❌ Location error.';
+    _setMsg(msg, 'err');
+    var badge = document.getElementById('bio-zone-badge');
+    if (badge) { badge.className = 'bio-zone-badge bio-zone-out'; badge.innerHTML = '<span class="bio-pulse bio-status-err"></span> Location Error'; }
+    _updateButtons();
+  }
+
+  function _setMsg(text, type) {
+    var el = document.getElementById('bio-geofence-msg');
+    if (!el) return;
+    var styles = {
+      ok:  { bg: '#ECFDF5', border: '#BBF7D0', color: '#16A34A' },
+      err: { bg: '#FFF5F5', border: '#FECACA', color: '#DC2626' },
+      warn:{ bg: '#FFF7ED', border: '#FED7AA', color: '#EA580C' }
+    };
+    var st = styles[type] || styles.warn;
+    el.style.background   = st.bg;
+    el.style.borderColor  = st.border;
+    el.style.color        = st.color;
+    el.innerHTML = text;
+  }
+
+  function _updateButtons() {
+    var empSel  = document.getElementById('bio-emp-sel');
+    var empOK   = empSel && empSel.value !== '';
+    var btnIn   = document.getElementById('bio-btn-in');
+    var btnOut  = document.getElementById('bio-btn-out');
+    var allowed = _inZone && empOK && _userLat !== null;
+    if (btnIn)  btnIn.disabled  = !allowed;
+    if (btnOut) btnOut.disabled = !allowed;
+  }
+
+  // ── Populate employee dropdown ────────────────────────────
+  function _populateEmpSelect() {
+    ['bio-emp-sel','bio-log-filter-emp'].forEach(function(id) {
+      var sel = document.getElementById(id);
+      if (!sel) return;
+      var current = sel.value;
+      sel.innerHTML = id === 'bio-log-filter-emp'
+        ? '<option value="">All Employees</option>'
+        : '<option value="">— Select employee —</option>';
+      var emps = (typeof EMP !== 'undefined' ? EMP : []);
+      emps.slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); }).forEach(function(e) {
+        var opt = document.createElement('option');
+        opt.value = e.id || e.employee_id || '';
+        opt.textContent = (e.name || 'Unknown') + (e.department ? ' — ' + e.department : '');
+        opt.dataset.name = e.name || '';
+        opt.dataset.dept = e.department || '';
+        sel.appendChild(opt);
+      });
+      if (current) sel.value = current;
+    });
+  }
+
+  // ── Today's punches display ───────────────────────────────
+  function _renderToday() {
+    var el = document.getElementById('bio-today-list');
+    if (!el) return;
+    var today = new Date().toDateString();
+    var empSel = document.getElementById('bio-emp-sel');
+    var empId  = empSel ? empSel.value : '';
+    var rows   = _logs.filter(function(l) {
+      return new Date(l.ts).toDateString() === today && (!empId || l.empId === empId);
+    });
+    if (!rows.length) {
+      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">No punches recorded today</div>';
+      return;
+    }
+    el.innerHTML = rows.map(function(r) {
+      var d = new Date(r.ts);
+      var t = [d.getHours(), d.getMinutes(), d.getSeconds()].map(function(x){return String(x).padStart(2,'0');}).join(':');
+      var icon = r.type === 'in' ? '✅' : '🔴';
+      var label = r.type === 'in' ? 'Clock IN' : 'Clock OUT';
+      var bg    = r.type === 'in' ? '#ECFDF5' : '#FFF5F5';
+      var clr   = r.type === 'in' ? '#16A34A'  : '#DC2626';
+      return '<div class="bio-log-row">'
+        + '<div class="bio-log-type ' + (r.type==='in'?'bio-log-in':'bio-log-out') + '">' + icon + '</div>'
+        + '<div style="flex:1">'
+        +   '<div style="font-size:13px;font-weight:600;color:var(--text)">' + r.empName + '</div>'
+        +   '<div style="font-size:11px;color:var(--text-muted)">' + (r.dept||'') + '</div>'
+        + '</div>'
+        + '<div style="text-align:right">'
+        +   '<div style="font-size:13px;font-weight:700;color:' + clr + '">' + label + '</div>'
+        +   '<div class="bio-coord-text">' + t + ' · ' + Math.round(r.dist||0) + ' m</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  // ── Full log tab renderer ─────────────────────────────────
+  function _renderLog() {
+    var el = document.getElementById('bio-log-list');
+    if (!el) return;
+    var empFilter   = (document.getElementById('bio-log-filter-emp')   ? document.getElementById('bio-log-filter-emp').value   : '');
+    var monthFilter = (document.getElementById('bio-log-filter-month') ? document.getElementById('bio-log-filter-month').value : '');
+    var filtered = _logs.filter(function(l) {
+      if (empFilter && l.empId !== empFilter) return false;
+      if (monthFilter) {
+        var d = new Date(l.ts);
+        var ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        if (ym !== monthFilter) return false;
+      }
+      return true;
+    }).sort(function(a,b){ return new Date(b.ts) - new Date(a.ts); });
+
+    if (!filtered.length) {
+      el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:13px">No records found</div>';
+      return;
+    }
+    el.innerHTML = '<table class="bio-report-table"><thead><tr>'
+      + '<th>Employee</th><th>Department</th><th>Type</th><th>Date</th><th>Time</th><th>Distance</th><th>Coordinates</th>'
+      + '</tr></thead><tbody>'
+      + filtered.map(function(r) {
+          var d = new Date(r.ts);
+          var dateStr = d.toLocaleDateString('en-GB');
+          var timeStr = [d.getHours(),d.getMinutes(),d.getSeconds()].map(function(x){return String(x).padStart(2,'0');}).join(':');
+          var clr = r.type === 'in' ? '#16A34A' : '#DC2626';
+          return '<tr><td><strong>' + (r.empName||'--') + '</strong></td>'
+            + '<td style="color:var(--text-muted)">' + (r.dept||'--') + '</td>'
+            + '<td><span style="background:' + (r.type==='in'?'#ECFDF5':'#FFF5F5') + ';color:' + clr + ';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700">' + (r.type==='in'?'IN':'OUT') + '</span></td>'
+            + '<td>' + dateStr + '</td>'
+            + '<td style="font-family:monospace;font-size:12px">' + timeStr + '</td>'
+            + '<td style="font-family:monospace;font-size:12px">' + Math.round(r.dist||0) + ' m</td>'
+            + '<td class="bio-coord-text">' + (r.lat?r.lat.toFixed(5):'--') + ', ' + (r.lng?r.lng.toFixed(5):'--') + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+
+  // ── Monthly report renderer ───────────────────────────────
+  function _renderReport() {
+    var el = document.getElementById('bio-report-wrap');
+    if (!el) return;
+    var monthEl = document.getElementById('bio-rep-month');
+    var monthFilter = monthEl ? monthEl.value : '';
+    if (!monthFilter) {
+      var now = new Date();
+      monthFilter = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+      if (monthEl) monthEl.value = monthFilter;
+    }
+    var filtered = _logs.filter(function(l) {
+      var d = new Date(l.ts);
+      var ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      return ym === monthFilter;
+    });
+    // Group by employee
+    var byEmp = {};
+    filtered.forEach(function(r) {
+      if (!byEmp[r.empId]) byEmp[r.empId] = { name: r.empName, dept: r.dept, inCount:0, outCount:0, days:{} };
+      var e = byEmp[r.empId];
+      if (r.type === 'in')  e.inCount++;
+      else                  e.outCount++;
+      var dayKey = new Date(r.ts).toLocaleDateString('en-GB');
+      e.days[dayKey] = true;
+    });
+    var keys = Object.keys(byEmp);
+    if (!keys.length) {
+      el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:13px">No data for this month</div>';
+      return;
+    }
+    el.innerHTML = '<table class="bio-report-table"><thead><tr>'
+      + '<th>#</th><th>Employee</th><th>Department</th><th>Days Present</th><th>IN Punches</th><th>OUT Punches</th><th>Status</th>'
+      + '</tr></thead><tbody>'
+      + keys.map(function(id, i) {
+          var e = byEmp[id];
+          var daysCount = Object.keys(e.days).length;
+          var ok = e.inCount > 0;
+          return '<tr><td>' + (i+1) + '</td>'
+            + '<td><strong>' + (e.name||'--') + '</strong></td>'
+            + '<td style="color:var(--text-muted)">' + (e.dept||'--') + '</td>'
+            + '<td style="font-weight:600;color:#2563EB">' + daysCount + '</td>'
+            + '<td style="font-weight:600;color:#16A34A">' + e.inCount + '</td>'
+            + '<td style="font-weight:600;color:#DC2626">' + e.outCount + '</td>'
+            + '<td><span style="background:' + (ok?'#ECFDF5':'#FFF5F5') + ';color:' + (ok?'#16A34A':'#DC2626') + ';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700">' + (ok?'Active':'No Data') + '</span></td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+
+  // ── Punch action ─────────────────────────────────────────
+  function _punch(type) {
+    if (!_inZone || _userLat === null) {
+      alert('You must be inside the work zone to punch ' + type + '.');
+      return;
+    }
+    var empSel = document.getElementById('bio-emp-sel');
+    if (!empSel || !empSel.value) { alert('Please select an employee first.'); return; }
+    var opt  = empSel.options[empSel.selectedIndex];
+    var dist = _haversine(_userLat, _userLng, _settings.lat, _settings.lng);
+    var record = {
+      id:      Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+      empId:   empSel.value,
+      empName: opt.dataset.name || opt.textContent.split('—')[0].trim(),
+      dept:    opt.dataset.dept || '',
+      type:    type,
+      ts:      new Date().toISOString(),
+      lat:     _userLat,
+      lng:     _userLng,
+      acc:     _userAcc,
+      dist:    Math.round(dist)
+    };
+    _logs.push(record);
+    _save();
+
+    // Update last punch display
+    var now = new Date();
+    var t = [now.getHours(),now.getMinutes(),now.getSeconds()].map(function(x){return String(x).padStart(2,'0');}).join(':');
+    var lpEl = document.getElementById('bio-last-punch');
+    var lpVal = document.getElementById('bio-last-punch-val');
+    if (lpEl) lpEl.style.display = 'block';
+    if (lpVal) lpVal.textContent = (type === 'in' ? '✅ IN' : '🔴 OUT') + ' at ' + t;
+
+    _renderToday();
+
+    // Visual feedback
+    var btn = document.getElementById('bio-btn-' + type);
+    if (btn) {
+      var orig = btn.textContent;
+      btn.textContent = type === 'in' ? '✓ Clocked IN!' : '✗ Clocked OUT!';
+      setTimeout(function(){ btn.textContent = orig; }, 2000);
+    }
+
+    if (typeof toast === 'function') toast((type === 'in' ? 'Clock IN' : 'Clock OUT') + ' recorded for ' + record.empName, 's');
+  }
+
+  // ── Settings UI ───────────────────────────────────────────
+  function _loadSettingsUI() {
+    var f = function(id, val) { var el = document.getElementById(id); if(el) el.value = val; };
+    f('bio-s-name', _settings.name || '');
+    f('bio-s-lat',  _settings.lat  || '');
+    f('bio-s-lng',  _settings.lng  || '');
+    f('bio-s-radius', _settings.radius || 200);
+    f('bio-s-radius-slider', _settings.radius || 200);
+  }
+
+  function _saveSettingsUI() {
+    var g = function(id) { var el = document.getElementById(id); return el ? el.value : ''; };
+    var lat = parseFloat(g('bio-s-lat'));
+    var lng = parseFloat(g('bio-s-lng'));
+    var rad = parseInt(g('bio-s-radius'));
+    if (isNaN(lat) || isNaN(lng)) { _showSettingsMsg('❌ Please enter valid latitude and longitude.', 'red'); return; }
+    if (isNaN(rad) || rad < 50)   { _showSettingsMsg('❌ Radius must be at least 50 meters.',         'red'); return; }
+    _settings.name   = g('bio-s-name') || 'Work';
+    _settings.lat    = lat;
+    _settings.lng    = lng;
+    _settings.radius = rad;
+    _saveSettings();
+    _showSettingsMsg('✅ Settings saved successfully!', 'green');
+    if (_userLat !== null) _onPosition({ coords: { latitude: _userLat, longitude: _userLng, accuracy: _userAcc } });
+  }
+
+  function _showSettingsMsg(msg, color) {
+    var el = document.getElementById('bio-settings-msg');
+    if (!el) return;
+    el.style.display = 'block';
+    el.style.color   = color === 'green' ? '#16A34A' : '#DC2626';
+    el.textContent   = msg;
+    setTimeout(function(){ el.style.display = 'none'; }, 3000);
+  }
+
+  function _captureCurrentAsCenter() {
+    if (_userLat === null) { alert('Location not yet available. Please wait a moment.'); return; }
+    var latEl = document.getElementById('bio-s-lat');
+    var lngEl = document.getElementById('bio-s-lng');
+    if (latEl) latEl.value = _userLat.toFixed(6);
+    if (lngEl) lngEl.value = _userLng.toFixed(6);
+    _showSettingsMsg('📍 Coordinates captured! Press Save to apply.', 'green');
+  }
+
+  // ── CSV Export ───────────────────────────────────────────
+  function _exportCSV() {
+    if (!_logs.length) { alert('No log data to export.'); return; }
+    var header = 'Employee ID,Employee Name,Department,Type,Date,Time,Distance (m),Latitude,Longitude\n';
+    var rows = _logs.sort(function(a,b){ return new Date(a.ts)-new Date(b.ts); }).map(function(r) {
+      var d = new Date(r.ts);
+      var date = d.toLocaleDateString('en-GB');
+      var time = [d.getHours(),d.getMinutes(),d.getSeconds()].map(function(x){return String(x).padStart(2,'0');}).join(':');
+      return [r.empId, '"'+(r.empName||'')+'"', '"'+(r.dept||'')+'"', r.type.toUpperCase(), date, time, Math.round(r.dist||0), r.lat?r.lat.toFixed(6):'', r.lng?r.lng.toFixed(6):''].join(',');
+    }).join('\n');
+    var blob = new Blob([header + rows], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'biometric_log_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+  }
+
+  // ── Clear logs ────────────────────────────────────────────
+  function _clearLogs() {
+    if (!confirm('Are you sure you want to delete ALL biometric log records? This cannot be undone.')) return;
+    _logs = [];
+    _save();
+    _renderToday();
+    _renderLog();
+    _renderReport();
+    _showSettingsMsg('✅ All logs cleared.', 'green');
+    if (typeof toast === 'function') toast('All biometric logs cleared', 'w');
+  }
+
+  // ── Tab switch ────────────────────────────────────────────
+  function _switchTab(tab) {
+    _tab = tab;
+    ['punch','log','report','settings'].forEach(function(t) {
+      var panel = document.getElementById('bio-panel-' + t);
+      var btn   = document.getElementById('bio-tab-' + t);
+      if (panel) panel.style.display = (t === tab) ? '' : 'none';
+      if (btn)   btn.className = 'bio-tab' + (t === tab ? ' active' : '');
+    });
+    if (tab === 'log')     { _populateEmpSelect(); _renderLog(); }
+    if (tab === 'report')  { _renderReport(); }
+    if (tab === 'settings'){ _loadSettingsUI(); }
+    if (tab === 'punch')   { _populateEmpSelect(); _renderToday(); }
+  }
+
+  // ── Init ─────────────────────────────────────────────────
+  function _init() {
+    _load();
+    _startClock();
+    _populateEmpSelect();
+    _renderToday();
+    _startWatch();
+
+    // Set default month filters to current month
+    var now = new Date();
+    var ym = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    ['bio-log-filter-month','bio-rep-month'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.value = ym;
+    });
+
+    // Resize observer for map
+    var svgEl = document.getElementById('bio-map-svg');
+    if (svgEl && window.ResizeObserver) {
+      var ro = new ResizeObserver(function(){ _updateMap(); });
+      ro.observe(svgEl.parentElement);
+    }
+
+    // Hide settings tab for non-admin
+    if (typeof _role !== 'undefined' && _role !== 'admin') {
+      var st = document.getElementById('bio-tab-settings');
+      if (st) st.style.display = 'none';
+    }
+  }
+
+  // ── Public API ────────────────────────────────────────────
+  return {
+    init:             _init,
+    punch:            _punch,
+    switchTab:        _switchTab,
+    saveSettings:     _saveSettingsUI,
+    captureCenter:    _captureCurrentAsCenter,
+    exportCSV:        _exportCSV,
+    clearLogs:        _clearLogs,
+    renderLog:        _renderLog,
+    renderReport:     _renderReport,
+    onEmpChange:      function() { _updateButtons(); _renderToday(); }
+  };
+
+})();
+
+// ── Global wrappers (called from HTML onclick) ────────────────
+function bioPunch(type)            { BIO.punch(type); }
+function bioSwitchTab(tab)         { BIO.switchTab(tab); }
+function bioSaveSettings()         { BIO.saveSettings(); }
+function bioCaptureCurrentAsCenter(){ BIO.captureCenter(); }
+function bioExportCSV()            { BIO.exportCSV(); }
+function bioClearAllLogs()         { BIO.clearLogs(); }
+function bioRenderLog()            { BIO.renderLog(); }
+function bioRenderReport()         { BIO.renderReport(); }
+function bioOnEmpChange()          { BIO.onEmpChange(); }
+
+// ── Hook into showPg to auto-init biometric page ─────────────
+(function(){
+  var _bioOrigShowPg = window.showPg;
+  var _bioInited = false;
+  window.showPg = function(id) {
+    _bioOrigShowPg && _bioOrigShowPg(id);
+    if (id === 'biometric') {
+      setTimeout(function(){
+        if (!_bioInited) { BIO.init(); _bioInited = true; }
+        else { BIO.switchTab('punch'); }
+      }, 50);
+    }
+  };
+})();
+
 
 /* Hook into showPg to initialise the certificate page */
 (function() {
